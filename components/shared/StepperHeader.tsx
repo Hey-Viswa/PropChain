@@ -2,7 +2,7 @@
 
 import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useMintStore } from "@/store/useMintStore";
+import { usePathname } from "next/navigation";
 
 const STEPS = [
   { id: 1, label: "Property Details" },
@@ -12,7 +12,10 @@ const STEPS = [
 ];
 
 export default function StepperHeader() {
-  const { step: currentStep } = useMintStore();
+  const pathname = usePathname();
+  let currentStep = 1;
+  if (pathname.includes("/upload")) currentStep = 2;
+  else if (pathname.includes("/review")) currentStep = 3;
 
   return (
     <div className="flex items-start gap-0">

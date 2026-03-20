@@ -10,7 +10,7 @@ import { Loader2 } from "lucide-react";
 
 export default function MintStep4() {
   const router = useRouter();
-  const { setStep, details, uploadedDocs, reset } = useMintStore();
+  const { setStep, details, uploadedDocs, reset, aiResults } = useMintStore();
   const { toast } = useToast();
   const [submitting, setSubmitting] = useState(false);
 
@@ -31,6 +31,18 @@ export default function MintStep4() {
   }
 
   const docCount = uploadedDocs.length;
+
+  if (!details.ulpin) {
+    return (
+      <div className="bg-surface_container_lowest rounded-xl p-8 text-center max-w-md mx-auto space-y-4 border border-outline_variant/20 shadow-sm mt-12">
+        <p className="text-title-md font-semibold text-on_surface">Incomplete Data</p>
+        <p className="text-body-md text-on_surface_variant">Please complete Step 1 first.</p>
+        <Button onClick={() => router.push("/mint/details")} className="w-full">
+          Go to Step 1
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className="grid grid-cols-1 xl:grid-cols-[1fr_360px] 2xl:grid-cols-[1fr_420px] gap-6 xl:gap-8">
@@ -61,14 +73,18 @@ export default function MintStep4() {
             Documents ({docCount})
           </p>
           <ul className="space-y-2">
-            {uploadedDocs.map((doc, i) => (
-              <li
-                key={i}
-                className="text-body-md text-on_surface_variant flex items-center before:content-[''] before:w-1.5 before:h-1.5 before:bg-primary before:rounded-full before:mr-2"
-              >
-                {doc.name}
-              </li>
-            ))}
+            {uploadedDocs.map((doc, i) => {
+              const aiDoc = aiResults?.documents?.find(d => d.name === doc.name);
+              return (
+                <li
+                  key={i}
+                  className="text-body-md text-on_surface_variant flex items-center justify-between before:content-[''] before:w-1.5 before:h-1.5 before:bg-primary before:rounded-full before:mr-2"
+                >
+                  <span>{doc.name}</span>
+                  {aiDoc && <span className="text-xs font-semibold text-success">AI Score: {aiDoc.score}%</span>}
+                </li>
+              );
+            })}
             {docCount === 0 && (
               <li className="text-body-md text-on_surface_variant">No documents attached.</li>
             )}
@@ -92,7 +108,7 @@ export default function MintStep4() {
           <div className="flex justify-between items-center">
             <span className="text-body-md text-on_surface_variant">AI Confidence</span>
             <Badge className="bg-success_container text-success rounded-full py-0.5">
-              84%
+              {aiResults ? `${aiResults.overallScore}%` : "Pending"}
             </Badge>
           </div>
           <div className="flex justify-between items-center">

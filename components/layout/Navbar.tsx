@@ -4,6 +4,8 @@ import { ChevronRight } from "lucide-react";
 import { useBreadcrumbs } from "@/hooks/useBreadcrumbs";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { UserButton, useUser } from "@clerk/nextjs";
+import { useEffect } from "react";
 
 import { useRoleStore } from "@/store/useRoleStore";
 
@@ -12,6 +14,13 @@ const MOCK_WALLET = "0x1A2B...9F0E";
 export default function Navbar() {
   const crumbs = useBreadcrumbs();
   const { role } = useRoleStore();
+  const { user, isLoaded } = useUser();
+
+  useEffect(() => {
+    if (user) {
+      console.log("Clerk user imageUrl:", user.imageUrl);
+    }
+  }, [user]);
 
   return (
     <header
@@ -59,6 +68,31 @@ export default function Navbar() {
         <Badge className="bg-secondary_fixed text-on_secondary_fixed rounded-full text-xs px-3 py-1 uppercase">
           {role}
         </Badge>
+
+        {/* Clerk User Button */}
+        {isLoaded && user && (
+          <UserButton
+            showName={false}
+            appearance={{
+              elements: {
+                avatarBox:
+                  "w-8 h-8 rounded-full ring-2 ring-primary_fixed",
+                avatarImage:
+                  "w-8 h-8 rounded-full object-cover",
+                userButtonTrigger:
+                  "focus:shadow-none focus:outline-none",
+                userButtonPopoverCard:
+                  "shadow-[0_12px_32px_rgba(0,26,67,0.06)] rounded-xl border-0",
+                userButtonPopoverActionButton:
+                  "hover:bg-surface_container_low rounded-lg",
+                userButtonPopoverActionButtonText:
+                  "text-on_surface text-sm",
+                userButtonPopoverFooter:
+                  "hidden",
+              },
+            }}
+          />
+        )}
       </div>
     </header>
   );

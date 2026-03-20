@@ -41,7 +41,7 @@ export default function AIIntelligenceCard() {
         </div>
       </div>
 
-      <button className="w-full mt-6 bg-[#d6e3ff] text-[#001a43] hover:bg-white text-xs font-bold uppercase tracking-wider py-3.5 rounded-lg transition-colors relative z-10 shadow-sm">
+      <button className="w-full mt-6 bg-[#d6e3ff] text-[#001a43] hover:bg-white text-xs font-bold uppercase tracking-wider py-3.5 rounded-md transition-colors relative z-10 shadow-sm">
         Initialize Node Optimization
       </button>
     </div>

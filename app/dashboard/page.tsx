@@ -1,20 +1,52 @@
 "use client";
 
-
+import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { Download, Calendar } from "lucide-react";
+import { Download, Calendar, Wallet } from "lucide-react";
 import PortfolioChart from "./components/PortfolioChart";
 import AIIntelligenceCard from "./components/AIIntelligenceCard";
 import NetworkTelemetry from "./components/NetworkTelemetry";
 
 export default function DashboardPage() {
+  const { isSignedIn, isConnected, isLoaded, user, connect } = useAuth();
+
+  if (!isLoaded) {
+    return <div className="p-8 text-center text-on_surface_variant">Loading...</div>;
+  }
+
+  if (!isSignedIn) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh]">
+        <h2 className="text-xl font-bold font-display text-on_surface mb-2">Please sign in</h2>
+        <p className="text-on_surface_variant">You must be signed in to view this page.</p>
+      </div>
+    );
+  }
+
+  if (isSignedIn && !isConnected) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh]">
+        <div className="bg-surface_container_lowest rounded-2xl p-8 shadow-[0_8px_24px_rgba(0,0,0,0.02)] border border-outline_variant/10 text-center max-w-md w-full">
+          <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary mx-auto mb-4">
+            <Wallet className="w-8 h-8" />
+          </div>
+          <h2 className="text-2xl font-bold font-display text-on_surface mb-2">Connect Wallet</h2>
+          <p className="text-on_surface_variant mb-8">Connect your wallet to manage properties and view your portfolio.</p>
+          <Button onClick={connect} className="w-full bg-primary text-on_primary h-12 text-base shadow-floating">
+            Connect Wallet
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h1 className="text-display font-bold text-on_surface font-display leading-tight tracking-tight text-3xl sm:text-4xl mb-1">
-              System Analytics
+              Good morning, {user?.firstName ?? "there"}.
             </h1>
             <p className="text-body-md text-on_surface_variant max-w-xl">
               Real-time performance metrics for global asset liquidity and verification throughput.

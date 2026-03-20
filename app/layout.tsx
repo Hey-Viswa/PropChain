@@ -6,6 +6,8 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import AppShellWrapper from "@/components/layout/AppShellWrapper";
 
+import { ClerkProvider } from "@clerk/nextjs";
+
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -29,15 +31,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={cn("font-sans", geist.variable)}>
-      <body
-        className={`${plusJakartaSans.variable} ${inter.variable} antialiased`}
-      >
-        <AppShellWrapper>
-          {children}
-        </AppShellWrapper>
-        <Toaster />
-      </body>
-    </html>
+    <ClerkProvider>
+      <html lang="en" className={cn("font-sans", geist.variable)}>
+        <body
+          className={`${plusJakartaSans.variable} ${inter.variable} antialiased`}
+        >
+          <AppShellWrapper>
+            {children}
+          </AppShellWrapper>
+          <Toaster />
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

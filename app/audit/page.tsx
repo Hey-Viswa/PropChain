@@ -169,7 +169,7 @@ export default function AuditHistoryPage() {
             <span className="text-xs text-on_surface_variant font-medium">Showing 1 to 5 of 12,482 entries</span>
             <div className="flex items-center gap-1">
               <Button variant="outline" size="icon" className="w-8 h-8 rounded-md bg-white border-outline_variant/30 text-on_surface_variant"><ChevronLeft size={14} /></Button>
-              <Button variant="default" className="w-8 h-8 rounded-md bg-primary text-white p-0">1</Button>
+              <Button variant="default" className="w-8 h-8 rounded-md bg-primary text-on_primary p-0">1</Button>
               <Button variant="outline" className="w-8 h-8 rounded-md bg-white border-outline_variant/30 text-on_surface p-0">2</Button>
               <Button variant="outline" className="w-8 h-8 rounded-md bg-white border-outline_variant/30 text-on_surface p-0">3</Button>
               <span className="px-2 text-on_surface_variant">...</span>
@@ -203,7 +203,7 @@ export default function AuditHistoryPage() {
               <p className="text-[#5c3c00] text-sm leading-relaxed mb-6">
                 Our AI engine has flagged <span className="font-bold border-b border-[#5c3c00]">2 events</span> that might require your manual verification this week. Review your queue to maintain compliance.
               </p>
-              <Button className="bg-[#1f1400] text-[#fdecd8] hover:bg-black border-none rounded-lg h-10 px-6 font-semibold shadow-none w-fit">
+              <Button className="bg-[#1f1400] text-[#fdecd8] hover:bg-black border-none rounded-md h-10 px-6 font-semibold shadow-none w-fit">
                 Go to Queue
               </Button>
             </div>

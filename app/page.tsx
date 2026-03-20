@@ -3,11 +3,71 @@
 import Link from "next/link";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Building2, Shield, Asterisk, Lock, CheckCircle2, 
+import { Building2, Shield, Asterisk, Lock, CheckCircle2, 
   ArrowRight, RefreshCcw, Bell, UserCircle2, Sparkles, Building 
 } from "lucide-react";
 import Image from "next/image";
+import { SignInButton, SignUpButton, useUser, UserButton } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
+
+function CtaButton({ className, children, withArrow }: { className?: string, children?: React.ReactNode, withArrow?: boolean }) {
+  const { isSignedIn } = useUser();
+  const router = useRouter();
+
+  if (isSignedIn) {
+    return (
+      <Button onClick={() => router.push("/dashboard")} className={className}>
+        Go to Dashboard {withArrow && <ArrowRight size={16} className="ml-2" />}
+      </Button>
+    );
+  }
+
+  return (
+    <div className="flex gap-2 w-full flex-col sm:flex-row">
+      <SignUpButton mode="modal">
+        <Button className={className}>Get Started {withArrow && <ArrowRight size={16} className="ml-2" />}</Button>
+      </SignUpButton>
+      <SignInButton mode="modal">
+        <Button variant="outline" className={className}>Sign In</Button>
+      </SignInButton>
+    </div>
+  );
+}
+
+function NavCta() {
+  const { isSignedIn } = useUser();
+  const router = useRouter();
+  
+  if (isSignedIn) {
+    return (
+      <Button onClick={() => router.push("/dashboard")} className="rounded-full shadow-none px-6 h-9">
+        Go to Dashboard
+      </Button>
+    );
+  }
+  
+  return (
+    <div className="flex gap-2">
+      <SignInButton mode="modal">
+        <Button variant="ghost" className="rounded-full shadow-none px-4 h-9">Sign In</Button>
+      </SignInButton>
+      <SignUpButton mode="modal">
+        <Button className="rounded-full shadow-none px-6 h-9">Get Started</Button>
+      </SignUpButton>
+    </div>
+  );
+}
+
+function ProfileOrLogin() {
+  const { isSignedIn, isLoaded } = useUser();
+  if (!isLoaded) return <div className="w-8 h-8 rounded-full bg-surface_container animate-pulse" />;
+  if (isSignedIn) return <UserButton />;
+  return (
+    <button className="text-on_surface_variant hover:text-on_surface transition-colors p-1 mr-2">
+      <UserCircle2 size={18} />
+    </button>
+  );
+}
 
 export default function LandingPage() {
   return (
@@ -40,13 +100,9 @@ export default function LandingPage() {
             <button className="text-on_surface_variant hover:text-on_surface transition-colors p-1">
               <Bell size={18} />
             </button>
-            <button className="text-on_surface_variant hover:text-on_surface transition-colors p-1 mr-2">
-              <UserCircle2 size={18} />
-            </button>
+            <ProfileOrLogin />
             
-            <Link href="/dashboard" className={buttonVariants({ variant: "default", className: "rounded-full shadow-none px-6 h-9" })}>
-              Connect Wallet
-            </Link>
+            <NavCta />
           </div>
         </div>
       </header>
@@ -71,9 +127,7 @@ export default function LandingPage() {
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4 mb-12 sm:mb-16">
-                <Link href="/dashboard" className={buttonVariants({ size: "lg", className: "rounded-full h-12 px-8 text-sm font-semibold shadow-floating" })}>
-                  Connect Wallet <ArrowRight size={16} className="ml-2" />
-                </Link>
+                <CtaButton className="rounded-full h-12 px-8 text-sm font-semibold shadow-floating" withArrow />
                 <Button variant="secondary" size="lg" className="rounded-full h-12 px-8 text-sm font-semibold bg-surface_container hover:bg-surface_container_high text-on_surface">
                   View Network Data
                 </Button>
@@ -265,10 +319,8 @@ export default function LandingPage() {
                   Join 12,000+ investors and developers building on the PropChain registry. Start tokenizing your first asset today.
                 </p>
                 <div className="flex flex-col sm:flex-row justify-center gap-4">
-                  <Link href="/dashboard" className={buttonVariants({ size: "lg", className: "rounded-full h-12 px-8 text-sm font-semibold" })}>
-                    Connect Wallet
-                  </Link>
-                  <Button variant="outline" size="lg" className="rounded-full h-12 px-8 text-sm font-semibold border-gray-600 text-gray-300 hover:bg-gray-800 hover:text-white bg-transparent">
+                  <CtaButton className="rounded-full h-12 px-8 text-sm font-semibold" />
+                  <Button variant="outline" size="lg" className="rounded-full h-12 px-8 text-sm font-semibold border-gray-600 text-gray-300 hover:bg-gray-800 hover:text-on_primary bg-transparent">
                     Developer Hub
                   </Button>
                 </div>

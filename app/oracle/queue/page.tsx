@@ -49,8 +49,8 @@ export default function OracleQueuePage() {
               </div>
             </div>
             <div className="flex gap-2">
-               <button className="text-xs font-semibold px-4 py-2 rounded-lg bg-surface_container text-on_surface_variant hover:bg-surface_container_high">Decline</button>
-               <button className="text-xs font-semibold px-4 py-2 rounded-lg bg-primary text-white hover:bg-primary/90">Review Docs</button>
+               <button className="text-xs font-semibold px-4 py-2 rounded-md bg-surface_container text-on_surface_variant hover:bg-surface_container_high">Decline</button>
+               <button className="text-xs font-semibold px-4 py-2 rounded-md bg-primary text-on_primary hover:bg-primary/90">Review Docs</button>
             </div>
           </div>
           
@@ -65,7 +65,7 @@ export default function OracleQueuePage() {
               </div>
             </div>
             <div className="flex gap-2">
-               <button className="text-xs font-semibold px-4 py-2 rounded-lg bg-primary text-white hover:bg-primary/90">Sign & Approve</button>
+               <button className="text-xs font-semibold px-4 py-2 rounded-md bg-primary text-on_primary hover:bg-primary/90">Sign & Approve</button>
             </div>
           </div>
         </div>

@@ -137,3 +137,26 @@ export const mockUser: WalletUser = {
 // Backward compat aliases
 export const mockProperties = MOCK_PROPERTIES;
 export const mockAuditEntries = MOCK_AUDIT;
+
+export const MOCK_SUBMISSIONS_OVER_TIME = [
+  { date: 'Mar 14', approved: 4, rejected: 1 },
+  { date: 'Mar 15', approved: 7, rejected: 2 },
+  { date: 'Mar 16', approved: 5, rejected: 1 },
+  { date: 'Mar 17', approved: 9, rejected: 3 },
+  { date: 'Mar 18', approved: 6, rejected: 0 },
+  { date: 'Mar 19', approved: 11, rejected: 2 },
+  { date: 'Mar 20', approved: 8, rejected: 1 },
+]
+
+export const MOCK_VERIFICATION_OUTCOMES = [
+  { name: 'Approved', value: 118, color: '#006e2c' },
+  { name: 'Rejected', value: 24,  color: '#ba1a1a' },
+]
+
+export const MOCK_RECENT_ORACLE_ACTIVITY = [
+  { action: 'APPROVE', ulpin: 'MH0123456789', decision: 'Approved', time: '10 min ago' },
+  { action: 'REJECT',  ulpin: 'DL5544332211', decision: 'Rejected', time: '34 min ago' },
+  { action: 'APPROVE', ulpin: 'KA1122334455', decision: 'Approved', time: '1 hr ago'  },
+  { action: 'APPROVE', ulpin: 'GJ6677889900', decision: 'Approved', time: '2 hrs ago' },
+  { action: 'REJECT',  ulpin: 'TN9988776655', decision: 'Rejected', time: '3 hrs ago' },
+]

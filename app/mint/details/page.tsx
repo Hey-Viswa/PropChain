@@ -2,13 +2,54 @@
 
 import { useMintStore } from "@/store/useMintStore";
 import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Info, MapPin, Target, CheckCircle2, Shield, Clock, ArrowRight } from "lucide-react";
 import Image from "next/image";
 
+const detailsSchema = z.object({
+  ulpin: z.string().regex(/^[A-Z]{2}\d{10}$/),
+  area: z.coerce.number().positive(),
+  type: z.enum(["Residential", "Commercial", "Agricultural"]),
+  address: z.string().min(10),
+  district: z.string().min(1),
+  state: z.string().min(1),
+  description: z.string().max(500).optional(),
+});
+
+type DetailsFormValues = z.infer<typeof detailsSchema>;
+
 export default function MintStep1() {
   const router = useRouter();
-  const { setStep } = useMintStore();
+  const { details, setDetails } = useMintStore();
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { isValid },
+  } = useForm<DetailsFormValues>({
+    resolver: zodResolver(detailsSchema),
+    mode: "onChange",
+  });
+
+  useEffect(() => {
+    if (details.ulpin) setValue("ulpin", details.ulpin);
+    if (details.area) setValue("area", details.area);
+    if (details.type) setValue("type", details.type as any);
+    if (details.address) setValue("address", details.address);
+    if (details.district) setValue("district", details.district);
+    if (details.state) setValue("state", details.state);
+    if (details.description) setValue("description", details.description);
+  }, [details, setValue]);
+
+  const onSubmit = (data: DetailsFormValues) => {
+    setDetails(data);
+    router.push("/mint/upload");
+  };
 
   return (
     <div className="max-w-[1000px] mx-auto space-y-8">
@@ -28,7 +69,7 @@ export default function MintStep1() {
           <h2 className="text-lg font-bold font-display text-on_surface">Step 1: Property Identification</h2>
         </div>
 
-        <form className="space-y-8">
+        <form className="space-y-8" onSubmit={handleSubmit(onSubmit)}>
           {/* Row 1 */}
           <div>
             <label className="block text-xs font-bold text-on_surface mb-2">Unique Land Parcel Identification Number (ULPIN)</label>
@@ -38,8 +79,9 @@ export default function MintStep1() {
               </div>
               <input 
                 type="text" 
+                {...register("ulpin")}
                 placeholder="14-digit alphanumeric ID"
-                className="w-full bg-surface_container_low border-transparent focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-12 pl-12 pr-4 text-mono text-on_surface transition-all font-mono"
+                className="w-full bg-surface_container_low border-transparent focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-12 pl-12 pr-4 text-on_surface transition-all font-mono"
               />
             </div>
             <p className="text-[10px] italic text-on_surface_variant mt-2">Enter the government-issued ULPIN as it appears on the official land record.</p>
@@ -55,6 +97,7 @@ export default function MintStep1() {
                 </div>
                 <input 
                   type="number" 
+                  {...register("area")}
                   placeholder="e.g. 2450"
                   className="w-full bg-surface_container_low border-transparent focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-12 pl-12 pr-4 text-on_surface transition-all"
                 />
@@ -66,11 +109,11 @@ export default function MintStep1() {
                 <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
                   <span className="text-on_surface_variant/50 font-medium">🏢</span>
                 </div>
-                <select className="w-full bg-surface_container_low border-transparent focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-12 pl-12 pr-10 text-on_surface transition-all appearance-none cursor-pointer">
-                  <option>Residential (Plot)</option>
-                  <option>Residential (Apartment)</option>
-                  <option>Commercial</option>
-                  <option>Industrial</option>
+                <select {...register("type")} className="w-full bg-surface_container_low border-transparent focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-12 pl-12 pr-10 text-on_surface transition-all appearance-none cursor-pointer">
+                  <option value="">Select Property Type</option>
+                  <option value="Residential">Residential</option>
+                  <option value="Commercial">Commercial</option>
+                  <option value="Agricultural">Agricultural / Industrial</option>
                 </select>
                 <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none">
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-on_surface_variant"><path d="m6 9 6 6 6-6"/></svg>
@@ -85,17 +128,20 @@ export default function MintStep1() {
             <div className="space-y-4">
               <input 
                 type="text" 
+                {...register("address")}
                 placeholder="Street Address / Plot No."
                 className="w-full bg-surface_container_low border-transparent focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-12 px-4 text-on_surface transition-all"
               />
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <input 
                   type="text" 
+                  {...register("district")}
                   placeholder="City"
                   className="w-full bg-surface_container_low border-transparent focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-12 px-4 text-on_surface transition-all"
                 />
                 <input 
                   type="text" 
+                  {...register("state")}
                   placeholder="State/Province"
                   className="w-full bg-surface_container_low border-transparent focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-12 px-4 text-on_surface transition-all"
                 />
@@ -145,9 +191,9 @@ export default function MintStep1() {
               Save As Draft
             </button>
             <Button 
-              type="button" 
-              className="h-12 px-8 bg-primary text-on_primary shadow-floating font-semibold rounded-lg"
-              onClick={() => router.push("/mint/upload")}
+              type="submit" 
+              disabled={!isValid}
+              className="h-12 px-8 bg-primary text-on_primary shadow-floating font-semibold rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Continue To Documents <ArrowRight className="ml-2 w-4 h-4" />
             </Button>

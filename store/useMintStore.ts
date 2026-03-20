@@ -1,24 +1,62 @@
 "use client";
 
 import { create } from "zustand";
-import type { PropertyDetailsForm, AIResult } from "@/types";
+
+type DocType = "sale_deed" | "gov_id" | "survey";
+
+interface MintDoc {
+  name: string;
+  size: number;
+  docType: DocType;
+}
+
+interface AIDocResult {
+  name: string;
+  score: number;
+  fields: Record<string, string>;
+}
+
+interface AIResults {
+  overallScore: number;
+  documents: AIDocResult[];
+}
+
+interface Details {
+  ulpin: string;
+  address: string;
+  state: string;
+  district: string;
+  area: number | null;
+  type: "Residential" | "Commercial" | "Agricultural" | "";
+  description: string;
+}
 
 interface MintState {
   step: 1 | 2 | 3 | 4;
-  details: Partial<PropertyDetailsForm>;
-  uploadedDocs: { name: string; size: number; type: string }[];
-  aiResults: AIResult | null;
+  details: Details;
+  uploadedDocs: MintDoc[];
+  aiResults: AIResults | null;
   setStep: (step: 1 | 2 | 3 | 4) => void;
-  setDetails: (data: Partial<PropertyDetailsForm>) => void;
-  addDoc: (doc: { name: string; size: number; type: string }) => void;
+  setDetails: (data: Partial<Details>) => void;
+  addDoc: (doc: MintDoc) => void;
   removeDoc: (name: string) => void;
-  setAIResults: (results: AIResult) => void;
+  setAIResults: (results: AIResults) => void;
   reset: () => void;
 }
 
+const initialDetails: Details = {
+  ulpin: "",
+  address: "",
+  state: "",
+  district: "",
+  area: null,
+  type: "",
+  description: "",
+};
+
 export const useMintStore = create<MintState>((set) => ({
   step: 1,
-  details: {},
+  details: { ...initialDetails },
   uploadedDocs: [],
   aiResults: null,
   setStep: (step) => set({ step }),
@@ -32,5 +70,5 @@ export const useMintStore = create<MintState>((set) => ({
     })),
   setAIResults: (aiResults) => set({ aiResults }),
   reset: () =>
-    set({ step: 1, details: {}, uploadedDocs: [], aiResults: null }),
+    set({ step: 1, details: { ...initialDetails }, uploadedDocs: [], aiResults: null }),
 }));

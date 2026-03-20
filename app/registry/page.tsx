@@ -29,7 +29,7 @@ export default function RegistryPage() {
             className="w-full h-12 pl-12 pr-4 bg-transparent border-none outline-none text-on_surface font-medium placeholder:text-on_surface_variant/60"
           />
         </div>
-        <Button className="h-12 px-8 bg-primary rounded-xl text-white font-semibold">Search Network</Button>
+        <Button className="h-12 px-8 bg-primary rounded-xl text-on_primary font-semibold">Search Network</Button>
       </div>
 
       {/* Mock Results */}

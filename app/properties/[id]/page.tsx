@@ -1,21 +1,50 @@
 "use client";
 
-import { use } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { usePropertyStore } from "@/store/usePropertyStore";
 import { Box, MapPin, Share2, History, CheckCircle2 } from "lucide-react";
 import Image from "next/image";
+import StatusBadge from "@/components/shared/StatusBadge";
+import ConfidenceBar from "@/components/shared/ConfidenceBar";
+import { Button } from "@/components/ui/button";
 
-export default function PropertyIdPage({ params }: { params: Promise<{ id: string }> }) {
-  const resolvedParams = use(params);
+export default function PropertyIdPage() {
+  const params = useParams();
+  const router = useRouter();
+  const id = params.id as string;
+  const property = usePropertyStore((s) => s.properties.find((p) => p.id === id));
+
+  if (!property) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
+        <p className="text-headline-md text-on_surface font-semibold">
+          Property not found
+        </p>
+        <p className="text-body-md text-on_surface_variant">
+          The property you are looking for does not exist.
+        </p>
+        <Button variant="default" onClick={() => router.push('/properties')}>
+          Back to My Properties
+        </Button>
+      </div>
+    );
+  }
+
+  const truncate = (str: string, first: number, last: number) => {
+    if (!str) return "";
+    return str.substring(0, first) + "..." + str.substring(str.length - last);
+  };
+
   return (
     <div className="space-y-8">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between gap-4">
         <div>
           <h1 className="text-display font-bold text-on_surface font-display leading-tight tracking-tight text-3xl sm:text-4xl mb-1">
-            Property Details
+            {property.address}
           </h1>
           <p className="text-body-md text-on_surface_variant flex items-center gap-2">
-            <MapPin size={16} /> Asset ID: <span className="font-mono text-primary">{resolvedParams.id || "0x4A2...19F"}</span>
+            <MapPin size={16} /> Asset ID: <span className="font-mono text-primary">{property.id}</span>
           </p>
         </div>
       </div>
@@ -34,15 +63,42 @@ export default function PropertyIdPage({ params }: { params: Promise<{ id: strin
           <div className="space-y-3 text-sm">
             <div className="flex justify-between border-b border-outline_variant/10 pb-2">
               <span className="text-on_surface_variant">Owner Wallet</span>
-              <span className="font-mono text-primary">0x1A2B...9F0E</span>
+              <span className="font-mono text-primary">{truncate(property.owner, 6, 4)}</span>
             </div>
             <div className="flex justify-between border-b border-outline_variant/10 pb-2">
               <span className="text-on_surface_variant">Status</span>
-              <span className="text-success font-semibold flex items-center gap-1"><CheckCircle2 size={14} /> ACTIVE MINT</span>
+              <StatusBadge status={property.status} />
             </div>
             <div className="flex justify-between border-b border-outline_variant/10 pb-2">
-              <span className="text-on_surface_variant">Valuation Oracle</span>
-              <span className="text-on_surface font-medium">$42.4M USD</span>
+              <span className="text-on_surface_variant">ULPIN</span>
+              <span className="text-on_surface font-medium">{property.ulpin}</span>
+            </div>
+            <div className="flex justify-between border-b border-outline_variant/10 pb-2">
+              <span className="text-on_surface_variant">Area</span>
+              <span className="text-on_surface font-medium">{property.area}</span>
+            </div>
+            <div className="flex justify-between border-b border-outline_variant/10 pb-2">
+              <span className="text-on_surface_variant">Type</span>
+              <span className="text-on_surface font-medium">{property.type}</span>
+            </div>
+            <div className="flex justify-between border-b border-outline_variant/10 pb-2">
+              <span className="text-on_surface_variant">Registered At</span>
+              <span className="text-on_surface font-medium">{property.registeredAt}</span>
+            </div>
+            <div className="flex justify-between border-b border-outline_variant/10 pb-2">
+              <span className="text-on_surface_variant">IPFS CID</span>
+              <span className="font-mono text-primary">{truncate(property.ipfsCid, 8, 6)}</span>
+            </div>
+            <div className="flex flex-col border-b border-outline_variant/10 pb-3 pt-1">
+              <span className="text-on_surface_variant mb-2">AI Confidence</span>
+              <ConfidenceBar score={property.aiConfidence} showLabel={false} />
+            </div>
+            <div className="flex justify-between border-b border-outline_variant/10 pb-2 pt-1 gap-2 items-center">
+              <span className="text-on_surface_variant">Encumbrance</span>
+              <span className={`text-sm font-semibold flex items-center gap-1 ${property.hasEncumbrance ? 'text-error' : 'text-success'}`}>
+                <span className={`w-2 h-2 rounded-full ${property.hasEncumbrance ? 'bg-error' : 'bg-success'}`}></span>
+                {property.hasEncumbrance ? "Active Lien Registered" : "No Active Liens"}
+              </span>
             </div>
           </div>
         </div>

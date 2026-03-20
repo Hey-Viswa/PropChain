@@ -1,7 +1,19 @@
+"use client";
+import { useEffect } from "react";
+import { useUser } from "@clerk/nextjs";
 import Sidebar from "./Sidebar";
 import Navbar from "./Navbar";
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
+  const { user, isLoaded } = useUser();
+
+  useEffect(() => {
+    if (isLoaded && user) {
+      // Force reload user to get latest imageUrl
+      user.reload();
+    }
+  }, [isLoaded, user]);
+
   return (
     <div className="flex h-screen bg-surface overflow-hidden">
       <Sidebar />
