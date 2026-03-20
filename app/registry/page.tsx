@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import { Globe, Search, ArrowRight, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -33,40 +34,42 @@ export default function RegistryPage() {
       </div>
 
       {/* Mock Results */}
-      <div className="pt-8 space-y-4">
-        <h3 className="text-sm font-bold uppercase tracking-widest text-on_surface_variant mb-6 flex items-center gap-2">
+      <Suspense fallback={<div className="h-48 bg-surface_container rounded-xl animate-pulse" />}>
+        <div className="pt-8 space-y-4">
+         <h3 className="text-sm font-bold uppercase tracking-widest text-on_surface_variant mb-6 flex items-center gap-2">
           <div className="w-2 h-2 rounded-full bg-success"></div> Live Network Feed (Last 100 Minted)
-        </h3>
+         </h3>
 
-        {[
+         {[
           { id: "PC-8829 NYC", name: "The Azure Heights", val: "$4.2M", loc: "Manhattan, NY" },
           { id: "PC-9912 SG", name: "Vertex Industrial", val: "$18.5M", loc: "Jurong, Singapore" },
           { id: "PC-1102 LDN", name: "Thames View Apts", val: "$8.1M", loc: "London, UK" },
-        ].map((item, i) => (
+         ].map((item, i) => (
            <div key={i} className="bg-surface_container_lowest border border-outline_variant/10 rounded-xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:shadow-card transition-shadow cursor-pointer group">
-             <div className="flex items-center gap-5">
-                <div className="w-12 h-12 rounded-lg bg-surface_container flex items-center justify-center text-on_surface_variant">
-                   <Building2 size={24} />
-                </div>
-                <div>
-                   <h4 className="font-bold text-on_surface text-lg group-hover:text-primary transition-colors">{item.name}</h4>
-                   <p className="text-sm text-on_surface_variant flex items-center gap-2 mt-1">
-                     <span className="font-mono text-xs">{item.id}</span> • {item.loc}
-                   </p>
-                </div>
-             </div>
-             <div className="flex items-center gap-6 sm:text-right">
-                <div className="hidden sm:block">
-                   <p className="text-[10px] uppercase font-bold text-on_surface_variant mb-0.5">TVL</p>
-                   <p className="font-bold text-on_surface">{item.val}</p>
-                </div>
-                <div className="w-10 h-10 rounded-full bg-surface_container flex items-center justify-center text-on_surface group-hover:bg-primary/10 group-hover:text-primary transition-colors">
-                   <ArrowRight size={18} />
-                </div>
-             </div>
+            <div className="flex items-center gap-5">
+              <div className="w-12 h-12 rounded-lg bg-surface_container flex items-center justify-center text-on_surface_variant">
+                <Building2 size={24} />
+              </div>
+              <div>
+                <h4 className="font-bold text-on_surface text-lg group-hover:text-primary transition-colors">{item.name}</h4>
+                <p className="text-sm text-on_surface_variant flex items-center gap-2 mt-1">
+                  <span className="font-mono text-xs">{item.id}</span> • {item.loc}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-6 sm:text-right">
+              <div className="hidden sm:block">
+                <p className="text-[10px] uppercase font-bold text-on_surface_variant mb-0.5">TVL</p>
+                <p className="font-bold text-on_surface">{item.val}</p>
+              </div>
+              <div className="w-10 h-10 rounded-full bg-surface_container flex items-center justify-center text-on_surface group-hover:bg-primary/10 group-hover:text-primary transition-colors">
+                <ArrowRight size={18} />
+              </div>
+            </div>
            </div>
-        ))}
-      </div>
+         ))}
+        </div>
+      </Suspense>
     </div>
   );
 }

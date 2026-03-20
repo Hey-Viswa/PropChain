@@ -1,13 +1,12 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { useRouter } from "next/navigation";
 import { useMintStore } from "@/store/useMintStore";
 import { Button } from "@/components/ui/button";
 import { FileText, Plus, Cloud, ScanBarcode, ArrowRight, ArrowLeft, X, Loader2 } from "lucide-react";
+import Link from "next/link";
 
 export default function MintStep2() {
-  const router = useRouter();
   const { setStep, uploadedDocs, addDoc, removeDoc, aiResults, setAIResults, details } = useMintStore();
   const [isAILoading, setIsAILoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -210,23 +209,27 @@ export default function MintStep2() {
 
       {/* Footer Nav */}
       <div className="flex items-center justify-between w-full mt-12 pt-8 border-t border-border/40">
-        <Button variant="ghost" onClick={() => router.push("/mint")} className="text-on_surface font-semibold hover:bg-surface_container_low px-1 hover:transparent">
-          <ArrowLeft className="w-4 h-4 mr-2" strokeWidth={2.5} />
-          Back to Details
-        </Button>
+        <Link href="/mint">
+          <Button variant="ghost" className="text-on_surface font-semibold hover:bg-surface_container_low px-1 hover:transparent">
+            <ArrowLeft className="w-4 h-4 mr-2" strokeWidth={2.5} />
+            Back to Details
+          </Button>
+        </Link>
         <div className="flex gap-4">
           <Button variant="secondary" className="bg-surface_container text-on_surface_variant hover:bg-surface_container_high h-11 px-6 font-semibold shadow-sm">
             Save Draft
           </Button>
-          <Button 
-            onClick={() => router.push("/mint/review")} 
-            disabled={uploadedDocs.length < 2 || isAILoading}
-            className="bg-primary hover:bg-primary/95 text-on_primary shadow-md h-11 px-8 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Continue to Minting
-          </Button>
+          <Link href="/mint/review" aria-disabled={uploadedDocs.length < 2 || isAILoading}>
+            <Button
+              disabled={uploadedDocs.length < 2 || isAILoading}
+              className="bg-primary hover:bg-primary/95 text-on_primary shadow-md h-11 px-8 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Continue to Minting
+            </Button>
+          </Link>
         </div>
       </div>
     </div>
   );
 }
+

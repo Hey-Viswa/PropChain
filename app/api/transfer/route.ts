@@ -1,10 +1,17 @@
-import { NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
+﻿import { NextRequest, NextResponse } from "next/server";
+import { connectDB } from "@/lib/db/mongoose";
+import { PropertyRecord } from "@/lib/db/models/Property";
 
-export async function POST(req: Request) {
-  const { userId } = await auth();
-  if (!userId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+export async function POST(req: NextRequest) {
+  try {
+    const { tokenId, fromWallet, toWallet, txHash } = await req.json();
+    await connectDB();
+    await PropertyRecord.findOneAndUpdate(
+      { tokenId },
+      { walletAddress: toWallet.toLowerCase(), txHash }
+    );
+    return NextResponse.json({ success: true });
+  } catch (err) {
+    return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
-  return NextResponse.json({ success: true });
 }

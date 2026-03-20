@@ -1,18 +1,23 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
-let isConnected = false;
+const MONGODB_URI = process.env.MONGODB_URI as string;
 
-export const connectDB = async () => {
-  mongoose.set('strictQuery', true);
+if (!MONGODB_URI) {
+  console.log("MONGODB_URI is not defined in .env.local");
+}
 
-  if (!process.env.MONGODB_URI) return console.log('MONGODB_URI is structurally absent');
-  if (isConnected) return console.log('=> using existing database connection');
+let cached = (global as any).mongoose ?? { conn: null, promise: null };
 
-  try {
-    await mongoose.connect(process.env.MONGODB_URI);
-    isConnected = true;
-    console.log('MongoDB is connected successfully');
-  } catch (error) {
-    console.log(error);
+export async function connectDB() {
+  if (cached.conn) return cached.conn;
+
+  if (!cached.promise) {
+    cached.promise = mongoose
+      .connect(MONGODB_URI, { bufferCommands: false })
+      .then((m) => m);
   }
+
+  cached.conn = await cached.promise;
+  (global as any).mongoose = cached;
+  return cached.conn;
 }

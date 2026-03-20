@@ -7,28 +7,70 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
+import { usePropertyContract } from "@/hooks/usePropertyContract";
+import { useWallet } from "@/hooks/useWallet";
+import Link from "next/link";
 
 export default function MintStep4() {
   const router = useRouter();
   const { setStep, details, uploadedDocs, reset, aiResults } = useMintStore();
   const { toast } = useToast();
   const [submitting, setSubmitting] = useState(false);
+  const { mintProperty } = usePropertyContract();
+  const { address } = useWallet();
 
   useEffect(() => {
     setStep(4);
   }, [setStep]);
 
-  function handleSubmit() {
+  const handleSubmit = async () => {
     setSubmitting(true);
-    setTimeout(() => {
-      reset();
-      router.push("/properties");
-      toast({
-        title: "Property submitted for Oracle approval.",
-        description: "Your registration has been sent to the network.",
+    try {
+      // Step 1: Save to MongoDB
+      const regRes = await fetch("/api/properties/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          walletAddress:   address,
+          ulpin:           details.ulpin,
+          physicalAddress: details.address,
+          areaSqFt:        details.area,
+          propertyType:    details.type,
+          description:     details.description,
+          documentUrl:     uploadedDocs[0]?.name ?? "",
+        }),
       });
-    }, 1500);
-  }
+      const regData = await regRes.json();
+      if (!regData.success) throw new Error(regData.error || "Registration failed");
+
+      // Step 2: Call contract — mint NFT
+      const txHash = await mintProperty(
+        details.ulpin!,
+        "QmMockHash_" + details.ulpin, // Phase 3: real IPFS hash
+        details.address!,
+        details.area!
+      );
+
+      // Step 3: Confirm in MongoDB with txHash
+      // tokenId comes from contract event — for now store txHash only
+      await fetch("/api/properties/confirm-mint", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ recordId: regData.id, tokenId: 0, txHash }),
+      });
+
+      reset();
+      toast({ title: "Submitted!", description: "Awaiting Oracle approval." });
+      router.push("/properties");
+    } catch (err: any) {
+      toast({
+        title: "Submission failed",
+        description: err.message ?? "Please try again.",
+      });
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   const docCount = uploadedDocs.length;
 
@@ -37,9 +79,9 @@ export default function MintStep4() {
       <div className="bg-surface_container_lowest rounded-xl p-8 text-center max-w-md mx-auto space-y-4 border border-outline_variant/20 shadow-sm mt-12">
         <p className="text-title-md font-semibold text-on_surface">Incomplete Data</p>
         <p className="text-body-md text-on_surface_variant">Please complete Step 1 first.</p>
-        <Button onClick={() => router.push("/mint/details")} className="w-full">
-          Go to Step 1
-        </Button>
+        <Link href="/mint/details">
+          <Button className="w-full">Go to Step 1</Button>
+        </Link>
       </div>
     );
   }
@@ -140,14 +182,15 @@ export default function MintStep4() {
               "Sign & Submit to Blockchain"
             )}
           </Button>
-          <Button
-            variant="ghost"
-            className="w-full"
-            onClick={() => router.push("/mint/upload")}
-            disabled={submitting}
-          >
-            Cancel
-          </Button>
+          <Link href="/mint/upload" aria-disabled={submitting}>
+            <Button
+              variant="ghost"
+              className="w-full"
+              disabled={submitting}
+            >
+              Cancel
+            </Button>
+          </Link>
           <p className="text-[0.7rem] text-on_surface_variant text-center leading-relaxed">
             This initiates a mock transaction on Polygon Mumbai testnet. No real assets will be transferred.
           </p>

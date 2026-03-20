@@ -1,15 +1,28 @@
-import { create } from 'zustand';
+import { create } from "zustand";
+import { useAccount } from "wagmi";
 
-type Role = 'user' | 'oracle';
-
-interface RoleStore {
-  role: Role;
-  setRole: (role: Role) => void;
-  toggleRole: () => void;
+interface RoleState {
+  role: "USER" | "ORACLE";
+  setRole: (role: "USER" | "ORACLE") => void;
 }
 
-export const useRoleStore = create<RoleStore>((set) => ({
-  role: 'user', // Default role
+const useStoreBase = create<RoleState>((set) => ({
+  role: "USER",
   setRole: (role) => set({ role }),
-  toggleRole: () => set((state) => ({ role: state.role === 'user' ? 'oracle' : 'user' })),
 }));
+
+export function useRoleStore<T>(selector?: (state: RoleState) => T): any {
+  const account = useAccount();
+  const store = selector ? useStoreBase(selector) : useStoreBase();
+
+  if (selector) {
+    return store;
+  }
+
+  return {
+    ...(store as RoleState),
+    walletAddress: account.address,
+    isConnected: account.isConnected,
+  };
+}
+

@@ -1,13 +1,12 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { useMintStore } from "@/store/useMintStore";
 import AIReviewPanel from "@/components/forms/AIReviewPanel";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default function MintStep3() {
-  const router = useRouter();
   const { setStep } = useMintStore();
 
   useEffect(() => {
@@ -19,12 +18,12 @@ export default function MintStep3() {
       <AIReviewPanel />
 
       <div className="flex justify-between pt-4 mt-8 border-t border-outline_variant/20">
-        <Button variant="ghost" onClick={() => router.push("/mint/upload")}>
-          ← Back
-        </Button>
-        <Button onClick={() => router.push("/mint/review")}>
-          Next: Review & Sign →
-        </Button>
+        <Link href="/mint/upload">
+          <Button variant="ghost">← Back</Button>
+        </Link>
+        <Link href="/mint/review">
+          <Button>Next: Review & Sign →</Button>
+        </Link>
       </div>
     </div>
   );

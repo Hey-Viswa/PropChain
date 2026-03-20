@@ -6,15 +6,15 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { UserButton, useUser } from "@clerk/nextjs";
 import { useEffect } from "react";
+import { useWallet } from "@/hooks/useWallet";
 
 import { useRoleStore } from "@/store/useRoleStore";
-
-const MOCK_WALLET = "0x1A2B...9F0E";
 
 export default function Navbar() {
   const crumbs = useBreadcrumbs();
   const { role } = useRoleStore();
   const { user, isLoaded } = useUser();
+  const { isConnected, truncatedAddress, connect } = useWallet();
 
   useEffect(() => {
     if (user) {
@@ -60,9 +60,20 @@ export default function Navbar() {
         </Badge>
 
         {/* Wallet */}
-        <span className="bg-surface_container rounded-md px-3 py-1.5 text-xs font-mono text-on_surface_variant hidden sm:inline">
-          {MOCK_WALLET}
-        </span>
+        {isConnected ? (
+          <span className="bg-surface_container rounded-md px-3 py-1.5 text-xs font-mono text-on_surface_variant hidden sm:inline">
+            {truncatedAddress}
+          </span>
+        ) : (
+          <button
+            onClick={connect}
+            className="bg-primary text-on_primary rounded-md
+                       px-4 py-1.5 text-sm font-medium
+                       hover:opacity-90 transition cursor-pointer hidden sm:inline"
+          >
+            Connect Wallet
+          </button>
+        )}
 
         {/* Role */}
         <Badge className="bg-secondary_fixed text-on_secondary_fixed rounded-full text-xs px-3 py-1 uppercase">

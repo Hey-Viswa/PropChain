@@ -1,16 +1,16 @@
 "use client";
 
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { usePropertyStore } from "@/store/usePropertyStore";
 import { Box, MapPin, Share2, History, CheckCircle2 } from "lucide-react";
 import Image from "next/image";
 import StatusBadge from "@/components/shared/StatusBadge";
 import ConfidenceBar from "@/components/shared/ConfidenceBar";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default function PropertyIdPage() {
   const params = useParams();
-  const router = useRouter();
   const id = params.id as string;
   const property = usePropertyStore((s) => s.properties.find((p) => p.id === id));
 
@@ -23,9 +23,9 @@ export default function PropertyIdPage() {
         <p className="text-body-md text-on_surface_variant">
           The property you are looking for does not exist.
         </p>
-        <Button variant="default" onClick={() => router.push('/properties')}>
-          Back to My Properties
-        </Button>
+        <Link href="/properties">
+          <Button variant="default">Back to My Properties</Button>
+        </Link>
       </div>
     );
   }

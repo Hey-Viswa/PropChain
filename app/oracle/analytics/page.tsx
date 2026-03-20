@@ -1,10 +1,9 @@
 "use client";
 
+import { Suspense } from "react";
+import dynamic from "next/dynamic";
 import { BarChart3, PieChart as PieChartIcon, Activity, TrendingUp } from "lucide-react";
-import {
-  AreaChart, Area, XAxis, YAxis, CartesianGrid,
-  Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend
-} from 'recharts';
+import OracleGuard from "@/components/shared/OracleGuard";
 import {
   MOCK_SUBMISSIONS_OVER_TIME,
   MOCK_VERIFICATION_OUTCOMES,
@@ -12,8 +11,73 @@ import {
 } from '@/lib/mockData';
 import { cn } from '@/lib/utils';
 
+const ResponsiveContainer = dynamic(
+  () => import("recharts").then((mod) => ({ default: mod.ResponsiveContainer })),
+  {
+    ssr: false,
+    loading: () => <div className="h-60 bg-surface_container rounded-xl animate-pulse" />,
+  }
+);
+
+const AreaChart = dynamic(
+  () => import("recharts").then((mod) => ({ default: mod.AreaChart })),
+  {
+    ssr: false,
+    loading: () => <div className="h-60 bg-surface_container rounded-xl animate-pulse" />,
+  }
+);
+
+const Area = dynamic(
+  () => import("recharts").then((mod) => ({ default: mod.Area })),
+  { ssr: false }
+);
+
+const XAxis = dynamic(
+  () => import("recharts").then((mod) => ({ default: mod.XAxis })),
+  { ssr: false }
+);
+
+const YAxis = dynamic(
+  () => import("recharts").then((mod) => ({ default: mod.YAxis })),
+  { ssr: false }
+);
+
+const CartesianGrid = dynamic(
+  () => import("recharts").then((mod) => ({ default: mod.CartesianGrid })),
+  { ssr: false }
+);
+
+const Tooltip = dynamic(
+  () => import("recharts").then((mod) => ({ default: mod.Tooltip })),
+  { ssr: false }
+);
+
+const PieChart = dynamic(
+  () => import("recharts").then((mod) => ({ default: mod.PieChart })),
+  {
+    ssr: false,
+    loading: () => <div className="h-48 bg-surface_container rounded-xl animate-pulse" />,
+  }
+);
+
+const Pie = dynamic(
+  () => import("recharts").then((mod) => ({ default: mod.Pie })),
+  { ssr: false }
+);
+
+const Cell = dynamic(
+  () => import("recharts").then((mod) => ({ default: mod.Cell })),
+  { ssr: false }
+);
+
+const Legend = dynamic(
+  () => import("recharts").then((mod) => ({ default: mod.Legend })),
+  { ssr: false }
+);
+
 export default function OracleAnalyticsPage() {
   return (
+    <OracleGuard>
     <div className="space-y-8">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between gap-4">
@@ -45,69 +109,33 @@ export default function OracleAnalyticsPage() {
       </div>
 
       {/* Charts row — two columns */}
-      <div className="grid grid-cols-1 xl:grid-cols-[1fr_340px] 2xl:grid-cols-[1fr_380px] gap-4 xl:gap-6">
-      
-        {/* Left: Area chart */}
-        <div className="bg-surface_container_lowest rounded-xl p-5 xl:p-6">
-          <p className="text-title-md font-semibold text-on_surface mb-1">
-            Submissions Over Time
-          </p>
-          <p className="text-body-md text-on_surface_variant mb-5">
-            Last 7 days
-          </p>
-          <ResponsiveContainer width="100%" height={240}>
-            <AreaChart data={MOCK_SUBMISSIONS_OVER_TIME}
-              margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
-              <defs>
-                <linearGradient id="approvedGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%"  stopColor="#0050b2" stopOpacity={0.15}/>
-                  <stop offset="95%" stopColor="#0050b2" stopOpacity={0}/>
-                </linearGradient>
-                <linearGradient id="rejectedGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%"  stopColor="#ba1a1a" stopOpacity={0.1}/>
-                  <stop offset="95%" stopColor="#ba1a1a" stopOpacity={0}/>
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#c3c6cf" strokeOpacity={0.3} vertical={false} />
-              <XAxis dataKey="date" tick={{ fontSize: 11, fill: '#43474e' }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 11, fill: '#43474e' }} axisLine={false} tickLine={false} />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: '#ffffff',
-                  border: 'none',
-                  borderRadius: '8px',
-                  boxShadow: '0 12px 32px rgba(0,26,67,0.08)',
-                  fontSize: '12px',
-                }}
-              />
-              <Area type="monotone" dataKey="approved" stroke="#0050b2" strokeWidth={2} fill="url(#approvedGrad)" name="Approved" />
-              <Area type="monotone" dataKey="rejected" stroke="#ba1a1a" strokeWidth={2} fill="url(#rejectedGrad)" name="Rejected" />
-            </AreaChart>
-          </ResponsiveContainer>
-        </div>
-      
-        {/* Right: Donut chart */}
-        <div className="bg-surface_container_lowest rounded-xl p-5 xl:p-6 flex flex-col relative">
-          <p className="text-title-md font-semibold text-on_surface mb-1">
-            Verification Outcomes
-          </p>
-          <p className="text-body-md text-on_surface_variant mb-4">
-            All time
-          </p>
-          <div className="flex-1 flex items-center justify-center relative">
-            <ResponsiveContainer width="100%" height={200}>
-              <PieChart>
-                <Pie
-                  data={MOCK_VERIFICATION_OUTCOMES}
-                  cx="50%" cy="50%"
-                  innerRadius={55} outerRadius={80}
-                  paddingAngle={3}
-                  dataKey="value"
-                >
-                  {MOCK_VERIFICATION_OUTCOMES.map((entry, i) => (
-                    <Cell key={i} fill={entry.color} />
-                  ))}
-                </Pie>
+      <Suspense fallback={<div className="h-48 bg-surface_container rounded-xl animate-pulse" />}>
+        <div className="grid grid-cols-1 xl:grid-cols-[1fr_340px] 2xl:grid-cols-[1fr_380px] gap-4 xl:gap-6">
+        
+          {/* Left: Area chart */}
+          <div className="bg-surface_container_lowest rounded-xl p-5 xl:p-6">
+            <p className="text-title-md font-semibold text-on_surface mb-1">
+              Submissions Over Time
+            </p>
+            <p className="text-body-md text-on_surface_variant mb-5">
+              Last 7 days
+            </p>
+            <ResponsiveContainer width="100%" height={240}>
+              <AreaChart data={MOCK_SUBMISSIONS_OVER_TIME}
+                margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="approvedGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%"  stopColor="#0050b2" stopOpacity={0.15}/>
+                    <stop offset="95%" stopColor="#0050b2" stopOpacity={0}/>
+                  </linearGradient>
+                  <linearGradient id="rejectedGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%"  stopColor="#ba1a1a" stopOpacity={0.1}/>
+                    <stop offset="95%" stopColor="#ba1a1a" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#c3c6cf" strokeOpacity={0.3} vertical={false} />
+                <XAxis dataKey="date" tick={{ fontSize: 11, fill: '#43474e' }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 11, fill: '#43474e' }} axisLine={false} tickLine={false} />
                 <Tooltip
                   contentStyle={{
                     backgroundColor: '#ffffff',
@@ -117,26 +145,64 @@ export default function OracleAnalyticsPage() {
                     fontSize: '12px',
                   }}
                 />
-                <Legend
-                  iconType="circle"
-                  iconSize={8}
-                  formatter={(value) => (
-                    <span style={{ color: '#43474e', fontSize: '12px' }}>
-                      {value}
-                    </span>
-                  )}
-                />
-              </PieChart>
+                <Area type="monotone" dataKey="approved" stroke="#0050b2" strokeWidth={2} fill="url(#approvedGrad)" name="Approved" />
+                <Area type="monotone" dataKey="rejected" stroke="#ba1a1a" strokeWidth={2} fill="url(#rejectedGrad)" name="Rejected" />
+              </AreaChart>
             </ResponsiveContainer>
-            {/* Center label — absolute positioned */}
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none pb-6">
-              <p className="text-center text-label-sm text-on_surface_variant w-24">
-                83% Approval Rate
-              </p>
+          </div>
+        
+          {/* Right: Donut chart */}
+          <div className="bg-surface_container_lowest rounded-xl p-5 xl:p-6 flex flex-col relative">
+            <p className="text-title-md font-semibold text-on_surface mb-1">
+              Verification Outcomes
+            </p>
+            <p className="text-body-md text-on_surface_variant mb-4">
+              All time
+            </p>
+            <div className="flex-1 flex items-center justify-center relative">
+              <ResponsiveContainer width="100%" height={200}>
+                <PieChart>
+                  <Pie
+                    data={MOCK_VERIFICATION_OUTCOMES}
+                    cx="50%" cy="50%"
+                    innerRadius={55} outerRadius={80}
+                    paddingAngle={3}
+                    dataKey="value"
+                  >
+                    {MOCK_VERIFICATION_OUTCOMES.map((entry, i) => (
+                      <Cell key={i} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: '#ffffff',
+                      border: 'none',
+                      borderRadius: '8px',
+                      boxShadow: '0 12px 32px rgba(0,26,67,0.08)',
+                      fontSize: '12px',
+                    }}
+                  />
+                  <Legend
+                    iconType="circle"
+                    iconSize={8}
+                    formatter={(value) => (
+                      <span style={{ color: '#43474e', fontSize: '12px' }}>
+                        {value}
+                      </span>
+                    )}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+              {/* Center label — absolute positioned */}
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none pb-6">
+                <p className="text-center text-label-sm text-on_surface_variant w-24">
+                  83% Approval Rate
+                </p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </Suspense>
       
       {/* Recent Oracle Activity table */}
       <div className="bg-surface_container_lowest rounded-xl p-5 xl:p-6 mt-4 xl:mt-6">
@@ -172,5 +238,6 @@ export default function OracleAnalyticsPage() {
         </div>
       </div>
     </div>
+    </OracleGuard>
   );
 }

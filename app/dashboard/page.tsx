@@ -1,14 +1,24 @@
 "use client";
 
 import { useAuth } from "@/hooks/useAuth";
+import { useKYC } from "@/hooks/useKYC";
+import { useWallet } from "@/hooks/useWallet";
+import { Suspense, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Download, Calendar, Wallet } from "lucide-react";
+import { Download, Calendar, Wallet, ShieldAlert } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import PortfolioChart from "./components/PortfolioChart";
 import AIIntelligenceCard from "./components/AIIntelligenceCard";
 import NetworkTelemetry from "./components/NetworkTelemetry";
 
 export default function DashboardPage() {
-  const { isSignedIn, isConnected, isLoaded, user, connect } = useAuth();
+  const { isSignedIn, isLoaded, user } = useAuth();
+  const { isConnected, connect } = useWallet();
+  const { kycVerified, loading, checking, submitKYC } = useKYC();
+  
+  const [aadhaar, setAadhaar] = useState("");
+  const [otp, setOtp] = useState("");
+  const [error, setError] = useState("");
 
   if (!isLoaded) {
     return <div className="p-8 text-center text-on_surface_variant">Loading...</div>;
@@ -23,25 +33,85 @@ export default function DashboardPage() {
     );
   }
 
-  if (isSignedIn && !isConnected) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh]">
-        <div className="bg-surface_container_lowest rounded-2xl p-8 shadow-[0_8px_24px_rgba(0,0,0,0.02)] border border-outline_variant/10 text-center max-w-md w-full">
-          <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary mx-auto mb-4">
-            <Wallet className="w-8 h-8" />
-          </div>
-          <h2 className="text-2xl font-bold font-display text-on_surface mb-2">Connect Wallet</h2>
-          <p className="text-on_surface_variant mb-8">Connect your wallet to manage properties and view your portfolio.</p>
-          <Button onClick={connect} className="w-full bg-primary text-on_primary h-12 text-base shadow-floating">
-            Connect Wallet
-          </Button>
-        </div>
-      </div>
-    );
-  }
+  const showOverlay = (!isConnected) || (isConnected && !kycVerified && !checking);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 relative">
+      {showOverlay && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-surface/80 backdrop-blur-sm p-4">
+          <div className="bg-surface_container_lowest rounded-2xl p-8 shadow-[0_8px_24px_rgba(0,0,0,0.02)] border border-outline_variant/10 max-w-md w-full text-center">
+            {!isConnected ? (
+              <>
+                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary mx-auto mb-4">
+                  <Wallet className="w-8 h-8" />
+                </div>
+                <h2 className="text-2xl font-bold font-display text-on_surface mb-2">Connect Wallet</h2>
+                <p className="text-on_surface_variant mb-8 text-sm">
+                  Connect your wallet to manage properties and view your portfolio.
+                </p>
+                <Button onClick={connect} className="w-full bg-primary text-on_primary h-12 text-base shadow-floating">
+                  Connect Wallet
+                </Button>
+              </>
+            ) : (
+              <>
+                <div className="w-16 h-16 rounded-full bg-warning/10 flex items-center justify-center text-warning mx-auto mb-4">
+                  <ShieldAlert className="w-8 h-8" />
+                </div>
+                <h2 className="text-2xl font-bold font-display text-on_surface mb-2">Pending KYC</h2>
+                <p className="text-on_surface_variant mb-6 text-sm">
+                  Please verify your identity using your Aadhaar number to unlock dashboard features.
+                </p>
+
+                <div className="space-y-4 text-left">
+                  <div>
+                    <label className="block text-sm font-medium text-on_surface mb-1">Aadhaar Number</label>
+                    <Input
+                      type="password"
+                      placeholder="12-digit Aadhaar Number"
+                      value={aadhaar}
+                      onChange={(e) => { setAadhaar(e.target.value); setError(""); }}
+                      maxLength={12}
+                      className="w-full"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-on_surface mb-1">Fake OTP</label>
+                    <Input
+                      type="text"
+                      placeholder="6-digit OTP"
+                      value={otp}
+                      onChange={(e) => { setOtp(e.target.value); setError(""); }}
+                      maxLength={6}
+                      className="w-full"
+                    />
+                  </div>
+
+                  {error && <p className="text-error text-sm font-medium tracking-tight bg-error/10 p-2 rounded">{error}</p>}
+
+                  <Button
+                    onClick={async () => {
+                      if (aadhaar.length !== 12) {
+                        setError("Aadhaar must be exactly 12 digits.");
+                        return;
+                      }
+                      const res = await submitKYC(aadhaar);
+                      if (!res.success) {
+                        setError(res.error || "Submission failed.");
+                      }
+                    }}
+                    disabled={loading || aadhaar.length !== 12 || otp.length < 6}
+                    className="w-full bg-primary text-on_primary h-12 text-base shadow-floating mt-4"
+                  >
+                    {loading ? "Verifying..." : "Submit KYC"}
+                  </Button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
@@ -121,59 +191,61 @@ export default function DashboardPage() {
         </div>
 
         {/* Charts Row */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 xl:gap-6">
-          <div className="lg:col-span-2 bg-surface_container_lowest rounded-2xl p-6 shadow-[0_8px_24px_rgba(0,0,0,0.02)] border border-outline_variant/10">
-            <div className="flex justify-between items-start mb-8">
-              <div>
-                <h3 className="text-lg font-bold font-display text-on_surface">Portfolio Growth</h3>
-                <p className="text-xs text-on_surface_variant">Asset minting vs secondary market volume</p>
+        <Suspense fallback={<div className="h-48 bg-surface_container rounded-xl animate-pulse" />}>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 xl:gap-6">
+            <div className="lg:col-span-2 bg-surface_container_lowest rounded-2xl p-6 shadow-[0_8px_24px_rgba(0,0,0,0.02)] border border-outline_variant/10">
+              <div className="flex justify-between items-start mb-8">
+                <div>
+                  <h3 className="text-lg font-bold font-display text-on_surface">Portfolio Growth</h3>
+                  <p className="text-xs text-on_surface_variant">Asset minting vs secondary market volume</p>
+                </div>
+                <div className="flex items-center gap-4 text-xs font-medium text-on_surface_variant">
+                  <div className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-primary" /> Minted</div>
+                  <div className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-secondary" /> Volume</div>
+                </div>
               </div>
-              <div className="flex items-center gap-4 text-xs font-medium text-on_surface_variant">
-                <div className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-primary" /> Minted</div>
-                <div className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-secondary" /> Volume</div>
-              </div>
-            </div>
-            <PortfolioChart />
-          </div>
-
-          <div className="lg:col-span-1 bg-surface_container_lowest rounded-2xl p-6 shadow-[0_8px_24px_rgba(0,0,0,0.02)] border border-outline_variant/10 flex flex-col items-center">
-            <div className="w-full text-left mb-6">
-              <h3 className="text-lg font-bold font-display text-on_surface">Asset Composition</h3>
-              <p className="text-xs text-on_surface_variant">System-wide registry distribution</p>
-            </div>
-            
-            {/* Custom SVG House graphic */}
-            <div className="relative w-48 h-48 mb-8 flex items-center justify-center">
-              <svg width="200" height="200" viewBox="0 0 200 200" className="absolute inset-0">
-                {/* Roof blue */}
-                <path d="M 20 100 L 100 20 L 180 100" fill="none" stroke="#0050b2" strokeWidth="16" strokeLinecap="round" strokeLinejoin="round" />
-                {/* Right wall brown */}
-                <path d="M 175 95 L 175 160 L 60 180" fill="none" stroke="#835500" strokeWidth="12" strokeLinecap="round" strokeLinejoin="round" />
-                {/* Base abstract shape */}
-                <rect x="50" y="60" width="100" height="100" rx="8" fill="#f3f3fa" />
-              </svg>
-              <div className="relative z-10 text-center bg-surface_container_lowest/80 backdrop-blur-sm rounded-lg p-3">
-                <p className="text-2xl font-bold font-display text-on_surface leading-none">1.2k</p>
-                <p className="text-[9px] font-bold text-on_surface_variant uppercase tracking-widest mt-1">Total Assets</p>
-              </div>
+              <PortfolioChart />
             </div>
 
-            <div className="w-full space-y-3">
-              <div className="flex justify-between items-center text-sm">
-                <div className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-primary" /><span className="text-on_surface font-medium">Residential</span></div>
-                <span className="text-on_surface_variant font-medium">62%</span>
+            <div className="lg:col-span-1 bg-surface_container_lowest rounded-2xl p-6 shadow-[0_8px_24px_rgba(0,0,0,0.02)] border border-outline_variant/10 flex flex-col items-center">
+              <div className="w-full text-left mb-6">
+                <h3 className="text-lg font-bold font-display text-on_surface">Asset Composition</h3>
+                <p className="text-xs text-on_surface_variant">System-wide registry distribution</p>
               </div>
-              <div className="flex justify-between items-center text-sm">
-                <div className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-[#835500]" /><span className="text-on_surface font-medium">Commercial</span></div>
-                <span className="text-on_surface_variant font-medium">24%</span>
+              
+              {/* Custom SVG House graphic */}
+              <div className="relative w-48 h-48 mb-8 flex items-center justify-center">
+                <svg width="200" height="200" viewBox="0 0 200 200" className="absolute inset-0">
+                  {/* Roof blue */}
+                  <path d="M 20 100 L 100 20 L 180 100" fill="none" stroke="#0050b2" strokeWidth="16" strokeLinecap="round" strokeLinejoin="round" />
+                  {/* Right wall brown */}
+                  <path d="M 175 95 L 175 160 L 60 180" fill="none" stroke="#835500" strokeWidth="12" strokeLinecap="round" strokeLinejoin="round" />
+                  {/* Base abstract shape */}
+                  <rect x="50" y="60" width="100" height="100" rx="8" fill="#f3f3fa" />
+                </svg>
+                <div className="relative z-10 text-center bg-surface_container_lowest/80 backdrop-blur-sm rounded-lg p-3">
+                  <p className="text-2xl font-bold font-display text-on_surface leading-none">1.2k</p>
+                  <p className="text-[9px] font-bold text-on_surface_variant uppercase tracking-widest mt-1">Total Assets</p>
+                </div>
               </div>
-              <div className="flex justify-between items-center text-sm">
-                <div className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-outline_variant" /><span className="text-on_surface font-medium">Industrial</span></div>
-                <span className="text-on_surface_variant font-medium">14%</span>
+
+              <div className="w-full space-y-3">
+                <div className="flex justify-between items-center text-sm">
+                  <div className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-primary" /><span className="text-on_surface font-medium">Residential</span></div>
+                  <span className="text-on_surface_variant font-medium">62%</span>
+                </div>
+                <div className="flex justify-between items-center text-sm">
+                  <div className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-[#835500]" /><span className="text-on_surface font-medium">Commercial</span></div>
+                  <span className="text-on_surface_variant font-medium">24%</span>
+                </div>
+                <div className="flex justify-between items-center text-sm">
+                  <div className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-outline_variant" /><span className="text-on_surface font-medium">Industrial</span></div>
+                  <span className="text-on_surface_variant font-medium">14%</span>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        </Suspense>
 
         {/* Bottom Row */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 xl:gap-6">

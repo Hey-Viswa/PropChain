@@ -4,15 +4,39 @@ import PageHeader from "@/components/shared/PageHeader";
 import { Button } from "@/components/ui/button";
 import { PlusCircle, Search, LayoutGrid, List, Filter as FilterIcon, Maximize2, Building2, MapPin, Shield } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
 import { usePropertyStore } from "@/store/usePropertyStore";
 import PropertyCard from "@/components/shared/PropertyCard";
+import { useReadProperties } from "@/hooks/useReadProperties";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function PropertiesPage() {
-  const properties = usePropertyStore(s => s.properties);
+  const storeProperties = usePropertyStore(s => s.properties);
   const filterStatus = usePropertyStore(s => s.filterStatus);
   const setFilter  = usePropertyStore(s => s.setFilter);
-  const filteredProperties = filterStatus === "all" ? properties : properties.filter(p => p.status === filterStatus);
+
+  const { properties, loading } = useReadProperties();
+
+  const mappedProperties = properties.map(p => ({
+    id:              p.tokenId.toString(),
+    ulpin:           p.ulpin,
+    address:         p.physicalAddress,
+    area:            p.areaSqFt,
+    type:            p.propertyType ?? "Residential",
+    status:          p.isApproved ? "verified" : "awaiting_oracle",
+    owner:           p.registeredBy,
+    registeredAt:    new Date(p.registeredAt * 1000).toLocaleDateString(),
+    ipfsCid:         p.ipfsDocHash,
+    aiConfidence:    0,
+    hasEncumbrance:  p.hasEncumbrance,
+  })) as any[];
+
+  // Fallback to store if no on-chain properties while disconnected or starting
+  const displayProperties = properties.length > 0 ? mappedProperties : storeProperties;
+  
+  const filteredProperties = filterStatus === "all" 
+    ? displayProperties 
+    : displayProperties.filter(p => p.status === filterStatus);
+
   return (
     <div className="w-full">
       <div className="space-y-8">
@@ -95,7 +119,7 @@ export default function PropertiesPage() {
             <button 
               onClick={() => setFilter('all')}
               className={filterStatus === 'all' ? "rounded-full px-4 py-1.5 text-[0.75rem] font-medium bg-primary text-on_primary cursor-pointer transition-colors" : "rounded-full px-4 py-1.5 text-[0.75rem] font-medium bg-surface_container text-on_surface_variant cursor-pointer hover:bg-surface_container_high transition-colors"}>
-              All <span className="bg-surface_container px-1.5 py-0.5 rounded-md ml-1 text-[10px]">{properties.length}</span>
+              All <span className="bg-surface_container px-1.5 py-0.5 rounded-md ml-1 text-[10px]">{displayProperties.length}</span>
             </button>
             <button 
               onClick={() => setFilter('verified')}
@@ -130,30 +154,48 @@ export default function PropertiesPage() {
         </div>
 
         {/* Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          
-          {filteredProperties.map((property) => (
-            <PropertyCard key={property.id} property={property} />
-          ))}
-
-          {/* Card 5 - Add New */}
-          <div className="rounded-2xl border-[1.5px] border-dashed border-outline_variant/40 bg-surface_container_lowest flex flex-col items-center justify-center min-h-[400px] hover:border-primary/50 hover:bg-primary/5 transition-colors group cursor-pointer p-8">
-             <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-               <Building2 size={24} />
-               <div className="absolute bottom-2.5 right-2 w-3.5 h-3.5 bg-white rounded-full flex items-center justify-center">
-                 <PlusCircle size={12} className="text-primary fill-primary" />
-               </div>
-             </div>
-             <h3 className="text-lg font-bold font-display text-on_surface mb-2">Add New Property</h3>
-             <p className="text-sm text-on_surface_variant text-center max-w-[200px] mb-6">
-                Submit your property documents for verification and tokenization.
-             </p>
-             <button className="text-sm font-bold text-primary flex items-center gap-1.5 hover:underline">
-               Start Process &rarr;
-             </button>
+        {loading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <Skeleton className="h-[200px] w-full rounded-xl" />
+            <Skeleton className="h-[200px] w-full rounded-xl" />
+            <Skeleton className="h-[200px] w-full rounded-xl" />
           </div>
+        ) : filteredProperties.length === 0 ? (
+          <div className="flex flex-col items-center justify-center text-center p-12 bg-surface_container_lowest rounded-xl border border-outline_variant/20 shadow-sm mt-8">
+            <Building2 size={48} className="text-on_surface_variant mb-4 mx-auto opacity-50" />
+            <p className="text-title-md font-semibold text-on_surface">No properties found</p>
+            <p className="text-body-md text-on_surface_variant mb-6">Mint your first property to get started.</p>
+            <Link href="/mint">
+              <Button>Start Process &rarr;</Button>
+            </Link>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredProperties.map((property) => (
+              <PropertyCard key={property.id} property={property} />
+            ))}
 
-        </div>
+            {/* Card Add New */}
+            <Link
+              href="/mint"
+              className="rounded-2xl border-[1.5px] border-dashed border-outline_variant/40 bg-surface_container_lowest flex flex-col items-center justify-center min-h-[400px] hover:border-primary/50 hover:bg-primary/5 transition-colors group cursor-pointer p-8"
+            >
+              <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <Building2 size={24} />
+                <div className="absolute bottom-2.5 right-2 w-3.5 h-3.5 bg-white rounded-full flex items-center justify-center">
+                  <PlusCircle size={12} className="text-primary fill-primary" />
+                </div>
+              </div>
+              <h3 className="text-lg font-bold font-display text-on_surface mb-2">Add New Property</h3>
+              <p className="text-sm text-on_surface_variant text-center max-w-[200px] mb-6">
+                Submit your property documents for verification and tokenization.
+              </p>
+              <span className="text-sm font-bold text-primary flex items-center gap-1.5 hover:underline">
+                Start Process &rarr;
+              </span>
+            </Link>
+          </div>
+        )}
       </div>
     </div>
   );

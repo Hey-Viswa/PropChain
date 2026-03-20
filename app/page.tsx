@@ -8,17 +8,17 @@ import { Building2, Shield, Asterisk, Lock, CheckCircle2,
 } from "lucide-react";
 import Image from "next/image";
 import { SignInButton, SignUpButton, useUser, UserButton } from "@clerk/nextjs";
-import { useRouter } from "next/navigation";
 
 function CtaButton({ className, children, withArrow }: { className?: string, children?: React.ReactNode, withArrow?: boolean }) {
   const { isSignedIn } = useUser();
-  const router = useRouter();
 
   if (isSignedIn) {
     return (
-      <Button onClick={() => router.push("/dashboard")} className={className}>
-        Go to Dashboard {withArrow && <ArrowRight size={16} className="ml-2" />}
-      </Button>
+      <Link href="/dashboard">
+        <Button className={className}>
+          Go to Dashboard {withArrow && <ArrowRight size={16} className="ml-2" />}
+        </Button>
+      </Link>
     );
   }
 
@@ -36,13 +36,12 @@ function CtaButton({ className, children, withArrow }: { className?: string, chi
 
 function NavCta() {
   const { isSignedIn } = useUser();
-  const router = useRouter();
   
   if (isSignedIn) {
     return (
-      <Button onClick={() => router.push("/dashboard")} className="rounded-full shadow-none px-6 h-9">
-        Go to Dashboard
-      </Button>
+      <Link href="/dashboard">
+        <Button className="rounded-full shadow-none px-6 h-9">Go to Dashboard</Button>
+      </Link>
     );
   }
   
