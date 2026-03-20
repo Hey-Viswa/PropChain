@@ -1,0 +1,65 @@
+"use client";
+
+import { ChevronRight } from "lucide-react";
+import { useBreadcrumbs } from "@/hooks/useBreadcrumbs";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
+
+import { useRoleStore } from "@/store/useRoleStore";
+
+const MOCK_WALLET = "0x1A2B...9F0E";
+
+export default function Navbar() {
+  const crumbs = useBreadcrumbs();
+  const { role } = useRoleStore();
+
+  return (
+    <header
+      className={cn(
+        "sticky top-0 z-40 h-16 flex items-center justify-between",
+        "px-6 xl:px-8 2xl:px-10",
+        "bg-surface_container_low/80 backdrop-blur-[12px]",
+        "shadow-[0_12px_32px_rgba(0,26,67,0.06)]"
+      )}
+    >
+      {/* Breadcrumbs */}
+      <nav className="flex items-center gap-1.5 min-w-0">
+        {crumbs.map((crumb, i) => (
+          <span key={i} className="flex items-center gap-1.5 min-w-0">
+            {i > 0 && (
+              <ChevronRight size={13} className="text-on_surface_variant shrink-0" />
+            )}
+            <span
+              className={cn(
+                "text-label-sm truncate",
+                i === crumbs.length - 1
+                  ? "text-on_surface font-medium"
+                  : "text-on_surface_variant"
+              )}
+            >
+              {crumb.label}
+            </span>
+          </span>
+        ))}
+      </nav>
+
+      {/* Right badges */}
+      <div className="flex items-center gap-2.5 shrink-0 ml-4">
+        {/* Network */}
+        <Badge className="bg-primary_fixed text-primary rounded-full text-xs px-3 py-1 font-medium">
+          Polygon Mumbai
+        </Badge>
+
+        {/* Wallet */}
+        <span className="bg-surface_container rounded-md px-3 py-1.5 text-xs font-mono text-on_surface_variant hidden sm:inline">
+          {MOCK_WALLET}
+        </span>
+
+        {/* Role */}
+        <Badge className="bg-secondary_fixed text-on_secondary_fixed rounded-full text-xs px-3 py-1 uppercase">
+          {role}
+        </Badge>
+      </div>
+    </header>
+  );
+}
