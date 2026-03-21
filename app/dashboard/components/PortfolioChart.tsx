@@ -19,7 +19,7 @@ export default function PortfolioChart() {
             className="w-full bg-[#b8cdef] hover:bg-primary transition-colors rounded-t-sm"
             style={{ height: `${(col.vol / max) * 100}%` }}
           />
-          <div className="absolute -bottom-6 text-[10px] font-semibold text-on_surface_variant">
+          <div className="absolute -bottom-6 text-[10px] font-semibold text-on_surface_variant dark:text-[#9ba3b8]">
             {col.label}
           </div>
         </div>

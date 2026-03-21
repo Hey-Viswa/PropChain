@@ -15,7 +15,7 @@ const ResponsiveContainer = dynamic(
   () => import("recharts").then((mod) => ({ default: mod.ResponsiveContainer })),
   {
     ssr: false,
-    loading: () => <div className="h-60 bg-surface_container rounded-xl animate-pulse" />,
+    loading: () => <div className="h-60 bg-surface_container dark:bg-[#1c2333] rounded-xl animate-shimmer" />,
   }
 );
 
@@ -23,7 +23,10 @@ const AreaChart = dynamic(
   () => import("recharts").then((mod) => ({ default: mod.AreaChart })),
   {
     ssr: false,
-    loading: () => <div className="h-60 bg-surface_container rounded-xl animate-pulse" />,
+    loading: () => (
+      <div className="h-60 bg-surface_container
+                      rounded-xl animate-pulse" />
+    ),
   }
 );
 
@@ -56,7 +59,10 @@ const PieChart = dynamic(
   () => import("recharts").then((mod) => ({ default: mod.PieChart })),
   {
     ssr: false,
-    loading: () => <div className="h-48 bg-surface_container rounded-xl animate-pulse" />,
+    loading: () => (
+      <div className="h-48 bg-surface_container
+                      rounded-xl animate-pulse" />
+    ),
   }
 );
 
@@ -82,10 +88,10 @@ export default function OracleAnalyticsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between gap-4">
         <div>
-          <h1 className="text-display font-bold text-on_surface font-display leading-tight tracking-tight text-3xl sm:text-4xl mb-1">
+          <h1 className="text-display font-bold text-on_surface dark:text-[#e8eaf0] font-display leading-tight tracking-tight text-3xl sm:text-4xl mb-1">
             Network Analytics
           </h1>
-          <p className="text-body-md text-on_surface_variant">
+          <p className="text-body-md text-on_surface_variant dark:text-[#9ba3b8]">
             Top-level oracle metrics and validator distribution across the protocol.
           </p>
         </div>
@@ -98,26 +104,26 @@ export default function OracleAnalyticsPage() {
           { icon: <BarChart3 size={20} />, label: "Total Transactions", value: "842k", color: "text-primary", bg: "bg-primary/10" },
           { icon: <PieChartIcon size={20} />, label: "Active Nodes", value: "128", color: "text-[#d97706]", bg: "bg-[#d97706]/10" },
         ].map((stat, i) => (
-          <div key={i} className="bg-surface_container_lowest rounded-2xl p-6 border border-outline_variant/10 shadow-[0_8px_24px_rgba(0,0,0,0.02)]">
+          <div key={i} className="bg-surface_container_lowest dark:bg-[#131820] rounded-2xl p-6 border border-outline_variant/10 shadow-[0_8px_24px_rgba(0,0,0,0.02)]">
             <div className={`w-10 h-10 rounded-lg flex items-center justify-center mb-4 ${stat.bg} ${stat.color}`}>
               {stat.icon}
             </div>
-            <p className="text-[10px] uppercase font-bold text-on_surface_variant mb-1">{stat.label}</p>
-            <p className="text-2xl font-bold font-display text-on_surface">{stat.value}</p>
+            <p className="text-[10px] uppercase font-bold text-on_surface_variant dark:text-[#9ba3b8] mb-1">{stat.label}</p>
+            <p className="text-2xl font-bold font-display text-on_surface dark:text-[#e8eaf0]">{stat.value}</p>
           </div>
         ))}
       </div>
 
       {/* Charts row — two columns */}
-      <Suspense fallback={<div className="h-48 bg-surface_container rounded-xl animate-pulse" />}>
+      <Suspense fallback={<div className="h-48 bg-surface_container dark:bg-[#1c2333] rounded-xl animate-shimmer" />}>
         <div className="grid grid-cols-1 xl:grid-cols-[1fr_340px] 2xl:grid-cols-[1fr_380px] gap-4 xl:gap-6">
         
           {/* Left: Area chart */}
-          <div className="bg-surface_container_lowest rounded-xl p-5 xl:p-6">
-            <p className="text-title-md font-semibold text-on_surface mb-1">
+          <div className="bg-surface_container_lowest dark:bg-[#131820] rounded-xl p-5 xl:p-6">
+            <p className="text-title-md font-semibold text-on_surface dark:text-[#e8eaf0] mb-1">
               Submissions Over Time
             </p>
-            <p className="text-body-md text-on_surface_variant mb-5">
+            <p className="text-body-md text-on_surface_variant dark:text-[#9ba3b8] mb-5">
               Last 7 days
             </p>
             <ResponsiveContainer width="100%" height={240}>
@@ -152,11 +158,11 @@ export default function OracleAnalyticsPage() {
           </div>
         
           {/* Right: Donut chart */}
-          <div className="bg-surface_container_lowest rounded-xl p-5 xl:p-6 flex flex-col relative">
-            <p className="text-title-md font-semibold text-on_surface mb-1">
+          <div className="bg-surface_container_lowest dark:bg-[#131820] rounded-xl p-5 xl:p-6 flex flex-col relative">
+            <p className="text-title-md font-semibold text-on_surface dark:text-[#e8eaf0] mb-1">
               Verification Outcomes
             </p>
-            <p className="text-body-md text-on_surface_variant mb-4">
+            <p className="text-body-md text-on_surface_variant dark:text-[#9ba3b8] mb-4">
               All time
             </p>
             <div className="flex-1 flex items-center justify-center relative">
@@ -195,7 +201,7 @@ export default function OracleAnalyticsPage() {
               </ResponsiveContainer>
               {/* Center label — absolute positioned */}
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none pb-6">
-                <p className="text-center text-label-sm text-on_surface_variant w-24">
+                <p className="text-center text-label-sm text-on_surface_variant dark:text-[#9ba3b8] w-24">
                   83% Approval Rate
                 </p>
               </div>
@@ -205,8 +211,8 @@ export default function OracleAnalyticsPage() {
       </Suspense>
       
       {/* Recent Oracle Activity table */}
-      <div className="bg-surface_container_lowest rounded-xl p-5 xl:p-6 mt-4 xl:mt-6">
-        <p className="text-title-md font-semibold text-on_surface mb-4">
+      <div className="bg-surface_container_lowest dark:bg-[#131820] rounded-xl p-5 xl:p-6 mt-4 xl:mt-6">
+        <p className="text-title-md font-semibold text-on_surface dark:text-[#e8eaf0] mb-4">
           Recent Oracle Activity
         </p>
         <div className="space-y-3">
@@ -217,7 +223,7 @@ export default function OracleAnalyticsPage() {
                   "w-2 h-2 rounded-full flex-shrink-0",
                   entry.action === 'APPROVE' ? 'bg-success' : 'bg-error'
                 )} />
-                <span className="text-body-md font-mono text-on_surface_variant">
+                <span className="text-body-md font-mono text-on_surface_variant dark:text-[#9ba3b8]">
                   {entry.ulpin}
                 </span>
               </div>
@@ -229,7 +235,7 @@ export default function OracleAnalyticsPage() {
                 )}>
                   {entry.decision}
                 </span>
-                <span className="text-label-sm text-on_surface_variant">
+                <span className="text-label-sm text-on_surface_variant dark:text-[#9ba3b8]">
                   {entry.time}
                 </span>
               </div>

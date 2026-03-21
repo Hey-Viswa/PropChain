@@ -26,7 +26,7 @@ export function AssetCard({
   const isMinted = status === "MINTED";
 
   return (
-    <div className="bg-surface_container_lowest rounded-2xl overflow-hidden hover:shadow-floating transition-all duration-300 border border-border/40 flex flex-col group h-full">
+    <div className="bg-surface_container_lowest dark:bg-[#131820] rounded-2xl overflow-hidden hover:shadow-floating transition-all duration-300 border border-border/40 flex flex-col group h-full">
       {/* Image half */}
       <div className="relative h-[220px] w-full overflow-hidden">
         <Image src={imageUrl} alt={name} fill className="object-cover transition-transform duration-700 group-hover:scale-105" />
@@ -63,9 +63,9 @@ export function AssetCard({
       </div>
 
       {/* Content half */}
-      <div className="p-5 flex flex-col flex-1 bg-surface_container_lowest">
-        <h3 className="text-lg font-bold text-on_surface mb-1.5 font-display">{name}</h3>
-        <div className="flex items-center text-on_surface_variant text-sm mb-6">
+      <div className="p-5 flex flex-col flex-1 bg-surface_container_lowest dark:bg-[#131820]">
+        <h3 className="text-lg font-bold text-on_surface dark:text-[#e8eaf0] mb-1.5 font-display">{name}</h3>
+        <div className="flex items-center text-on_surface_variant dark:text-[#9ba3b8] text-sm mb-6">
           <MapPin className="w-3.5 h-3.5 mr-1.5 opacity-70" />
           {location}
         </div>
@@ -75,7 +75,7 @@ export function AssetCard({
             <p className="text-[10px] font-bold text-on_surface_variant/60 uppercase tracking-widest mb-1.5">
               {isMinted ? "VALUATION" : "EST. VALUATION"}
             </p>
-            <p className="text-[22px] font-bold font-display text-on_surface leading-none">{valuation}</p>
+            <p className="text-[22px] font-bold font-display text-on_surface dark:text-[#e8eaf0] leading-none">{valuation}</p>
           </div>
           {isMinted ? (
              <div className="text-right flex flex-col items-end justify-end pb-0.5">

@@ -11,6 +11,11 @@ export interface IPropertyRecord extends Document {
   documentUrl:    string;
   txHash:         string | null;
   status:         "pending" | "approved" | "rejected";
+  approvedBy:     string | null;
+  approvedAt:     Date | null;
+  rejectedBy:     string | null;
+  rejectedAt:     Date | null;
+  rejectReason:   string | null;
   createdAt:      Date;
 }
 
@@ -26,6 +31,11 @@ const PropertySchema = new Schema<IPropertyRecord>({
   txHash:          { type: String, default: null },
   status:          { type: String, enum: ["pending","approved","rejected"],
                      default: "pending" },
+  approvedBy:      { type: String, default: null },
+  approvedAt:      { type: Date, default: null },
+  rejectedBy:      { type: String, default: null },
+  rejectedAt:      { type: Date, default: null },
+  rejectReason:    { type: String, default: null },
   createdAt:       { type: Date, default: Date.now },
 });
 

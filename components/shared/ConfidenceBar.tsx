@@ -26,17 +26,24 @@ export default function ConfidenceBar({
       {showLabel && (
         <div className="flex items-center justify-between">
           {label && (
-            <span className="text-label-sm text-on_surface_variant">{label}</span>
+            <span className="text-label-sm text-on_surface_variant dark:text-[#9ba3b8]">{label}</span>
           )}
           <span className={cn("text-label-sm font-medium ml-auto", text)}>
             {score}%
           </span>
         </div>
       )}
-      <div className="bg-surface_container rounded-full h-2 w-full overflow-hidden">
+      <div className="bg-surface_container dark:bg-[#1c2333] rounded-full h-2 w-full overflow-hidden">
         <div
-          className={cn("h-full rounded-full transition-all duration-500", bar)}
-          style={{ width: `${Math.min(100, Math.max(0, score))}%` }}
+          className={cn(
+            "h-full rounded-full transition-all",
+            "duration-700 ease-out",
+            bar
+          )}
+          style={{
+            width: `${Math.min(100, Math.max(0, score))}%`,
+            transition: "width 700ms cubic-bezier(0.4, 0, 0.2, 1)"
+          }}
         />
       </div>
     </div>

@@ -43,10 +43,10 @@ export default function PropertiesPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-display font-bold text-on_surface font-display leading-tight tracking-tight text-3xl sm:text-4xl mb-1">
+            <h1 className="text-display font-bold text-on_surface dark:text-[#e8eaf0] font-display leading-tight tracking-tight text-3xl sm:text-4xl mb-1">
               My Properties
             </h1>
-            <p className="text-body-md text-on_surface_variant">
+            <p className="text-body-md text-on_surface_variant dark:text-[#9ba3b8]">
               Manage your portfolio of tokenized real estate assets. Monitor verification status and real-time valuations across your registry.
             </p>
           </div>
@@ -62,37 +62,37 @@ export default function PropertiesPage() {
 
         {/* Stats Row */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 xl:gap-6">
-          <div className="bg-surface_container_lowest rounded-2xl p-6 shadow-[0_8px_24px_rgba(0,0,0,0.02)] border border-outline_variant/10">
+          <div className="bg-surface_container_lowest dark:bg-[#131820] rounded-2xl p-6 shadow-[0_8px_24px_rgba(0,0,0,0.02)] border border-outline_variant/10">
             <div className="flex justify-between items-start mb-4">
               <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
                  <div className="w-3 h-3 rounded-sm border-[1.5px] border-primary" />
               </div>
               <span className="text-xs font-semibold text-success bg-success/10 px-2 py-0.5 rounded-full">+12.4%</span>
             </div>
-            <p className="text-3xl font-bold font-display text-on_surface tracking-tight mb-1">$42,850,000</p>
-            <p className="text-[10px] font-bold text-on_surface_variant uppercase tracking-widest">Total Portfolio Valuation</p>
+            <p className="text-3xl font-bold font-display text-on_surface dark:text-[#e8eaf0] tracking-tight mb-1">$42,850,000</p>
+            <p className="text-[10px] font-bold text-on_surface_variant dark:text-[#9ba3b8] uppercase tracking-widest">Total Portfolio Valuation</p>
           </div>
 
-          <div className="bg-surface_container_lowest rounded-2xl p-6 shadow-[0_8px_24px_rgba(0,0,0,0.02)] border border-outline_variant/10">
+          <div className="bg-surface_container_lowest dark:bg-[#131820] rounded-2xl p-6 shadow-[0_8px_24px_rgba(0,0,0,0.02)] border border-outline_variant/10">
             <div className="flex justify-between items-start mb-4">
               <div className="w-8 h-8 rounded-lg bg-[#835500]/10 flex items-center justify-center text-[#835500]">
                  <Building2 size={16} />
               </div>
               <span className="text-xs font-semibold text-primary">18 Assets</span>
             </div>
-            <p className="text-2xl font-bold font-display text-on_surface tracking-tight mb-1">Minted Assets</p>
-            <p className="text-[10px] font-bold text-on_surface_variant uppercase tracking-widest">Successfully tokenized</p>
+            <p className="text-2xl font-bold font-display text-on_surface dark:text-[#e8eaf0] tracking-tight mb-1">Minted Assets</p>
+            <p className="text-[10px] font-bold text-on_surface_variant dark:text-[#9ba3b8] uppercase tracking-widest">Successfully tokenized</p>
           </div>
 
-          <div className="bg-surface_container_lowest rounded-2xl p-6 shadow-[0_8px_24px_rgba(0,0,0,0.02)] border border-outline_variant/10">
+          <div className="bg-surface_container_lowest dark:bg-[#131820] rounded-2xl p-6 shadow-[0_8px_24px_rgba(0,0,0,0.02)] border border-outline_variant/10">
             <div className="flex justify-between items-start mb-4">
               <div className="w-8 h-8 rounded-lg bg-[hsl(199,89%,48%)]/10 flex items-center justify-center text-[hsl(199,89%,48%)]">
                  <span className="text-lg leading-none">📋</span>
               </div>
-              <span className="text-xs font-semibold text-on_surface_variant">3 Pending</span>
+              <span className="text-xs font-semibold text-on_surface_variant dark:text-[#9ba3b8]">3 Pending</span>
             </div>
-            <p className="text-2xl font-bold font-display text-on_surface tracking-tight mb-1">In Verification</p>
-            <p className="text-[10px] font-bold text-on_surface_variant uppercase tracking-widest">Current audit queue</p>
+            <p className="text-2xl font-bold font-display text-on_surface dark:text-[#e8eaf0] tracking-tight mb-1">In Verification</p>
+            <p className="text-[10px] font-bold text-on_surface_variant dark:text-[#9ba3b8] uppercase tracking-widest">Current audit queue</p>
           </div>
 
           <div className="bg-[#1e2738] rounded-2xl p-6 shadow-floating text-white relative flex flex-col justify-between overflow-hidden">
@@ -118,34 +118,34 @@ export default function PropertiesPage() {
           <div className="flex gap-2 w-full sm:w-auto">
             <button 
               onClick={() => setFilter('all')}
-              className={filterStatus === 'all' ? "rounded-full px-4 py-1.5 text-[0.75rem] font-medium bg-primary text-on_primary cursor-pointer transition-colors" : "rounded-full px-4 py-1.5 text-[0.75rem] font-medium bg-surface_container text-on_surface_variant cursor-pointer hover:bg-surface_container_high transition-colors"}>
-              All <span className="bg-surface_container px-1.5 py-0.5 rounded-md ml-1 text-[10px]">{displayProperties.length}</span>
+              className={filterStatus === 'all' ? "rounded-full px-4 py-1.5 text-[0.75rem] font-medium bg-primary text-on_primary cursor-pointer transition-colors" : "rounded-full px-4 py-1.5 text-[0.75rem] font-medium bg-surface_container dark:bg-[#1c2333] text-on_surface_variant dark:text-[#9ba3b8] cursor-pointer hover:bg-surface_container_high transition-colors"}>
+              All <span className="bg-surface_container dark:bg-[#1c2333] px-1.5 py-0.5 rounded-md ml-1 text-[10px]">{displayProperties.length}</span>
             </button>
             <button 
               onClick={() => setFilter('verified')}
-              className={filterStatus === 'verified' ? "rounded-full px-4 py-1.5 text-[0.75rem] font-medium bg-primary text-on_primary cursor-pointer transition-colors" : "rounded-full px-4 py-1.5 text-[0.75rem] font-medium bg-surface_container text-on_surface_variant cursor-pointer hover:bg-surface_container_high transition-colors"}>
+              className={filterStatus === 'verified' ? "rounded-full px-4 py-1.5 text-[0.75rem] font-medium bg-primary text-on_primary cursor-pointer transition-colors" : "rounded-full px-4 py-1.5 text-[0.75rem] font-medium bg-surface_container dark:bg-[#1c2333] text-on_surface_variant dark:text-[#9ba3b8] cursor-pointer hover:bg-surface_container_high transition-colors"}>
               Verified
             </button>
             <button 
               onClick={() => setFilter('awaiting_oracle')}
-              className={filterStatus === 'awaiting_oracle' ? "rounded-full px-4 py-1.5 text-[0.75rem] font-medium bg-primary text-on_primary cursor-pointer transition-colors" : "rounded-full px-4 py-1.5 text-[0.75rem] font-medium bg-surface_container text-on_surface_variant cursor-pointer hover:bg-surface_container_high transition-colors"}>
+              className={filterStatus === 'awaiting_oracle' ? "rounded-full px-4 py-1.5 text-[0.75rem] font-medium bg-primary text-on_primary cursor-pointer transition-colors" : "rounded-full px-4 py-1.5 text-[0.75rem] font-medium bg-surface_container dark:bg-[#1c2333] text-on_surface_variant dark:text-[#9ba3b8] cursor-pointer hover:bg-surface_container_high transition-colors"}>
               Awaiting Oracle
             </button>
             <button 
               onClick={() => setFilter('needs_review')}
-              className={filterStatus === 'needs_review' ? "rounded-full px-4 py-1.5 text-[0.75rem] font-medium bg-primary text-on_primary cursor-pointer transition-colors" : "rounded-full px-4 py-1.5 text-[0.75rem] font-medium bg-surface_container text-on_surface_variant cursor-pointer hover:bg-surface_container_high transition-colors"}>
+              className={filterStatus === 'needs_review' ? "rounded-full px-4 py-1.5 text-[0.75rem] font-medium bg-primary text-on_primary cursor-pointer transition-colors" : "rounded-full px-4 py-1.5 text-[0.75rem] font-medium bg-surface_container dark:bg-[#1c2333] text-on_surface_variant dark:text-[#9ba3b8] cursor-pointer hover:bg-surface_container_high transition-colors"}>
               Needs Review
             </button>
             <button 
               onClick={() => setFilter('rejected')}
-              className={filterStatus === 'rejected' ? "rounded-full px-4 py-1.5 text-[0.75rem] font-medium bg-primary text-on_primary cursor-pointer transition-colors" : "rounded-full px-4 py-1.5 text-[0.75rem] font-medium bg-surface_container text-on_surface_variant cursor-pointer hover:bg-surface_container_high transition-colors"}>
+              className={filterStatus === 'rejected' ? "rounded-full px-4 py-1.5 text-[0.75rem] font-medium bg-primary text-on_primary cursor-pointer transition-colors" : "rounded-full px-4 py-1.5 text-[0.75rem] font-medium bg-surface_container dark:bg-[#1c2333] text-on_surface_variant dark:text-[#9ba3b8] cursor-pointer hover:bg-surface_container_high transition-colors"}>
               Rejected
             </button>
           </div>
           
           <div className="flex items-center gap-3 self-end sm:self-auto">
             <button className="w-8 h-8 rounded bg-primary/10 text-primary flex items-center justify-center"><LayoutGrid size={16} /></button>
-            <button className="w-8 h-8 rounded text-on_surface_variant hover:bg-surface_container flex items-center justify-center"><List size={16} /></button>
+            <button className="w-8 h-8 rounded text-on_surface_variant dark:text-[#9ba3b8] hover:bg-surface_container dark:hover:bg-[#1c2333] dark:bg-[#1c2333] flex items-center justify-center"><List size={16} /></button>
             <div className="w-px h-6 bg-outline_variant/20 mx-1" />
             <button className="text-sm font-bold text-primary flex items-center gap-1.5 px-2">
               <FilterIcon size={14} /> Advanced Filters
@@ -161,10 +161,10 @@ export default function PropertiesPage() {
             <Skeleton className="h-[200px] w-full rounded-xl" />
           </div>
         ) : filteredProperties.length === 0 ? (
-          <div className="flex flex-col items-center justify-center text-center p-12 bg-surface_container_lowest rounded-xl border border-outline_variant/20 shadow-sm mt-8">
-            <Building2 size={48} className="text-on_surface_variant mb-4 mx-auto opacity-50" />
-            <p className="text-title-md font-semibold text-on_surface">No properties found</p>
-            <p className="text-body-md text-on_surface_variant mb-6">Mint your first property to get started.</p>
+          <div className="flex flex-col items-center justify-center text-center p-12 bg-surface_container_lowest dark:bg-[#131820] rounded-xl border border-outline_variant/20 shadow-sm mt-8">
+            <Building2 size={48} className="text-on_surface_variant dark:text-[#9ba3b8] mb-4 mx-auto opacity-50" />
+            <p className="text-title-md font-semibold text-on_surface dark:text-[#e8eaf0]">No properties found</p>
+            <p className="text-body-md text-on_surface_variant dark:text-[#9ba3b8] mb-6">Mint your first property to get started.</p>
             <Link href="/mint">
               <Button>Start Process &rarr;</Button>
             </Link>
@@ -178,7 +178,7 @@ export default function PropertiesPage() {
             {/* Card Add New */}
             <Link
               href="/mint"
-              className="rounded-2xl border-[1.5px] border-dashed border-outline_variant/40 bg-surface_container_lowest flex flex-col items-center justify-center min-h-[400px] hover:border-primary/50 hover:bg-primary/5 transition-colors group cursor-pointer p-8"
+              className="rounded-2xl border-[1.5px] border-dashed border-outline_variant/40 bg-surface_container_lowest dark:bg-[#131820] flex flex-col items-center justify-center min-h-[400px] hover:border-primary/50 hover:bg-primary/5 transition-colors group cursor-pointer p-8"
             >
               <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                 <Building2 size={24} />
@@ -186,8 +186,8 @@ export default function PropertiesPage() {
                   <PlusCircle size={12} className="text-primary fill-primary" />
                 </div>
               </div>
-              <h3 className="text-lg font-bold font-display text-on_surface mb-2">Add New Property</h3>
-              <p className="text-sm text-on_surface_variant text-center max-w-[200px] mb-6">
+              <h3 className="text-lg font-bold font-display text-on_surface dark:text-[#e8eaf0] mb-2">Add New Property</h3>
+              <p className="text-sm text-on_surface_variant dark:text-[#9ba3b8] text-center max-w-[200px] mb-6">
                 Submit your property documents for verification and tokenization.
               </p>
               <span className="text-sm font-bold text-primary flex items-center gap-1.5 hover:underline">

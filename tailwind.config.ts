@@ -1,7 +1,7 @@
 import type { Config } from "tailwindcss";
 
 const config = {
-  darkMode: ["class"],
+  darkMode: "class",
   content: [
     './pages/**/*.{ts,tsx}',
     './components/**/*.{ts,tsx}',
@@ -41,6 +41,13 @@ const config = {
         on_error_container: "#410002",
         success: "#006e2c",
         success_container: "#98f5b0",
+        "surface-dark": "#0f1117",
+        "surface-container-low-dark": "#161b27",
+        "surface-container-dark": "#1c2333",
+        "surface-container-high-dark": "#222b3d",
+        "surface-container-lowest-dark": "#131820",
+        "on-surface-dark": "#e8eaf0",
+        "on-surface-variant-dark": "#9ba3b8",
         // standard shadcn variables mapped to our tokens
         border: "#c3c6cf",
         input: "#e2e2e9",
@@ -106,6 +113,20 @@ const config = {
         lg: "0.5rem",
         md: "0.375rem",
         sm: "0.25rem",
+      },
+      animation: {
+        "fade-up": "fadeUp 200ms ease-out forwards",
+        "fade-in": "fadeIn 150ms ease-out forwards",
+      },
+      keyframes: {
+        fadeUp: {
+          "0%": { opacity: "0", transform: "translateY(8px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        fadeIn: {
+          "0%": { opacity: "0" },
+          "100%": { opacity: "1" },
+        },
       },
     },
   },

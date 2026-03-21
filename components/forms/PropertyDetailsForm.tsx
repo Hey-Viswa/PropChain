@@ -12,7 +12,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 
 const labelClass =
-  "block text-label-sm text-on_surface_variant mb-1.5 font-medium";
+  "block text-label-sm text-on_surface_variant dark:text-[#9ba3b8] mb-1.5 font-medium";
 const errorClass = "text-[0.7rem] text-error mt-1 block";
 
 interface PropertyDetailsFormProps {
@@ -120,9 +120,9 @@ export default function PropertyDetailsForm({
           <select
             {...register("type")}
             className={cn(
-              "flex w-full bg-surface_container_highest rounded-md border-0 border-b border-outline_variant/20",
+              "flex w-full bg-surface_container_highest dark:bg-[#2a3347] dark:text-[#e8eaf0] dark:border-[#2a3347] dark:focus:border-[#6b9eff] rounded-md border-0 border-b border-outline_variant/20",
               "focus:border-primary focus-visible:outline-none",
-              "px-4 py-3 text-body-md text-on_surface cursor-pointer transition-colors",
+              "px-4 py-3 text-body-md text-on_surface dark:text-[#e8eaf0] cursor-pointer transition-colors",
               errors.type && "border-error"
             )}
           >

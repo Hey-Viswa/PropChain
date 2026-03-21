@@ -25,6 +25,28 @@
     --ring: 0 80 178;
     --radius: 0.375rem;
   }
+
+  .dark {
+    --background:         15 17 23;
+    --foreground:         232 234 240;
+    --card:               19 24 32;
+    --card-foreground:    232 234 240;
+    --popover:            19 24 32;
+    --popover-foreground: 232 234 240;
+    --primary:            107 158 255;
+    --primary-foreground: 0 26 67;
+    --secondary:          28 35 51;
+    --secondary-foreground: 232 234 240;
+    --muted:              28 35 51;
+    --muted-foreground:   155 163 184;
+    --accent:             34 43 61;
+    --accent-foreground:  232 234 240;
+    --destructive:        186 26 26;
+    --destructive-foreground: 255 255 255;
+    --border:             42 51 71;
+    --input:              42 51 71;
+    --ring:               107 158 255;
+  }
 }
 
 @layer base {
@@ -55,4 +77,67 @@
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #43474e;
+}
+
+/* —— ANIMATIONS —— */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-up {
+  animation: fadeUp 200ms ease-out forwards;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  15%       { transform: translateX(-6px); }
+  30%       { transform: translateX(6px); }
+  45%       { transform: translateX(-4px); }
+  60%       { transform: translateX(4px); }
+  75%       { transform: translateX(-2px); }
+  90%       { transform: translateX(2px); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    #ededf5 25%,
+    #f9f9ff 50%,
+    #ededf5 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite linear;
+}
+
+.dark .animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    #1c2333 25%,
+    #222b3d 50%,
+    #1c2333 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite linear;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

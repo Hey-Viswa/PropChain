@@ -60,7 +60,7 @@ export default function AIReviewPanel() {
   if (loading) {
     return (
       <div className="space-y-5">
-        <p className="text-body-md text-on_surface_variant text-center py-2">
+        <p className="text-body-md text-on_surface_variant dark:text-[#9ba3b8] text-center py-2">
           AI is analysing your documents…
         </p>
         <Skeleton className="h-28 w-full rounded-xl" />
@@ -79,12 +79,12 @@ export default function AIReviewPanel() {
         {MOCK_DOCS.map((doc) => (
           <div
             key={doc.docType}
-            className="bg-surface_container_lowest rounded-xl p-5 xl:p-6 space-y-4"
+            className="bg-surface_container_lowest dark:bg-[#131820] rounded-xl p-5 xl:p-6 space-y-4"
           >
             <div className="flex items-center justify-between gap-3">
               <div>
-                <p className="text-title-md font-medium text-on_surface">{doc.docType}</p>
-                <p className="text-label-sm text-on_surface_variant font-mono">{doc.name}</p>
+                <p className="text-title-md font-medium text-on_surface dark:text-[#e8eaf0]">{doc.docType}</p>
+                <p className="text-label-sm text-on_surface_variant dark:text-[#9ba3b8] font-mono">{doc.name}</p>
               </div>
               <Badge
                 className={cn(
@@ -106,8 +106,8 @@ export default function AIReviewPanel() {
             <div className="grid grid-cols-2 gap-x-6 gap-y-3">
               {Object.entries(doc.fields).map(([key, val]) => (
                 <div key={key}>
-                  <p className="text-label-sm text-on_surface_variant">{key}</p>
-                  <p className="text-body-md font-medium text-on_surface">{val}</p>
+                  <p className="text-label-sm text-on_surface_variant dark:text-[#9ba3b8]">{key}</p>
+                  <p className="text-body-md font-medium text-on_surface dark:text-[#e8eaf0]">{val}</p>
                 </div>
               ))}
             </div>
@@ -126,8 +126,8 @@ export default function AIReviewPanel() {
       </div>
 
       {/* Right: summary card */}
-      <div className="bg-surface_container_lowest rounded-xl p-5 xl:p-6 sticky top-6 space-y-5 h-fit">
-        <p className="text-title-md font-semibold text-on_surface font-display">
+      <div className="bg-surface_container_lowest dark:bg-[#131820] rounded-xl p-5 xl:p-6 sticky top-6 space-y-5 h-fit">
+        <p className="text-title-md font-semibold text-on_surface dark:text-[#e8eaf0] font-display">
           Verification Summary
         </p>
 
@@ -136,7 +136,7 @@ export default function AIReviewPanel() {
           <p className="text-[3rem] xl:text-[3.5rem] font-bold font-display text-success leading-none">
             {overallScore}%
           </p>
-          <p className="text-body-md text-on_surface_variant mt-2">Overall Confidence</p>
+          <p className="text-body-md text-on_surface_variant dark:text-[#9ba3b8] mt-2">Overall Confidence</p>
         </div>
 
         {/* Verdict */}
@@ -154,7 +154,7 @@ export default function AIReviewPanel() {
           ))}
         </div>
 
-        <p className="text-label-sm text-on_surface_variant pt-1">
+        <p className="text-label-sm text-on_surface_variant dark:text-[#9ba3b8] pt-1">
           ✓ No fraud signals detected
         </p>
       </div>

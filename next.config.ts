@@ -1,10 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Compress responses
   compress: true,
-
-  // Image optimization
+  poweredByHeader: false,
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "img.clerk.com" },
@@ -12,30 +10,16 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "images.unsplash.com" },
     ],
     formats: ["image/avif", "image/webp"],
+    minimumCacheTTL: 60,
   },
-
-  // Reduce JavaScript bundle size
   experimental: {
     optimizePackageImports: [
       "lucide-react",
       "recharts",
       "@clerk/nextjs",
+      "wagmi",
+      "viem",
     ],
-  },
-
-  // Headers for caching
-  async headers() {
-    return [
-      {
-        source: "/(.*)",
-        headers: [
-          {
-            key: "X-DNS-Prefetch-Control",
-            value: "on",
-          },
-        ],
-      },
-    ];
   },
 };
 

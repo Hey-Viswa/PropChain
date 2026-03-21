@@ -1,4 +1,5 @@
 import * as React from "react"
+import type { ToastActionElement, ToastProps } from "@/components/ui/toast"
 
 const TOAST_LIMIT = 1
 const TOAST_REMOVE_DELAY = 1000000
@@ -7,8 +8,8 @@ type ToasterToast = {
   id: string
   title?: React.ReactNode
   description?: React.ReactNode
-  action?: React.ReactNode
-}
+  action?: ToastActionElement
+} & ToastProps
 
 let count = 0
 

@@ -36,7 +36,7 @@ export default function StepperHeader() {
                   isActive &&
                     "bg-primary text-on_primary shadow-[0_0_0_4px_rgba(0,80,178,0.12)]",
                   isUpcoming &&
-                    "border-2 border-outline_variant text-on_surface_variant bg-transparent"
+                    "border-2 border-outline_variant text-on_surface_variant dark:text-[#9ba3b8] bg-transparent"
                 )}
               >
                 {isCompleted ? (
@@ -49,7 +49,7 @@ export default function StepperHeader() {
                 className={cn(
                   "text-[0.68rem] font-medium mt-1.5 whitespace-nowrap hidden md:block",
                   isActive && "text-primary",
-                  (isCompleted || isUpcoming) && "text-on_surface_variant"
+                  (isCompleted || isUpcoming) && "text-on_surface_variant dark:text-[#9ba3b8]"
                 )}
               >
                 {step.label}

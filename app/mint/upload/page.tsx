@@ -76,8 +76,8 @@ export default function MintStep2() {
     <div className="w-full flex flex-col items-center max-w-5xl mx-auto pb-10">
       {/* Header */}
       <div className="text-center mb-10 max-w-2xl mt-4">
-        <h1 className="text-[34px] font-bold font-display text-on_surface tracking-tight mb-4">Register Property Asset</h1>
-        <p className="text-on_surface_variant text-[15px] leading-relaxed">
+        <h1 className="text-[34px] font-bold font-display text-on_surface dark:text-[#e8eaf0] tracking-tight mb-4">Register Property Asset</h1>
+        <p className="text-on_surface_variant dark:text-[#9ba3b8] text-[15px] leading-relaxed">
           Upload your legal property deed. Our AI engine will verify ownership history<br className="hidden md:block" /> and extract essential metadata for the minting process.
         </p>
       </div>
@@ -87,17 +87,17 @@ export default function MintStep2() {
         <div className="border-2 border-dashed border-[#80a9e2] rounded-[32px] p-10 xl:p-12 flex flex-col items-center justify-center text-center bg-[#f9fbff] min-h-[480px] shadow-[inset_0_4px_24px_rgba(0,80,178,0.02)]">
           {uploadedDocs.length > 0 ? (
             <div className="w-full max-w-md flex flex-col gap-4 text-left">
-              <h3 className="text-[20px] font-bold font-display text-on_surface mb-2">Uploaded Documents</h3>
+              <h3 className="text-[20px] font-bold font-display text-on_surface dark:text-[#e8eaf0] mb-2">Uploaded Documents</h3>
               {uploadedDocs.map((doc, i) => (
                 <div key={i} className="flex justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-outline_variant/20">
                   <div className="flex items-center gap-3">
                     <FileText className="w-6 h-6 text-primary" />
                     <div>
-                      <p className="text-sm font-semibold text-on_surface">{doc.name}</p>
-                      <p className="text-xs text-on_surface_variant">{(doc.size / 1024 / 1024).toFixed(2)} MB • {doc.docType}</p>
+                      <p className="text-sm font-semibold text-on_surface dark:text-[#e8eaf0]">{doc.name}</p>
+                      <p className="text-xs text-on_surface_variant dark:text-[#9ba3b8]">{(doc.size / 1024 / 1024).toFixed(2)} MB • {doc.docType}</p>
                     </div>
                   </div>
-                  <button onClick={() => removeDoc(doc.name)} className="text-on_surface_variant hover:text-error transition-colors p-2">
+                  <button onClick={() => removeDoc(doc.name)} className="text-on_surface_variant dark:text-[#9ba3b8] hover:text-error transition-colors p-2">
                     <X className="w-4 h-4" />
                   </button>
                 </div>
@@ -105,7 +105,7 @@ export default function MintStep2() {
               
               <div className="mt-4 flex justify-center w-full">
                 <input type="file" className="hidden" id="file-upload" ref={fileInputRef} onChange={handleFileUpload} />
-                <Button onClick={() => fileInputRef.current?.click()} className="bg-surface_container_low text-on_surface hover:bg-surface_container_high shadow-none font-semibold">
+                <Button onClick={() => fileInputRef.current?.click()} className="bg-surface_container_low dark:bg-[#161b27] text-on_surface dark:text-[#e8eaf0] hover:bg-surface_container_high shadow-none font-semibold">
                   <Plus className="w-4 h-4 mr-2" /> Add Another File
                 </Button>
               </div>
@@ -115,8 +115,8 @@ export default function MintStep2() {
               <div className="w-20 h-20 rounded-2xl bg-[#e6eeff] flex items-center justify-center mb-6 shadow-sm border border-[#cce0ff]">
                 <FileText className="w-8 h-8 text-primary" />
               </div>
-              <h3 className="text-[22px] font-bold font-display text-on_surface tracking-tight mb-3">Import Source Document</h3>
-              <p className="text-on_surface_variant mb-10 max-w-[340px] text-[15px] leading-relaxed">
+              <h3 className="text-[22px] font-bold font-display text-on_surface dark:text-[#e8eaf0] tracking-tight mb-3">Import Source Document</h3>
+              <p className="text-on_surface_variant dark:text-[#9ba3b8] mb-10 max-w-[340px] text-[15px] leading-relaxed">
                 Drag and drop your PDF, TIFF, or JPEG file here, or click to browse files from your computer.
               </p>
               <div className="flex flex-col sm:flex-row items-center gap-4 w-full justify-center">
@@ -124,7 +124,7 @@ export default function MintStep2() {
                 <Button onClick={() => fileInputRef.current?.click()} className="bg-primary hover:bg-primary/95 text-on_primary shadow-md h-12 px-8 rounded-md w-full sm:w-auto font-semibold">
                   <Plus className="w-5 h-5 mr-2" /> Select File
                 </Button>
-                <Button variant="outline" className="bg-white border-border/80 text-primary shadow-sm h-12 px-8 rounded-md w-full sm:w-auto font-semibold hover:bg-surface_container_low">
+                <Button variant="outline" className="bg-white border-border/80 text-primary shadow-sm h-12 px-8 rounded-md w-full sm:w-auto font-semibold hover:bg-surface_container_low dark:hover:bg-[#161b27] dark:bg-[#161b27]">
                   Use Cloud Drive
                 </Button>
               </div>
@@ -191,11 +191,11 @@ export default function MintStep2() {
           {aiResults && (
             <div className="mt-2 text-left">
                <h4 className="text-[11px] font-bold tracking-[0.15em] text-on_surface_variant/60 uppercase mb-3 ml-1">EXTRACTION PREVIEW</h4>
-               <div className="bg-surface_container_lowest rounded-2xl shadow-sm border border-border/40 overflow-hidden">
+               <div className="bg-surface_container_lowest dark:bg-[#131820] rounded-2xl shadow-sm border border-border/40 overflow-hidden">
                   {Object.entries(aiResults.documents[0].fields).slice(0, 3).map(([key, val]) => (
-                    <div key={key} className="flex justify-between items-center py-3.5 px-5 border-b border-border/30 bg-surface_container_lowest last:border-0">
-                       <span className="text-[13px] font-semibold text-on_surface_variant">{key}</span>
-                       <span className="text-[15px] font-bold font-display text-on_surface line-clamp-1 text-right max-w-[200px]" title={val}>{val}</span>
+                    <div key={key} className="flex justify-between items-center py-3.5 px-5 border-b border-border/30 bg-surface_container_lowest dark:bg-[#131820] last:border-0">
+                       <span className="text-[13px] font-semibold text-on_surface_variant dark:text-[#9ba3b8]">{key}</span>
+                       <span className="text-[15px] font-bold font-display text-on_surface dark:text-[#e8eaf0] line-clamp-1 text-right max-w-[200px]" title={val}>{val}</span>
                     </div>
                   ))}
                </div>
@@ -210,13 +210,13 @@ export default function MintStep2() {
       {/* Footer Nav */}
       <div className="flex items-center justify-between w-full mt-12 pt-8 border-t border-border/40">
         <Link href="/mint">
-          <Button variant="ghost" className="text-on_surface font-semibold hover:bg-surface_container_low px-1 hover:transparent">
+          <Button variant="ghost" className="text-on_surface dark:text-[#e8eaf0] font-semibold hover:bg-surface_container_low dark:hover:bg-[#161b27] dark:bg-[#161b27] px-1 hover:transparent">
             <ArrowLeft className="w-4 h-4 mr-2" strokeWidth={2.5} />
             Back to Details
           </Button>
         </Link>
         <div className="flex gap-4">
-          <Button variant="secondary" className="bg-surface_container text-on_surface_variant hover:bg-surface_container_high h-11 px-6 font-semibold shadow-sm">
+          <Button variant="secondary" className="bg-surface_container dark:bg-[#1c2333] text-on_surface_variant dark:text-[#9ba3b8] hover:bg-surface_container_high h-11 px-6 font-semibold shadow-sm">
             Save Draft
           </Button>
           <Link href="/mint/review" aria-disabled={uploadedDocs.length < 2 || isAILoading}>

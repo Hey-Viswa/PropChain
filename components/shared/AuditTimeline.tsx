@@ -16,37 +16,37 @@ const actionConfig: Record<
   REGISTER: {
     icon: FileText,
     color: "text-primary",
-    bg: "bg-primary_fixed",
+    bg: "bg-primary_fixed dark:bg-[#1a2d4d]",
     label: "Registration Submitted",
   },
   APPROVE: {
     icon: CheckCircle2,
     color: "text-success",
-    bg: "bg-success_container",
+    bg: "bg-success_container dark:bg-[#0a2e1a]",
     label: "Oracle Approved",
   },
   TRANSFER: {
     icon: ArrowRight,
     color: "text-primary",
-    bg: "bg-primary_fixed",
+    bg: "bg-primary_fixed dark:bg-[#1a2d4d]",
     label: "Ownership Transfer",
   },
   AI_FLAG: {
     icon: AlertTriangle,
     color: "text-secondary",
-    bg: "bg-secondary_fixed",
+    bg: "bg-secondary_fixed dark:bg-[#3d2800]",
     label: "AI Flag Raised",
   },
   LIEN_ADDED: {
     icon: Lock,
     color: "text-error",
-    bg: "bg-error_container",
+    bg: "bg-error_container dark:bg-[#2d0a0a]",
     label: "Lien Added",
   },
   LIEN_RELEASED: {
     icon: Unlock,
     color: "text-success",
-    bg: "bg-success_container",
+    bg: "bg-success_container dark:bg-[#0a2e1a]",
     label: "Lien Released",
   },
 };
@@ -77,16 +77,16 @@ export default function AuditTimeline({ entries, className }: AuditTimelineProps
                 <Icon className={cn("w-4 h-4", config.color)} />
               </div>
               {!isLast && (
-                <div className="w-px flex-1 bg-surface_container mt-1 min-h-[24px]" />
+                <div className="w-px flex-1 bg-surface_container dark:bg-[#1c2333] mt-1 min-h-[24px]" />
               )}
             </div>
 
             {/* Content */}
             <div className={cn("pb-5 xl:pb-6 flex-1 min-w-0", isLast && "pb-0")}>
-              <p className="text-title-md font-medium text-on_surface">
+              <p className="text-title-md font-medium text-on_surface dark:text-[#e8eaf0]">
                 {config.label}
               </p>
-              <p className="text-body-md text-on_surface_variant mt-0.5 leading-relaxed">
+              <p className="text-body-md text-on_surface_variant dark:text-[#9ba3b8] mt-0.5 leading-relaxed">
                 {entry.note}
               </p>
               <p className="text-label-sm text-on_surface_variant/70 mt-1 font-mono">

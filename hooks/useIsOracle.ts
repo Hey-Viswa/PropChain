@@ -5,7 +5,7 @@ import { PROPERTY_NFT_ABI, PROPERTY_NFT_ADDRESS } from "@/lib/contracts/Property
 import { keccak256, toBytes } from "viem";
 
 export function useIsOracle() {
-  const { address } = useWallet();
+  const { address, isConnected } = useWallet();
   const ORACLE_ROLE = keccak256(toBytes("ORACLE_ROLE"));
 
   const { data: isOracle, isLoading } = useReadContract({
@@ -13,7 +13,7 @@ export function useIsOracle() {
     abi: PROPERTY_NFT_ABI,
     functionName: "hasRole",
     args: [ORACLE_ROLE, address as `0x${string}`],
-    query: { enabled: !!address },
+    query: { enabled: !!address && isConnected },
   });
 
   return { isOracle: !!isOracle, isLoading };

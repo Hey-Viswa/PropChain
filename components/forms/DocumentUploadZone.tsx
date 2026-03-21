@@ -47,32 +47,32 @@ export default function DocumentUploadZone({
   }
 
   return (
-    <div className="bg-surface_container_lowest rounded-xl p-5 xl:p-6 space-y-3">
+    <div className="bg-surface_container_lowest dark:bg-[#131820] rounded-xl p-5 xl:p-6 space-y-3">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <p className="text-title-md font-medium text-on_surface">{title}</p>
+        <p className="text-title-md font-medium text-on_surface dark:text-[#e8eaf0]">{title}</p>
         {required ? (
           <span className="text-label-sm text-error">Required</span>
         ) : (
-          <span className="text-label-sm text-on_surface_variant">Optional</span>
+          <span className="text-label-sm text-on_surface_variant dark:text-[#9ba3b8]">Optional</span>
         )}
       </div>
 
       {/* File selected: preview row */}
       {value ? (
-        <div className="flex items-center gap-3 bg-surface_container rounded-lg px-4 py-3">
+        <div className="flex items-center gap-3 bg-surface_container dark:bg-[#1c2333] rounded-lg px-4 py-3">
           <div className="w-8 h-8 rounded-lg bg-primary_fixed flex items-center justify-center shrink-0">
             <FileText size={15} className="text-primary" />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-body-md font-medium text-on_surface truncate">{value.name}</p>
-            <p className="text-label-sm text-on_surface_variant">{formatFileSize(value.size)}</p>
+            <p className="text-body-md font-medium text-on_surface dark:text-[#e8eaf0] truncate">{value.name}</p>
+            <p className="text-label-sm text-on_surface_variant dark:text-[#9ba3b8]">{formatFileSize(value.size)}</p>
           </div>
           <Button
             variant="ghost"
             size="icon"
             onClick={() => onFileChange(null)}
-            className="shrink-0 text-on_surface_variant hover:text-error hover:bg-error_container"
+            className="shrink-0 text-on_surface_variant dark:text-[#9ba3b8] hover:text-error hover:bg-error_container"
           >
             <X size={15} />
           </Button>
@@ -85,7 +85,7 @@ export default function DocumentUploadZone({
             "flex flex-col items-center gap-3 cursor-pointer transition-colors",
             dragOver
               ? "border-primary/60 bg-primary_fixed/20"
-              : "hover:border-primary/40 hover:bg-surface_container"
+              : "hover:border-primary/40 hover:bg-surface_container dark:hover:bg-[#1c2333] dark:bg-[#1c2333]"
           )}
           onDragOver={(e) => {
             e.preventDefault();
@@ -100,12 +100,12 @@ export default function DocumentUploadZone({
           }}
           onClick={() => inputRef.current?.click()}
         >
-          <UploadCloud size={28} className="text-on_surface_variant" />
+          <UploadCloud size={28} className="text-on_surface_variant dark:text-[#9ba3b8]" />
           <div className="text-center">
-            <p className="text-title-md font-medium text-on_surface">
+            <p className="text-title-md font-medium text-on_surface dark:text-[#e8eaf0]">
               Drop file here or click to upload
             </p>
-            <p className="text-body-md text-on_surface_variant mt-0.5">
+            <p className="text-body-md text-on_surface_variant dark:text-[#9ba3b8] mt-0.5">
               PDF, JPG, PNG — max 10MB
             </p>
           </div>

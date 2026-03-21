@@ -7,7 +7,7 @@ const Skeleton = ({
 }: React.HTMLAttributes<HTMLDivElement>) => {
   return (
     <div
-      className={cn("animate-pulse rounded-xl bg-surface_container", className)}
+      className={cn("animate-pulse rounded-xl bg-surface_container dark:bg-[#1c2333]", className)}
       {...props}
     />
   );
