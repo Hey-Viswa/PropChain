@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useAdminRole } from "@/hooks/useAdminRole";
 import { useWallet } from "@/hooks/useWallet";
 import { useOracleAccessStore } from "@/store/useOracleAccessStore";
+import OracleAuthButton from "@/components/shared/OracleAuthButton";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   LayoutDashboard,
@@ -13,7 +14,9 @@ import {
   ClipboardList,
   BarChart,
   ListTodo,
+  Users,
   Globe,
+  Shield,
   ShieldCheck,
   Settings2,
   SlidersHorizontal,
@@ -54,6 +57,7 @@ const oracleNavGroups: NavGroup[] = [
     items: [
       { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
       { label: "Verification Queue", href: "/oracle/queue", icon: ListTodo },
+      { label: "User Monitoring", href: "/oracle/users", icon: Users },
     ]
   },
   {
@@ -166,6 +170,25 @@ export default function Sidebar() {
                 </Link>
               );
             })()}
+
+            {/* Oracle mode switch / exit */}
+            {hasOracleRole && !isOracleMode && (
+              <div className="px-0 pt-2">
+                <Link
+                  href="/oracle/login"
+                  className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-primary dark:text-[#6b9eff] hover:bg-primary_fixed dark:hover:bg-[#1a2d4d] transition-colors text-sm font-medium border-l-2 border-transparent hover:border-primary dark:hover:border-[#6b9eff]"
+                >
+                  <Shield className="w-4 h-4 flex-shrink-0" />
+                  Switch to Oracle
+                </Link>
+              </div>
+            )}
+            
+            {(isOracleMode || hasOracleRole) && isOracleMode && (
+              <div className="px-0 pt-2">
+                <OracleAuthButton variant="sidebar" />
+              </div>
+            )}
           </>
         )}
       </nav>
@@ -186,8 +209,8 @@ export default function Sidebar() {
           </span>
         </div>
 
-        {showOracleNav && (
-          <div className="px-3 mt-2">
+        {(isOracleMode || hasOracleRole) && (
+          <div className="px-3">
             <div className="flex items-center gap-2 px-3 py-2 bg-secondary_fixed rounded-lg">
               <ShieldCheck className="w-4 h-4 text-secondary flex-shrink-0" />
               <span className="text-label-sm font-medium text-on_secondary_fixed">

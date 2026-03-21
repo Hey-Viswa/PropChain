@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/db/mongoose";
 import { PropertyRecord } from "@/lib/db/models/Property";
 import { KYCRecord } from "@/lib/db/models/KYC";
+import { User } from "@/lib/db/models/User";
+import { logActivity } from "@/lib/logActivity";
 
 export async function POST(req: NextRequest) {
   try {
@@ -16,10 +18,11 @@ export async function POST(req: NextRequest) {
     }
 
     await connectDB();
+    const normalizedWallet = walletAddress.toLowerCase();
 
     // Verify KYC
     const kyc = await KYCRecord.findOne({
-      walletAddress: walletAddress.toLowerCase(),
+      walletAddress: normalizedWallet,
       kycVerified: true,
     });
     if (!kyc) {
@@ -38,7 +41,7 @@ export async function POST(req: NextRequest) {
 
     // Save pending record
     const record = await PropertyRecord.create({
-      walletAddress: walletAddress.toLowerCase(),
+      walletAddress: normalizedWallet,
       ulpin,
       physicalAddress,
       areaSqFt: Number(areaSqFt),
@@ -46,6 +49,22 @@ export async function POST(req: NextRequest) {
       description: description ?? "",
       documentUrl:  documentUrl ?? "",
       status: "pending",
+    });
+
+    const linkedUser = await User.findOne({
+      walletAddress: normalizedWallet,
+    }).select("clerkId");
+
+    await logActivity({
+      clerkId: linkedUser?.clerkId ?? `wallet:${normalizedWallet}`,
+      walletAddress: normalizedWallet,
+      type: "PROPERTY_REGISTER",
+      description: `Property registration submitted: ${ulpin}`,
+      metadata: {
+        ulpin,
+        address: physicalAddress,
+        area: Number(areaSqFt),
+      },
     });
 
     return NextResponse.json({ success: true, id: record._id });

@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/db/mongoose";
 import { KYCRecord } from "@/lib/db/models/KYC";
+import { User } from "@/lib/db/models/User";
+import { logActivity } from "@/lib/logActivity";
 
 export async function POST(req: NextRequest) {
   try {
@@ -21,9 +23,10 @@ export async function POST(req: NextRequest) {
     }
 
     await connectDB();
+    const normalizedWallet = walletAddress.toLowerCase();
 
     const existing = await KYCRecord.findOne({
-      walletAddress: walletAddress.toLowerCase(),
+      walletAddress: normalizedWallet,
     });
 
     if (existing?.kycVerified) {
@@ -31,7 +34,7 @@ export async function POST(req: NextRequest) {
     }
 
     await KYCRecord.findOneAndUpdate(
-      { walletAddress: walletAddress.toLowerCase() },
+      { walletAddress: normalizedWallet },
       {
         aadhaarLast4: aadhaarNumber.slice(-4),
         kycVerified:  true,
@@ -39,6 +42,18 @@ export async function POST(req: NextRequest) {
       },
       { upsert: true, new: true }
     );
+
+    const linkedUser = await User.findOne({
+      walletAddress: normalizedWallet,
+    }).select("clerkId");
+
+    await logActivity({
+      clerkId: linkedUser?.clerkId ?? `wallet:${normalizedWallet}`,
+      walletAddress: normalizedWallet,
+      type: "KYC_SUBMIT",
+      description: "User submitted KYC verification",
+      metadata: { aadhaarMasked: "XXXX-XXXX-****" },
+    });
 
     return NextResponse.json({ success: true });
   } catch (err) {

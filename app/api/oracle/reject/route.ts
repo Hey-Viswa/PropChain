@@ -4,6 +4,7 @@ import { connectDB } from "@/lib/db/mongoose";
 import { PropertyRecord } from "@/lib/db/models/Property";
 import { User } from "@/lib/db/models/User";
 import { verifyOracleRole } from "@/lib/auth/verifyOracleRole";
+import { logActivity } from "@/lib/logActivity";
 
 export async function POST(req: NextRequest) {
   try {
@@ -57,6 +58,24 @@ export async function POST(req: NextRequest) {
         { status: 404 }
       );
     }
+
+    const targetWallet = updated.walletAddress ?? "";
+    const targetUser = targetWallet
+      ? await User.findOne({ walletAddress: targetWallet.toLowerCase() }).select("clerkId")
+      : null;
+
+    await logActivity({
+      clerkId: targetUser?.clerkId ?? `wallet:${targetWallet || "unknown"}`,
+      walletAddress: targetWallet,
+      type: "ORACLE_REJECT",
+      description: "Property rejected by Oracle",
+      metadata: {
+        oracleWallet: user.walletAddress,
+        reason: reason ?? "No reason provided",
+      },
+      flagged: true,
+      flagReason: reason ?? "Oracle rejection",
+    });
 
     return NextResponse.json({ success: true });
   } catch (err) {

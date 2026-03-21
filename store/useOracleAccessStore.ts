@@ -44,11 +44,27 @@ export const useOracleAccessStore = create<OracleAccessState>()(
     }),
     {
       name: "propchain-oracle-access",
-      // Only persist isOracleMode and activatedAt
-      // Do not persist attempts or lockedUntil
+      storage: {
+        getItem: (name) => {
+          if (typeof window === "undefined") return null;
+          const value = sessionStorage.getItem(name);
+          return value ? JSON.parse(value) : null;
+        },
+        setItem: (name, value) => {
+          if (typeof window === "undefined") return;
+          sessionStorage.setItem(name, JSON.stringify(value));
+        },
+        removeItem: (name) => {
+          if (typeof window === "undefined") return;
+          sessionStorage.removeItem(name);
+        },
+      },
       partialize: (s) => ({
+        ...s,
         isOracleMode: s.isOracleMode,
         activatedAt: s.activatedAt,
+        attempts: 0,
+        lockedUntil: null,
       }),
     }
   )

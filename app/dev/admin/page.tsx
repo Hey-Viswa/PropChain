@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
 import { useToast } from "@/hooks/use-toast";
+import { clearRoleCache } from "@/hooks/useAdminRole";
 
 const DEV_PASSWORD_KEY = "propchain_dev_auth";
 
@@ -123,6 +124,8 @@ export default function DevAdminPage() {
       });
       setNewClerkId("");
       setNewNote("");
+      // Clear cache so role takes effect immediately
+      clearRoleCache();
       fetchRoles();
     } finally {
       setSubmitting(false);
@@ -144,6 +147,7 @@ export default function DevAdminPage() {
         title: "Role revoked",
         description: `${role} removed from ${clerkId.slice(0, 12)}...`,
       });
+      clearRoleCache();
       fetchRoles();
     } catch {
       toast({
