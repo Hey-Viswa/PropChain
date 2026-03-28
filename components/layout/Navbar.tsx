@@ -1,17 +1,23 @@
 "use client";
 
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, ShieldCheck, ShieldAlert } from "lucide-react";
 import { useBreadcrumbs } from "@/hooks/useBreadcrumbs";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
-
 import { useRoleStore } from "@/store/useRoleStore";
-
-const MOCK_WALLET = "0x1A2B...9F0E";
+import { useKYC } from "@/hooks/useKYC";
+import { useAccount } from "wagmi";
 
 export default function Navbar() {
   const crumbs = useBreadcrumbs();
   const { role } = useRoleStore();
+  const { kycVerified, loading: kycLoading } = useKYC();
+  const { address, isConnected } = useAccount();
+
+  const walletDisplay = isConnected && address
+    ? `${address.slice(0, 6)}…${address.slice(-4)}`
+    : null;
 
   return (
     <header
@@ -50,10 +56,32 @@ export default function Navbar() {
           Polygon Mumbai
         </Badge>
 
-        {/* Wallet */}
-        <span className="bg-surface_container rounded-md px-3 py-1.5 text-xs font-mono text-on_surface_variant hidden sm:inline">
-          {MOCK_WALLET}
-        </span>
+        {/* KYC status */}
+        {kycLoading ? (
+          <Skeleton className="h-6 w-20 rounded-full" />
+        ) : (
+          <Badge
+            className={cn(
+              "rounded-full text-xs px-3 py-1 flex items-center gap-1",
+              kycVerified
+                ? "bg-green-500/15 text-green-600 dark:text-green-400"
+                : "bg-yellow-500/15 text-yellow-600 dark:text-yellow-400"
+            )}
+          >
+            {kycVerified ? (
+              <><ShieldCheck size={12} /> KYC Verified</>
+            ) : (
+              <><ShieldAlert size={12} /> KYC Pending</>
+            )}
+          </Badge>
+        )}
+
+        {/* Wallet address */}
+        {walletDisplay && (
+          <span className="bg-surface_container rounded-md px-3 py-1.5 text-xs font-mono text-on_surface_variant hidden sm:inline">
+            {walletDisplay}
+          </span>
+        )}
 
         {/* Role */}
         <Badge className="bg-secondary_fixed text-on_secondary_fixed rounded-full text-xs px-3 py-1 uppercase">
