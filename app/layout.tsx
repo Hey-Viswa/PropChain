@@ -1,21 +1,28 @@
 import type { Metadata } from "next";
-// Import fonts from Google Fonts
-import { Plus_Jakarta_Sans, Inter, Geist } from "next/font/google";
-import { Toaster } from "@/components/ui/toaster";
-import "./globals.css";
-import { cn } from "@/lib/utils";
+import { ClerkProvider } from "@clerk/nextjs";
+import { Plus_Jakarta_Sans, Inter } from "next/font/google";
+import { ThemeProvider } from "@/components/layout/ThemeProvider";
+import Web3Providers from "@/components/layout/Web3Providers";
 import AppShellWrapper from "@/components/layout/AppShellWrapper";
-
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+import { Toaster } from "@/components/ui/toaster";
+import NextTopLoader from "nextjs-toploader";
+import { Suspense } from "react";
+import "./globals.css";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  variable: "--font-plus-jakarta-sans", // Used in tailwind config for 'display'
+  subsets:  ["latin"],
+  display:  "swap",
+  preload:  true,
+  variable: "--font-display",
+  weight:   ["400", "500", "600", "700"],
 });
 
 const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter", // Used in tailwind config for 'body'
+  subsets:  ["latin"],
+  display:  "swap",
+  preload:  true,
+  variable: "--font-body",
+  weight:   ["400", "500", "600"],
 });
 
 export const metadata: Metadata = {
@@ -29,15 +36,39 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={cn("font-sans", geist.variable)}>
-      <body
-        className={`${plusJakartaSans.variable} ${inter.variable} antialiased`}
-      >
-        <AppShellWrapper>
-          {children}
-        </AppShellWrapper>
-        <Toaster />
-      </body>
-    </html>
+    <ClerkProvider>
+      <html
+        lang="en"
+        suppressHydrationWarning
+        className={`${plusJakartaSans.variable} ${inter.variable}`}>
+        <body className={inter.className}>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange>
+            <NextTopLoader
+              color="#0050b2"
+              initialPosition={0.08}
+              crawlSpeed={200}
+              height={3}
+              crawl={true}
+              showSpinner={false}
+              easing="ease"
+              speed={200}
+              shadow="0 0 10px #0050b2,0 0 5px #0050b2"
+            />
+            <Web3Providers>
+              <AppShellWrapper>
+                <Suspense fallback={null}>
+                  {children}
+                </Suspense>
+              </AppShellWrapper>
+            </Web3Providers>
+            <Toaster />
+          </ThemeProvider>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }
