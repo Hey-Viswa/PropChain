@@ -6,7 +6,9 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "listener": "tsx scripts/eventListener.ts",
+    "recovery": "tsx scripts/recoveryWorker.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.3.0",
@@ -53,6 +55,8 @@
     "eslint-config-next": "15.2.3",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
-    "typescript": "^5"
+    "typescript": "^5",
+    "tsx": "^4.19.3",
+    "dotenv": "^16.5.0"
   }
 }

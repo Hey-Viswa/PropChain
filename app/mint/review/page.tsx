@@ -1,71 +1,111 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { ExternalLink, Loader2 } from "lucide-react";
 import { useMintStore } from "@/store/useMintStore";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2 } from "lucide-react";
 import { usePropertyContract } from "@/hooks/usePropertyContract";
 import { useWallet } from "@/hooks/useWallet";
-import Link from "next/link";
+import { useKYC } from "@/hooks/useKYC";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+
+type RegisterSuccess = {
+  success: true;
+  id: string;
+  ulpin: string;
+  mintStatus: string;
+};
 
 export default function MintStep4() {
   const router = useRouter();
   const { setStep, details, uploadedDocs, reset, aiResults } = useMintStore();
   const { toast } = useToast();
+  const { address, isConnected, connect, isCorrectNetwork } = useWallet();
+  const { kycVerified, checking } = useKYC();
+  const { mintProperty, mintState, mintError, txHash } = usePropertyContract();
   const [submitting, setSubmitting] = useState(false);
-  const { mintProperty } = usePropertyContract();
-  const { address } = useWallet();
+  const [registeredRecordId, setRegisteredRecordId] = useState<string | null>(null);
 
   useEffect(() => {
     setStep(4);
   }, [setStep]);
 
+  const canSubmit = useMemo(() => {
+    if (!isConnected || !isCorrectNetwork) return false;
+    if (checking || !kycVerified) return false;
+    if (!details.ulpin || !details.address || !details.area || !details.type) return false;
+    return !submitting;
+  }, [isConnected, isCorrectNetwork, checking, kycVerified, details, submitting]);
+
   const handleSubmit = async () => {
+    if (!isConnected) {
+      await connect();
+      return;
+    }
+    if (!address) {
+      toast({ title: "No wallet connected", variant: "destructive" });
+      return;
+    }
+    if (!isCorrectNetwork) {
+      toast({
+        title: "Wrong network",
+        description: "Please switch to Polygon Mumbai or local Hardhat network.",
+        variant: "destructive",
+      });
+      return;
+    }
+    if (!kycVerified) {
+      toast({
+        title: "KYC required",
+        description: "Complete KYC before registering property.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setSubmitting(true);
     try {
-      // Step 1: Save to MongoDB
       const regRes = await fetch("/api/properties/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          walletAddress:   address,
-          ulpin:           details.ulpin,
+          walletAddress: address,
+          ulpin: details.ulpin,
           physicalAddress: details.address,
-          areaSqFt:        details.area,
-          propertyType:    details.type,
-          description:     details.description,
-          documentUrl:     uploadedDocs[0]?.name ?? "",
+          areaSqFt: details.area,
+          propertyType: details.type,
+          description: details.description,
+          documentUrl: uploadedDocs[0]?.name ?? "",
         }),
       });
-      const regData = await regRes.json();
-      if (!regData.success) throw new Error(regData.error || "Registration failed");
+      const regData = (await regRes.json()) as RegisterSuccess | { error?: string };
+      if (!regRes.ok || !("success" in regData) || !regData.success) {
+        throw new Error((regData as { error?: string }).error ?? "Registration failed");
+      }
 
-      // Step 2: Call contract — mint NFT
-      const txHash = await mintProperty(
-        details.ulpin!,
-        "QmMockHash_" + details.ulpin, // Phase 3: real IPFS hash
-        details.address!,
-        details.area!
-      );
-
-      // Step 3: Confirm in MongoDB with txHash
-      // tokenId comes from contract event — for now store txHash only
-      await fetch("/api/properties/confirm-mint", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ recordId: regData.id, tokenId: 0, txHash }),
+      setRegisteredRecordId(regData.id);
+      await mintProperty({
+        recordId: regData.id,
+        ulpin: details.ulpin,
+        docHash: `QmMockHash_${details.ulpin}`,
+        physicalAddress: details.address,
+        areaSqFt: details.area,
       });
 
       reset();
-      toast({ title: "Submitted!", description: "Awaiting Oracle approval." });
+      toast({
+        title: "Submitted successfully",
+        description: "Property minted and queued for Oracle approval.",
+      });
       router.push("/properties");
     } catch (err: any) {
       toast({
         title: "Submission failed",
-        description: err.message ?? "Please try again.",
+        description: err?.message ?? "Please try again.",
+        variant: "destructive",
       });
     } finally {
       setSubmitting(false);
@@ -73,6 +113,7 @@ export default function MintStep4() {
   };
 
   const docCount = uploadedDocs.length;
+  const txExplorerHref = txHash ? `https://mumbai.polygonscan.com/tx/${txHash}` : null;
 
   if (!details.ulpin) {
     return (
@@ -88,7 +129,6 @@ export default function MintStep4() {
 
   return (
     <div className="grid grid-cols-1 xl:grid-cols-[1fr_360px] 2xl:grid-cols-[1fr_420px] gap-6 xl:gap-8">
-      {/* Left: Summary */}
       <div className="bg-surface_container_lowest dark:bg-[#131820] rounded-xl p-6 xl:p-8 space-y-5 shadow-card h-fit">
         <p className="text-headline-md font-semibold text-on_surface dark:text-[#e8eaf0] font-display">
           Review Your Submission
@@ -116,25 +156,28 @@ export default function MintStep4() {
           </p>
           <ul className="space-y-2">
             {uploadedDocs.map((doc, i) => {
-              const aiDoc = aiResults?.documents?.find(d => d.name === doc.name);
+              const aiDoc = aiResults?.documents?.find((d) => d.name === doc.name);
               return (
                 <li
                   key={i}
                   className="text-body-md text-on_surface_variant dark:text-[#9ba3b8] flex items-center justify-between before:content-[''] before:w-1.5 before:h-1.5 before:bg-primary before:rounded-full before:mr-2"
                 >
                   <span>{doc.name}</span>
-                  {aiDoc && <span className="text-xs font-semibold text-success">AI Score: {aiDoc.score}%</span>}
+                  {aiDoc && (
+                    <span className="text-xs font-semibold text-success">AI Score: {aiDoc.score}%</span>
+                  )}
                 </li>
               );
             })}
             {docCount === 0 && (
-              <li className="text-body-md text-on_surface_variant dark:text-[#9ba3b8]">No documents attached.</li>
+              <li className="text-body-md text-on_surface_variant dark:text-[#9ba3b8]">
+                No documents attached.
+              </li>
             )}
           </ul>
         </div>
       </div>
 
-      {/* Right: Sticky Transaction Card */}
       <div className="bg-surface_container_lowest dark:bg-[#131820] rounded-xl p-5 xl:p-6 sticky top-24 h-fit shadow-card space-y-4">
         <p className="text-title-md font-semibold text-on_surface dark:text-[#e8eaf0] font-display">
           Transaction Summary
@@ -154,17 +197,39 @@ export default function MintStep4() {
             </Badge>
           </div>
           <div className="flex justify-between items-center">
-            <span className="text-body-md text-on_surface_variant dark:text-[#9ba3b8]">Network</span>
-            <span className="text-body-md font-medium text-on_surface dark:text-[#e8eaf0]">
-              Polygon Mumbai
+            <span className="text-body-md text-on_surface_variant dark:text-[#9ba3b8]">KYC Status</span>
+            <Badge className={kycVerified ? "bg-success_container text-success" : "bg-error_container text-on_error_container"}>
+              {checking ? "Checking..." : kycVerified ? "Verified" : "Not Verified"}
+            </Badge>
+          </div>
+          <div className="flex justify-between items-center">
+            <span className="text-body-md text-on_surface_variant dark:text-[#9ba3b8]">Wallet</span>
+            <span className="text-xs font-medium text-on_surface dark:text-[#e8eaf0]">
+              {address ? `${address.slice(0, 6)}...${address.slice(-4)}` : "Not connected"}
             </span>
           </div>
-          <div className="flex justify-between items-center pb-2 border-b border-outline_variant/20">
-            <span className="text-body-md text-on_surface_variant dark:text-[#9ba3b8]">Est. Gas</span>
-            <span className="text-body-md font-medium text-on_surface_variant dark:text-[#9ba3b8]">
-              ~0.001 MATIC
-            </span>
+          <div className="flex justify-between items-center">
+            <span className="text-body-md text-on_surface_variant dark:text-[#9ba3b8]">Mint State</span>
+            <Badge>{mintState}</Badge>
           </div>
+          {txHash && txExplorerHref && (
+            <a
+              href={txExplorerHref}
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center gap-2 text-xs text-primary hover:underline"
+            >
+              View tx hash <ExternalLink className="w-3.5 h-3.5" />
+            </a>
+          )}
+          {registeredRecordId && (
+            <p className="text-[0.7rem] text-on_surface_variant dark:text-[#9ba3b8]">
+              Record ID: {registeredRecordId}
+            </p>
+          )}
+          {mintError && (
+            <p className="text-[0.75rem] text-error">{mintError}</p>
+          )}
         </div>
 
         <div className="pt-2 space-y-3">
@@ -172,27 +237,27 @@ export default function MintStep4() {
             variant="default"
             className="w-full"
             onClick={handleSubmit}
-            disabled={submitting}
+            disabled={!canSubmit}
           >
             {submitting ? (
               <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" /> Submitting…
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" /> Submitting...
               </>
+            ) : !isConnected ? (
+              "Connect Wallet"
+            ) : !kycVerified ? (
+              "Complete KYC to Continue"
             ) : (
               "Sign & Submit to Blockchain"
             )}
           </Button>
           <Link href="/mint/upload" aria-disabled={submitting}>
-            <Button
-              variant="ghost"
-              className="w-full"
-              disabled={submitting}
-            >
+            <Button variant="ghost" className="w-full" disabled={submitting}>
               Cancel
             </Button>
           </Link>
           <p className="text-[0.7rem] text-on_surface_variant dark:text-[#9ba3b8] text-center leading-relaxed">
-            This initiates a mock transaction on Polygon Mumbai testnet. No real assets will be transferred.
+            This initiates a transaction and persists tx hash + tokenId in your property record.
           </p>
         </div>
       </div>

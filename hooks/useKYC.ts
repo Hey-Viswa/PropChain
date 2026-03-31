@@ -1,52 +1,52 @@
-import { useState, useEffect } from "react";
-import { useWallet } from "./useWallet";
+"use client";
+import { useUser } from "@clerk/nextjs";
+import { useEffect, useState, useCallback } from "react";
+import { useWallet } from "@/hooks/useWallet";
 
-export function useKYC() {
-  const { address, isConnected } = useWallet();
-  const [kycVerified, setKycVerified] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [checking, setChecking] = useState(false);
+interface KYCState {
+  kycVerified:  boolean;
+  verifiedAt:   string | null;
+  aadhaarLast4: string | null;
+  isLoading:    boolean;
+  refetch:      () => void;
+}
+
+export function useKYC(): KYCState {
+  const { user, isLoaded } = useUser();
+  const { address }        = useWallet();
+
+  const [kycVerified, setKycVerified]   = useState(false);
+  const [verifiedAt, setVerifiedAt]     = useState<string | null>(null);
+  const [aadhaarLast4, setAadhaarLast4] = useState<string | null>(null);
+  const [isLoading, setIsLoading]       = useState(true);
+
+  const fetchKYC = useCallback(async () => {
+    if (!isLoaded || !user) {
+      setIsLoading(false);
+      return;
+    }
+    try {
+      const res  = await fetch("/api/kyc/status");
+      const data = await res.json();
+      setKycVerified(data.verified ?? false);
+      setVerifiedAt(data.verifiedAt ?? null);
+      setAadhaarLast4(data.aadhaarLast4 ?? null);
+    } catch {
+      setKycVerified(false);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [user?.id, isLoaded]);
 
   useEffect(() => {
-    if (!address) return;
-    checkKYCStatus();
-  }, [address]);
+    fetchKYC();
+  }, [fetchKYC]);
 
-  const checkKYCStatus = async () => {
-    if (!address) return;
-    setChecking(true);
-    try {
-      const res = await fetch(`/api/kyc/status?wallet=${address}`);
-      const data = await res.json();
-      setKycVerified(data.kycVerified);
-    } catch (err) {
-      console.error("KYC check error:", err);
-    } finally {
-      setChecking(false);
-    }
+  return {
+    kycVerified,
+    verifiedAt,
+    aadhaarLast4,
+    isLoading,
+    refetch: fetchKYC,
   };
-
-  const submitKYC = async (aadhaarNumber: string) => {
-    if (!address) return { success: false, error: "No wallet connected" };
-    setLoading(true);
-    try {
-      const res = await fetch("/api/kyc/submit", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ walletAddress: address, aadhaarNumber }),
-      });
-      const data = await res.json();
-      if (data.success) {
-        setKycVerified(true);
-        return { success: true };
-      }
-      return { success: false, error: data.error };
-    } catch (err) {
-      return { success: false, error: "Network error" };
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return { kycVerified, loading, checking, submitKYC, checkKYCStatus };
 }

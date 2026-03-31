@@ -13,21 +13,8 @@ import {
 import { useOracleAccessStore } from "@/store/useOracleAccessStore";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import { sha256, stringToBytes } from "viem";
-
-const ORACLE_HASH =
-  process.env.NEXT_PUBLIC_ORACLE_ACCESS_HASH ?? "";
 const MAX_ATTEMPTS = 3;
 const LOCKOUT_MS = 30_000; // 30 seconds
-
-async function hashInput(input: string): Promise<string> {
-  // Use viem's SHA-256 helper to avoid browser
-  // crypto.subtle availability issues on local HTTP.
-  const digest = sha256(stringToBytes(input));
-  return digest.startsWith("0x")
-    ? digest.slice(2)
-    : digest;
-}
 
 interface Props {
   isOpen: boolean;
@@ -94,17 +81,29 @@ export default function OracleAccessModal({
     setError("");
 
     try {
-      if (!ORACLE_HASH) {
-        setError("Oracle access hash is not configured.");
+      // Send plaintext passphrase over HTTPS — hashing happens server-side.
+      // ORACLE_ACCESS_HASH is a server-only env var and is never sent to the client.
+      const res = await fetch("/api/oracle/verify-access", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ passphrase: code.trim() }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setError(
+          (data as { error?: string }).error ??
+          "Verification failed. Please try again."
+        );
+        setShaking(true);
+        setTimeout(() => setShaking(false), 500);
+        setCode("");
         return;
       }
 
-      const hashed = await hashInput(code.trim());
-      const isValid =
-        hashed.toLowerCase() ===
-        ORACLE_HASH.trim().toLowerCase();
+      const { valid } = (await res.json()) as { valid: boolean };
 
-      if (isValid) {
+      if (valid) {
         setSuccess(true);
         setTimeout(() => {
           setOracleMode(true);
@@ -139,6 +138,8 @@ export default function OracleAccessModal({
         setTimeout(() => setShaking(false), 500);
         setCode("");
       }
+    } catch {
+      setError("Network error. Please try again.");
     } finally {
       setChecking(false);
     }

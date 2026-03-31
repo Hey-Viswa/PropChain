@@ -9,7 +9,7 @@ const rpcUrl =
     ? process.env.MUMBAI_RPC_URL
     : "http://127.0.0.1:8545";
 
-const publicClient = createPublicClient({
+export const publicClient = createPublicClient({
   chain,
   transport: http(rpcUrl),
 });

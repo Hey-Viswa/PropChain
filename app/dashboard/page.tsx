@@ -3,23 +3,21 @@
 import { useAuth } from "@/hooks/useAuth";
 import { useKYC } from "@/hooks/useKYC";
 import { useWallet } from "@/hooks/useWallet";
-import { Suspense, useState } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Download, Calendar, Wallet, ShieldAlert } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import { Download, Calendar, ShieldAlert, Wallet } from "lucide-react";
 import PortfolioChart from "./components/PortfolioChart";
 import AIIntelligenceCard from "./components/AIIntelligenceCard";
 import NetworkTelemetry from "./components/NetworkTelemetry";
 import AssetSpiderChart from "@/components/shared/AssetSpiderChart";
+import KYCModal from "@/components/shared/KYCModal";
 
 export default function DashboardPage() {
   const { isSignedIn, isLoaded, user } = useAuth();
   const { isConnected, isConnecting, connect } = useWallet();
-  const { kycVerified, loading, checking, submitKYC } = useKYC();
-  
-  const [aadhaar, setAadhaar] = useState("");
-  const [otp, setOtp] = useState("");
-  const [error, setError] = useState("");
+  const { kycVerified, isLoading: kycLoading } = useKYC();
+
+  const [showKYC, setShowKYC] = useState(false);
 
   if (!isLoaded) {
     return <div className="p-8 text-center text-on_surface_variant dark:text-[#9ba3b8]">Loading...</div>;
@@ -34,84 +32,55 @@ export default function DashboardPage() {
     );
   }
 
-  const showOverlay = (!isConnected) || (isConnected && !kycVerified && !checking);
-
   return (
     <div className="space-y-6 relative">
-      {showOverlay && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-surface/80 backdrop-blur-sm p-4">
+      {/* Wallet connection overlay */}
+      {!isConnected && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-on_surface/20 dark:bg-black/40 backdrop-blur-sm p-4">
           <div className="bg-surface_container_lowest dark:bg-[#131820] rounded-2xl p-8 shadow-[0_8px_24px_rgba(0,0,0,0.02)] border border-outline_variant/10 max-w-md w-full text-center">
-            {!isConnected ? (
-              <>
-                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary mx-auto mb-4">
-                  <Wallet className="w-8 h-8" />
-                </div>
-                <h2 className="text-2xl font-bold font-display text-on_surface dark:text-[#e8eaf0] mb-2">Connect Wallet</h2>
-                <p className="text-on_surface_variant dark:text-[#9ba3b8] mb-8 text-sm">
-                  Connect your wallet to manage properties and view your portfolio.
-                </p>
-                <Button onClick={connect} disabled={isConnecting} className="w-full bg-primary text-on_primary h-12 text-base shadow-floating">
-                  {isConnecting ? "Connecting..." : "Connect Wallet"}
-                </Button>
-              </>
-            ) : (
-              <>
-                <div className="w-16 h-16 rounded-full bg-warning/10 flex items-center justify-center text-warning mx-auto mb-4">
-                  <ShieldAlert className="w-8 h-8" />
-                </div>
-                <h2 className="text-2xl font-bold font-display text-on_surface dark:text-[#e8eaf0] mb-2">Pending KYC</h2>
-                <p className="text-on_surface_variant dark:text-[#9ba3b8] mb-6 text-sm">
-                  Please verify your identity using your Aadhaar number to unlock dashboard features.
-                </p>
-
-                <div className="space-y-4 text-left">
-                  <div>
-                    <label className="block text-sm font-medium text-on_surface dark:text-[#e8eaf0] mb-1">Aadhaar Number</label>
-                    <Input
-                      type="password"
-                      placeholder="12-digit Aadhaar Number"
-                      value={aadhaar}
-                      onChange={(e) => { setAadhaar(e.target.value); setError(""); }}
-                      maxLength={12}
-                      className="w-full"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-on_surface dark:text-[#e8eaf0] mb-1">Fake OTP</label>
-                    <Input
-                      type="text"
-                      placeholder="6-digit OTP"
-                      value={otp}
-                      onChange={(e) => { setOtp(e.target.value); setError(""); }}
-                      maxLength={6}
-                      className="w-full"
-                    />
-                  </div>
-
-                  {error && <p className="text-error text-sm font-medium tracking-tight bg-error/10 p-2 rounded">{error}</p>}
-
-                  <Button
-                    onClick={async () => {
-                      if (aadhaar.length !== 12) {
-                        setError("Aadhaar must be exactly 12 digits.");
-                        return;
-                      }
-                      const res = await submitKYC(aadhaar);
-                      if (!res.success) {
-                        setError(res.error || "Submission failed.");
-                      }
-                    }}
-                    disabled={loading || aadhaar.length !== 12 || otp.length < 6}
-                    className="w-full bg-primary text-on_primary h-12 text-base shadow-floating mt-4"
-                  >
-                    {loading ? "Verifying..." : "Submit KYC"}
-                  </Button>
-                </div>
-              </>
-            )}
+            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary mx-auto mb-4">
+              <Wallet className="w-8 h-8" />
+            </div>
+            <h2 className="text-2xl font-bold font-display text-on_surface dark:text-[#e8eaf0] mb-2">Connect Wallet</h2>
+            <p className="text-on_surface_variant dark:text-[#9ba3b8] mb-8 text-sm">
+              Connect your wallet to manage properties and view your portfolio.
+            </p>
+            <Button onClick={connect} disabled={isConnecting} className="w-full bg-primary text-on_primary h-12 text-base shadow-floating">
+              {isConnecting ? "Connecting..." : "Connect Wallet"}
+            </Button>
           </div>
         </div>
       )}
+
+      {/* KYC overlay */}
+      {isConnected && !kycVerified && !kycLoading && (
+        <div className="fixed inset-0 z-40 flex items-center justify-center p-4 bg-on_surface/20 dark:bg-black/40 backdrop-blur-sm">
+          <div className="bg-surface_container_lowest dark:bg-[#131820] rounded-2xl p-8 max-w-sm w-full text-center space-y-4 shadow-[0_24px_64px_rgba(0,26,67,0.16)]">
+            <div className="w-14 h-14 rounded-2xl bg-primary_fixed dark:bg-[#1a2d4d] flex items-center justify-center mx-auto">
+              <ShieldAlert className="w-7 h-7 text-primary dark:text-[#6b9eff]" />
+            </div>
+            <div>
+              <p className="text-title-md font-bold text-on_surface dark:text-[#e8eaf0]">
+                Complete KYC Verification
+              </p>
+              <p className="text-body-md text-on_surface_variant dark:text-[#9ba3b8] mt-1">
+                Verify your identity to register and transfer properties.
+              </p>
+            </div>
+            <button
+              onClick={() => setShowKYC(true)}
+              className="w-full bg-primary text-on_primary rounded-md py-2.5 text-body-md font-medium hover:opacity-90 transition">
+              Start KYC Verification
+            </button>
+          </div>
+        </div>
+      )}
+
+      <KYCModal
+        isOpen={showKYC}
+        onClose={() => setShowKYC(false)}
+        onVerified={() => setShowKYC(false)}
+      />
 
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
