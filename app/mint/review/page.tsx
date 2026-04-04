@@ -24,7 +24,7 @@ export default function MintStep4() {
   const { setStep, details, uploadedDocs, reset, aiResults } = useMintStore();
   const { toast } = useToast();
   const { address, isConnected, connect, isCorrectNetwork } = useWallet();
-  const { kycVerified, checking } = useKYC();
+  const { kycVerified, isLoading: checking } = useKYC();
   const { mintProperty, mintState, mintError, txHash } = usePropertyContract();
   const [submitting, setSubmitting] = useState(false);
   const [registeredRecordId, setRegisteredRecordId] = useState<string | null>(null);
@@ -92,7 +92,7 @@ export default function MintStep4() {
         ulpin: details.ulpin,
         docHash: `QmMockHash_${details.ulpin}`,
         physicalAddress: details.address,
-        areaSqFt: details.area,
+        areaSqFt: details.area!,  // Guaranteed by canSubmit check
       });
 
       reset();

@@ -12,7 +12,8 @@
  *   BLOCKCHAIN_RPC_URL   (or falls back to localhost:8545 in dev)
  *   NEXT_PUBLIC_CONTRACT_ADDRESS
  */
-import "dotenv/config";
+import dotenv from "dotenv";
+dotenv.config({ path: ".env.local" });
 import mongoose from "mongoose";
 import {
   createPublicClient,

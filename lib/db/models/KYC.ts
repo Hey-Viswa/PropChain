@@ -49,9 +49,15 @@ const KYCSchema = new Schema<IKYC>(
       default: "",
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    collection: "kyc_records",
+  }
 );
 
-export const KYC =
-  mongoose.models.KYC ||
-  mongoose.model<IKYC>("KYC", KYCSchema);
+export const KYCRecord =
+  (mongoose.models.KYCRecord as mongoose.Model<IKYC> | undefined) ||
+  mongoose.model<IKYC>("KYCRecord", KYCSchema);
+
+// Backward-compatible alias for existing imports.
+export const KYC = KYCRecord;

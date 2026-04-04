@@ -11,6 +11,7 @@ import AIIntelligenceCard from "./components/AIIntelligenceCard";
 import NetworkTelemetry from "./components/NetworkTelemetry";
 import AssetSpiderChart from "@/components/shared/AssetSpiderChart";
 import KYCModal from "@/components/shared/KYCModal";
+import OracleAccessCard from "@/components/shared/OracleAccessCard";
 
 export default function DashboardPage() {
   const { isSignedIn, isLoaded, user } = useAuth();
@@ -103,6 +104,9 @@ export default function DashboardPage() {
             </Button>
           </div>
         </div>
+
+        {/* Oracle Access Card - Only shows for users with Oracle role */}
+        <OracleAccessCard />
 
         {/* Top Stats Row */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 xl:gap-6">

@@ -3,10 +3,11 @@ import { auth } from "@clerk/nextjs/server";
 import { z } from "zod";
 import { connectDB } from "@/lib/db/mongoose";
 import { PropertyRecord } from "@/lib/db/models/Property";
-import { KYCRecord } from "@/lib/db/models/KYC";
+import { KYCService } from "@/lib/services/KYCService";
 import { User } from "@/lib/db/models/User";
 import { headers } from "next/headers";
 import { createPropertyWithLogCompensating } from "@/lib/db/transactions";
+import { rateLimit } from "@/lib/rateLimit";
 
 const registerPropertySchema = z.object({
   walletAddress: z.string().regex(/^0x[a-fA-F0-9]{40}$/, "Invalid wallet address"),
@@ -26,6 +27,14 @@ export async function POST(req: NextRequest) {
         { error: "Unauthorized — not signed in" },
         { status: 401 }
       );
+    }
+
+    const { allowed, resetIn } = rateLimit(userId, 10);
+    if (!allowed) {
+      return NextResponse.json({ error: 'Too many requests' }, {
+        status: 429,
+        headers: { 'Retry-After': resetIn.toString() }
+      });
     }
 
     const parsed = registerPropertySchema.safeParse(await req.json());
@@ -64,13 +73,10 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const kyc = await KYCRecord.findOne({
-      walletAddress: normalizedWallet,
-      kycVerified: true,
-    });
-    if (!kyc) {
+    const isVerified = await KYCService.isVerified(userId);
+    if (!isVerified) {
       return NextResponse.json(
-        { error: "KYC not verified" },
+        { error: "KYC required" },
         { status: 403 }
       );
     }

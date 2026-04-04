@@ -15,9 +15,7 @@
 
 import { PropertyRecord, IPropertyRecord } from "./models/Property";
 import { ActivityLog } from "./models/ActivityLog";
-// Assume Transfer is defined, defining a light interface here to avoid type errors
-// if there is a Transfer model. If not, mongoose model fallback is used.
-import mongoose from "mongoose";
+import { TransferModel } from "./models/Transfer";
 
 // ── Pattern B: Compensating Writes for Property Minting ──────────────────────
 
@@ -78,9 +76,6 @@ export async function completeTransferCompensating(
 
   try {
     // Secondary writes: Update Transfer status + ActivityLog
-    // Note: Assuming a Transfer model exists based on the instruction.
-    const TransferModel = mongoose.models.Transfer || mongoose.model("Transfer", new mongoose.Schema({}));
-    
     await TransferModel.findByIdAndUpdate(transferId, { status: "COMPLETED" });
     
     await ActivityLog.create({

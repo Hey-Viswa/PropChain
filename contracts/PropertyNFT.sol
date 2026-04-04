@@ -32,7 +32,7 @@ contract PropertyNFT is ERC721, AccessControl {
 
   /**
    * @notice Mint a new property NFT.
-   * @dev Callable only by accounts with DEFAULT_ADMIN_ROLE (backend server wallet).
+   * @dev Any KYC'd user can mint their own property.
    *      The token is minted to msg.sender.
    */
   function mintProperty(
@@ -40,7 +40,7 @@ contract PropertyNFT is ERC721, AccessControl {
     string memory ipfsHash,
     string memory propertyAddress,
     uint256 areaSqFt
-  ) external onlyRole(DEFAULT_ADMIN_ROLE) returns (uint256) {
+  ) external returns (uint256) {
     require(bytes(ulpin).length > 0, "ULPIN required");
     require(areaSqFt > 0, "Invalid area");
     require(ulpinToTokenId[ulpin] == 0, "ULPIN already registered");

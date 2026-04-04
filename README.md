@@ -182,6 +182,24 @@ feature/* → development → (PR review) → production
 
 ---
 
+## Known Security Limitations (PoC)
+
+### Oracle JWT Forgeability
+Oracle access tokens are JWTs signed by the PropChain API server using ORACLE_JWT_SECRET.
+If the server is compromised, an attacker with access to ORACLE_JWT_SECRET can forge
+valid Oracle tokens and submit on-chain approval transactions.
+
+Mitigation in production (not implemented in PoC):
+- Use a Hardware Security Module (HSM) for JWT signing
+- Or: require Oracle actions to be signed by the Oracle's wallet directly (SIWE pattern)
+- The on-chain hasRole() check on every approval is a partial mitigation — 
+  a forged JWT still cannot bypass on-chain authorization IF the attacker
+  doesn't also control the Oracle wallet
+
+This is acceptable for a PoC/portfolio project. Not acceptable for production.
+
+---
+
 ## 🔮 Roadmap
 
 - [ ] Wallet connection (MetaMask / WalletConnect)

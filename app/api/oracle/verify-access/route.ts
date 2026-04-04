@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
+import { rateLimit } from "@/lib/rateLimit";
 
 /**
  * POST /api/oracle/verify-access
@@ -13,6 +14,16 @@ import crypto from "crypto";
  *  - Only a boolean result is returned
  */
 export async function POST(req: NextRequest) {
+  const ip = req.headers.get('x-forwarded-for') ?? 'unknown';
+  const { allowed, resetIn } = rateLimit(ip, 5);
+
+  if (!allowed) {
+    return NextResponse.json({ error: 'Too many requests' }, {
+      status: 429,
+      headers: { 'Retry-After': resetIn.toString() }
+    });
+  }
+
   try {
     const body = await req.json();
     const passphrase: string | undefined = body?.passphrase;

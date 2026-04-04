@@ -4,6 +4,7 @@ import { connectDB } from "@/lib/db/mongoose";
 import { KYC } from "@/lib/db/models/KYC";
 import { logActivity } from "@/lib/logActivity";
 import { headers } from "next/headers";
+import { rateLimit } from "@/lib/rateLimit";
 
 // Simulate OTP verification
 // In Phase 1 any 6-digit OTP passes
@@ -19,6 +20,14 @@ export async function POST(req: NextRequest) {
         { error: "Not authenticated" },
         { status: 401 }
       );
+    }
+
+    const { allowed, resetIn } = rateLimit(userId, 3);
+    if (!allowed) {
+      return NextResponse.json({ error: 'Too many requests' }, {
+        status: 429,
+        headers: { 'Retry-After': resetIn.toString() }
+      });
     }
 
     const { aadhaarNumber, otp, walletAddress } =

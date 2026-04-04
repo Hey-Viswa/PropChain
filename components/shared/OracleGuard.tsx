@@ -22,12 +22,6 @@ export default function OracleGuard({
     setMounted(true);
   }, []);
 
-  // FAST PATH: if oracle mode is active via Zustand
-  // show content immediately - no DB check needed
-  if (isOracleMode) {
-    return <>{children}</>;
-  }
-
   // Wait for mount and DB check
   if (!mounted || isLoading) {
     return (
@@ -70,98 +64,58 @@ export default function OracleGuard({
     );
   }
 
-  // DB role check passed - show content
-  if (isOracle) {
+  // User has Oracle role from Clerk OR has entered passphrase (isOracleMode)
+  // Either condition grants access
+  if (isOracle || isOracleMode) {
     return <>{children}</>;
   }
 
-  // Access denied - show inline activation UI
-  if (isLoading) {
-    return (
-      <>
-        <div className="flex flex-col items-center
-                      justify-center min-h-[60vh]
-                      gap-6">
+  // Access denied - user doesn't have Oracle role
+  return (
+    <>
+      <div className="flex flex-col items-center
+                    justify-center min-h-[60vh]
+                    gap-6">
 
-          {/* Icon */}
-          <div className="w-16 h-16 rounded-2xl
-                        bg-primary_fixed
-                        dark:bg-[#1a2d4d]
-                        flex items-center
-                        justify-center">
-            <Shield className="w-8 h-8 text-primary
-                              dark:text-[#6b9eff]" />
-          </div>
-
-          {/* Text */}
-          <div className="text-center max-w-sm">
-            <h2 className="text-title-md font-bold
-                          text-on_surface
-                          dark:text-[#e8eaf0] mb-2">
-              Oracle Access Required
-            </h2>
-            <p className="text-body-md
-                         text-on_surface_variant
-                         dark:text-[#9ba3b8]">
-              This area is restricted to authorized
-              government officials only.
-              Enter your secure access code to continue.
-            </p>
-          </div>
-
-          {/* Primary CTA */}
-          <OracleAuthButton variant="page" />
-
-          {/* Secondary - go back */}
-          <button
-            onClick={() => router.push("/dashboard")}
-            className="text-body-md
-                     text-on_surface_variant
-                     dark:text-[#9ba3b8]
-                     hover:text-on_surface
-                     dark:hover:text-[#e8eaf0]
-                     transition-colors">
-            ← Back to Dashboard
-          </button>
-
-          {/* Keyboard hint */}
-          <p className="text-label-sm
-                       text-on_surface_variant/50
-                       dark:text-[#9ba3b8]/40">
-            Tip: Press{" "}
-            <kbd className="font-mono text-[10px]
-                           bg-surface_container
-                           dark:bg-[#1c2333]
-                           px-1.5 py-0.5 rounded
-                           text-on_surface_variant
-                           dark:text-[#9ba3b8]">
-              Ctrl
-            </kbd>
-            {" + "}
-            <kbd className="font-mono text-[10px]
-                           bg-surface_container
-                           dark:bg-[#1c2333]
-                           px-1.5 py-0.5 rounded
-                           text-on_surface_variant
-                           dark:text-[#9ba3b8]">
-              Shift
-            </kbd>
-            {" + "}
-            <kbd className="font-mono text-[10px]
-                           bg-surface_container
-                           dark:bg-[#1c2333]
-                           px-1.5 py-0.5 rounded
-                           text-on_surface_variant
-                           dark:text-[#9ba3b8]">
-              O
-            </kbd>
-            {" "}anywhere to open Oracle Access
-          </p>
-
+        {/* Icon */}
+        <div className="w-16 h-16 rounded-2xl
+                      bg-error_container
+                      dark:bg-[#2d0a0a]
+                      flex items-center
+                      justify-center">
+          <Shield className="w-8 h-8 text-error
+                            dark:text-[#f87171]" />
         </div>
-      </>
-    );
-  }
 
-  return <>{children}</>;
+        {/* Text */}
+        <div className="text-center max-w-sm">
+          <h2 className="text-title-md font-bold
+                        text-on_surface
+                        dark:text-[#e8eaf0] mb-2">
+            Access Denied
+          </h2>
+          <p className="text-body-md
+                       text-on_surface_variant
+                       dark:text-[#9ba3b8]">
+            You do not have Oracle privileges.
+            This area is restricted to authorized
+            government officials only.
+          </p>
+        </div>
+
+        {/* Secondary - go back */}
+        <button
+          onClick={() => router.push("/dashboard")}
+          className="text-body-md
+                   text-on_surface_variant
+                   dark:text-[#9ba3b8]
+                   hover:text-on_surface
+                   dark:hover:text-[#e8eaf0]
+                   transition-colors">
+          ← Back to Dashboard
+        </button>
+
+      </div>
+    </>
+  );
 }
