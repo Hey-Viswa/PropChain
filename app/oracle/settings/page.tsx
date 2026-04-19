@@ -117,11 +117,13 @@ function OracleSettingsContent() {
                 </div>
               </div>
 
-              <Button variant="outline" className="w-full h-10 text-[10px] font-bold uppercase tracking-widest flex items-center justify-center gap-2 rounded-xl border-stone dark:border-white/5" asChild>
-                <a href={`https://mumbai.polygonscan.com/address/${CONTRACT_ADDRESS}`} target="_blank" rel="noopener noreferrer">
-                  <Globe className="w-3.5 h-3.5" />
-                  Polygonscan
-                </a>
+              <Button
+                variant="outline"
+                className="w-full h-10 text-[10px] font-bold uppercase tracking-widest rounded-xl border-stone dark:border-white/5 inline-flex items-center justify-center gap-2 leading-none"
+                onClick={() => window.open(`https://mumbai.polygonscan.com/address/${CONTRACT_ADDRESS}`, "_blank", "noopener,noreferrer")}
+              >
+                <Globe className="w-3.5 h-3.5 shrink-0" />
+                <span className="leading-none">Polygonscan</span>
               </Button>
             </CardContent>
           </Card>

@@ -139,21 +139,6 @@ export default function Sidebar() {
               </div>
             ))}
 
-            {/* Settings */}
-            <Link
-              href={settingsItem.href}
-              prefetch={true}
-              className={cn(
-                "flex items-center gap-3 px-3 py-2.5 rounded-xl w-full text-[12px] font-bold uppercase tracking-widest transition-all mt-4",
-                isActive(settingsItem.href)
-                  ? "bg-white dark:bg-card text-primary dark:text-[#E89874] shadow-sm border border-stone/30 dark:border-white/5"
-                  : "text-on_surface_variant/60 dark:text-muted-foreground/60 hover:bg-white/50 dark:hover:bg-card/50"
-              )}
-            >
-              <settingsItem.icon size={16} className="shrink-0" />
-              <span>{settingsItem.label}</span>
-            </Link>
-
             <div className="flex-1" />
 
             {/* Switch to Oracle (real role, not yet in oracle mode) */}
@@ -171,48 +156,65 @@ export default function Sidebar() {
       </nav>
 
       {/* ── Footer area ── */}
-      <div className="p-3 space-y-2 mt-auto border-t border-stone/30 dark:border-white/5 bg-sand/50 dark:bg-card/30">
+      <div className="p-3 mt-auto border-t border-stone/30 dark:border-white/5 bg-sand/50 dark:bg-card/30">
 
-        {/* Oracle active pill + exit */}
-        {isOracleMode && (
-          <button
-            onClick={reset}
-            className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl bg-primary text-on_primary shadow-lg transition-all active:scale-[0.98] group"
+        <div className="space-y-2 p-2 rounded-2xl bg-white/35 dark:bg-white/[0.04] border border-stone/20 dark:border-white/5">
+          {/* Settings */}
+          <Link
+            href={settingsItem.href}
+            prefetch={true}
+            className={cn(
+              "flex items-center gap-3 px-3 py-2.5 rounded-xl w-full text-[12px] font-bold uppercase tracking-widest transition-all",
+              isActive(settingsItem.href)
+                ? "bg-white dark:bg-card text-primary dark:text-[#E89874] shadow-sm border border-stone/30 dark:border-white/5"
+                : "text-on_surface_variant/60 dark:text-muted-foreground/60 hover:bg-white/60 dark:hover:bg-card/60"
+            )}
           >
-            <div className="flex items-center gap-2">
-              <ShieldCheck size={14} className="animate-pulse" />
-              <span className="text-[10px] font-black uppercase tracking-widest text-white">Oracle Active</span>
-            </div>
-            <LogOut size={12} className="opacity-60 group-hover:translate-x-0.5 transition-transform" />
-          </button>
-        )}
+            <settingsItem.icon size={16} className="shrink-0" />
+            <span>{settingsItem.label}</span>
+          </Link>
 
-        {/* Identity & Theme controls */}
-        <div className="flex items-center justify-between gap-2 p-2 bg-white/40 dark:bg-white/5 rounded-2xl border border-stone/20 dark:border-white/5">
-          <div className="flex items-center gap-2 min-w-0">
-             <div className="shrink-0 scale-90 origin-left">
-               <UserButton />
-             </div>
-             <div className="min-w-0 overflow-hidden">
-               <p className="text-[10px] font-black uppercase text-on_surface dark:text-[#e8eaf0] truncate">
-                 {user?.firstName || "Identity"}
-               </p>
-               <div className="flex items-center gap-1">
+          {/* Oracle active pill + exit */}
+          {isOracleMode && (
+            <button
+              onClick={reset}
+              className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl bg-primary text-on_primary shadow-lg transition-all active:scale-[0.98] group"
+            >
+              <div className="flex items-center gap-2">
+                <ShieldCheck size={14} className="animate-pulse" />
+                <span className="text-[10px] font-black uppercase tracking-widest text-white">Oracle Active</span>
+              </div>
+              <LogOut size={12} className="opacity-60 group-hover:translate-x-0.5 transition-transform" />
+            </button>
+          )}
+
+          {/* Identity & Theme controls */}
+          <div className="flex items-center justify-between gap-2 p-2 bg-white/45 dark:bg-white/5 rounded-2xl border border-stone/20 dark:border-white/5">
+            <div className="flex items-center gap-2 min-w-0">
+              <div className="shrink-0 scale-90 origin-left">
+                <UserButton />
+              </div>
+              <div className="min-w-0 overflow-hidden">
+                <p className="text-[10px] font-black uppercase text-on_surface dark:text-[#e8eaf0] truncate">
+                  {user?.firstName || "Identity"}
+                </p>
+                <div className="flex items-center gap-1">
                   <div className={cn("w-1 h-1 rounded-full", isConnected ? "bg-success" : "bg-error")} />
                   <p className="text-[9px] font-mono text-on_surface_variant/60 dark:text-muted-foreground/60 truncate">
                     {isConnected ? truncatedAddress : "Offline"}
                   </p>
-               </div>
-             </div>
-          </div>
-          <div className="shrink-0 h-8 w-8 flex items-center justify-center border-l border-stone/20 dark:border-white/5 pl-2">
-            <ThemeToggle />
+                </div>
+              </div>
+            </div>
+            <div className="shrink-0 h-8 w-8 flex items-center justify-center border-l border-stone/20 dark:border-white/5 pl-2">
+              <ThemeToggle />
+            </div>
           </div>
         </div>
 
         {/* Dev oracle toggle */}
         {isDev && !isOracleMode && (
-          <div className="flex items-center justify-between px-3 py-2 rounded-xl bg-stone/5 dark:bg-black/20 border border-dashed border-stone/50 dark:border-white/5 opacity-60 hover:opacity-100 transition-opacity">
+          <div className="mt-2 flex items-center justify-between px-3 py-2 rounded-xl bg-stone/5 dark:bg-black/20 border border-dashed border-stone/50 dark:border-white/5 opacity-60 hover:opacity-100 transition-opacity">
             <span className="text-[9px] font-black text-on_surface_variant/60 uppercase tracking-widest">Dev Mode</span>
             <Switch
               checked={isOracleMode}

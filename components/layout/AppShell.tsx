@@ -26,7 +26,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         <Navbar />
         <NetworkWarning />
         <main className="flex-1 overflow-y-auto px-4 py-4 sm:px-6 sm:py-6 md:px-8 md:py-8 pb-[calc(80px+env(safe-area-inset-bottom,0))] md:pb-8">
-          <div className="w-full max-w-[1200px] mx-auto animate-fade-up">
+          <div className="w-full max-w-[1200px] mx-auto animate-fade-in">
             {children}
           </div>
         </main>

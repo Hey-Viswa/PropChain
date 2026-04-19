@@ -64,7 +64,7 @@ function ProfileOrLogin() {
     </div>
   ) : (
     <SignInButton mode="modal">
-      <Button variant="ghost" className="text-on_surface_variant hover:text-primary rounded-xl h-10 px-4 text-[10px] font-bold tracking-widest uppercase cursor-pointer">
+      <Button variant="ghost" className="text-muted-foreground hover:text-primary rounded-xl h-10 px-4 text-[10px] font-bold tracking-widest uppercase cursor-pointer">
         Log In
       </Button>
     </SignInButton>
@@ -185,14 +185,21 @@ export default function LandingPage() {
       <main className="flex-1">
 
         {/* ── HERO ────────────────────────────────────────────────── */}
-        <section className="relative bg-[#12100E] dark:bg-[#080706] overflow-hidden section-padding">
+        <section className="relative bg-[#12100E] dark:bg-[#090806] overflow-hidden section-padding">
           {/* Architectural dot-grid background */}
           <div
-            className="absolute inset-0 opacity-[0.045]"
+            className="absolute inset-0 opacity-[0.18] dark:opacity-[0.14]"
             style={{
               backgroundImage:
-                "radial-gradient(circle, #FAF9F6 1px, transparent 1px)",
-              backgroundSize: "40px 40px",
+                "radial-gradient(circle at 1px 1px, rgba(250, 249, 246, 0.42) 1px, transparent 0)",
+              backgroundSize: "28px 28px",
+            }}
+          />
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage:
+                "radial-gradient(circle at 20% 18%, rgba(217, 119, 87, 0.18), transparent 42%), radial-gradient(circle at 80% 0%, rgba(255, 221, 180, 0.1), transparent 36%)",
             }}
           />
 
@@ -221,7 +228,7 @@ export default function LandingPage() {
 
             {/* Sub-headline + CTAs */}
             <div className="flex flex-col lg:flex-row gap-12 lg:gap-24 items-center animate-fade-up" style={{ animationDelay: '0.1s' }}>
-              <p className="text-[#9B9690] text-lg lg:text-xl leading-relaxed max-w-[480px] text-balance">
+              <p className="text-[#b8b1a9] dark:text-[#9B9690] text-lg lg:text-xl leading-relaxed max-w-[480px] text-balance">
                 PropChain transforms physical property into liquid digital assets — unified legal compliance, institutional security, and AI verification on a single protocol.
               </p>
               <div className="flex flex-col sm:flex-row items-center gap-8 flex-shrink-0">
@@ -232,7 +239,7 @@ export default function LandingPage() {
                 />
                 <Link
                   href="/network"
-                  className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-[#9B9690] hover:text-white transition-colors duration-150 cursor-pointer group whitespace-nowrap"
+                  className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-[#b8b1a9] dark:text-[#9B9690] hover:text-white transition-colors duration-150 cursor-pointer group whitespace-nowrap"
                 >
                   <span>View Network Data</span>
                   <ArrowUpRight
@@ -244,16 +251,16 @@ export default function LandingPage() {
             </div>
 
             {/* Stats bar */}
-            <div className="mt-24 pt-12 border-t border-[#FAF9F6]/10 grid grid-cols-2 md:grid-cols-4 gap-y-8 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+            <div className="mt-24 pt-12 border-t border-[#FAF9F6]/15 dark:border-[#FAF9F6]/10 grid grid-cols-2 md:grid-cols-4 gap-y-8 animate-fade-in" style={{ animationDelay: '0.2s' }}>
               {STATS.map(({ value, label }, i) => (
                 <div
                   key={label}
-                  className="px-8 first:pl-0 border-l border-[#FAF9F6]/10 first:border-l-0"
+                  className="px-8 first:pl-0 border-l border-[#FAF9F6]/15 dark:border-[#FAF9F6]/10 first:border-l-0"
                 >
                   <p className="font-display text-4xl lg:text-5xl text-[#F5F3F0] font-bold tracking-tight mb-2">
                     {value}
                   </p>
-                  <p className="text-[10px] font-bold tracking-[0.2em] uppercase text-[#6B6560]">
+                  <p className="text-[10px] font-bold tracking-[0.2em] uppercase text-[#8c847b] dark:text-[#6B6560]">
                     {label}
                   </p>
                 </div>
@@ -263,14 +270,14 @@ export default function LandingPage() {
         </section>
 
         {/* ── TRUST BAR ───────────────────────────────────────────── */}
-        <section className="bg-sand/30 border-y border-stone/50 py-6">
+        <section className="bg-muted/30 border-y border-border py-6">
           <div className="container mx-auto px-fluid-gap">
             <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-4">
-              <span className="text-[9px] font-black tracking-[0.3em] uppercase text-on_surface_variant flex-shrink-0 pr-4 border-r border-stone/50">
+              <span className="text-[9px] font-black tracking-[0.3em] uppercase text-muted-foreground flex-shrink-0 pr-4 border-r border-border">
                 Institutional Partners
               </span>
               {["Chainlink", "Ethereum L2", "Fireblocks", "Circle", "Coinbase Prime"].map((name) => (
-                <span key={name} className="text-[11px] font-bold text-on_surface_variant tracking-[0.15em] uppercase hover:text-primary transition-colors cursor-default">
+                <span key={name} className="text-[11px] font-bold text-muted-foreground tracking-[0.15em] uppercase hover:text-primary transition-colors cursor-default">
                   {name}
                 </span>
               ))}
@@ -279,14 +286,14 @@ export default function LandingPage() {
         </section>
 
         {/* ── FEATURES ────────────────────────────────────────────── */}
-        <section className="bg-cream section-padding">
+        <section className="bg-background section-padding">
           <div className="container mx-auto px-fluid-gap">
             {/* Section header */}
-            <div className="flex flex-col md:flex-row md:items-start justify-between mb-24 gap-12 pb-16 border-b border-stone/50">
-              <h2 className="text-fluid-h1 text-on_surface max-w-2xl text-balance font-bold leading-[1.1]">
+            <div className="flex flex-col md:flex-row md:items-start justify-between mb-24 gap-12 pb-16 border-b border-border">
+              <h2 className="text-fluid-h1 text-foreground max-w-2xl text-balance font-bold leading-[1.1]">
                 The infrastructure layer for property finance.
               </h2>
-              <p className="text-on_surface_variant text-lg max-w-[380px] leading-relaxed font-medium md:pt-2">
+              <p className="text-muted-foreground text-lg max-w-[380px] leading-relaxed font-medium md:pt-2">
                 Every component engineered for institutional-grade real estate tokenization at global scale.
               </p>
             </div>
@@ -296,21 +303,21 @@ export default function LandingPage() {
               {FEATURES.map((f, i) => (
                 <div
                   key={f.num}
-                  className="group flex flex-col md:flex-row md:items-start gap-8 md:gap-16 py-12 border-b border-stone/50 last:border-b-0 hover:bg-sand/30 transition-all duration-300 px-6 -mx-6 rounded-2xl cursor-default"
+                  className="group flex flex-col md:flex-row md:items-start gap-8 md:gap-16 py-12 border-b border-border last:border-b-0 hover:bg-muted/30 transition-all duration-300 px-6 -mx-6 rounded-2xl cursor-default"
                 >
                   <span className="font-display text-[5rem] leading-none font-black text-primary/10 group-hover:text-primary/30 transition-colors duration-300 w-24 flex-shrink-0 select-none">
                     {f.num}
                   </span>
                   <div className="flex-1 min-w-0 md:pt-4">
-                    <h3 className="text-fluid-h2 text-on_surface mb-4">
+                    <h3 className="text-fluid-h2 text-foreground mb-4">
                       {f.title}
                     </h3>
-                    <p className="text-on_surface_variant text-base leading-relaxed max-w-xl font-medium">
+                    <p className="text-muted-foreground text-base leading-relaxed max-w-xl font-medium">
                       {f.body}
                     </p>
                   </div>
                   <div className="flex-shrink-0 md:pt-6">
-                    <span className="inline-block border-2 border-stone text-on_surface_variant text-[10px] tracking-[0.2em] uppercase font-bold px-4 py-2 rounded-xl group-hover:border-primary group-hover:text-primary transition-colors">
+                    <span className="inline-block border-2 border-border text-muted-foreground text-[10px] tracking-[0.2em] uppercase font-bold px-4 py-2 rounded-xl group-hover:border-primary group-hover:text-primary transition-colors">
                       {f.tag}
                     </span>
                   </div>

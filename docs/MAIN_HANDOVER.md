@@ -32,6 +32,16 @@ For any task that changes workspace files, the agent must:
 3. Push the commit to the current remote branch before final response.
 4. If commit or push is blocked (auth, branch protection, remote missing, conflict), record the blocker and exact next command in the Session Log and mention it in the final response.
 
+## Master Changelog + Push Rule (Strict Mandatory)
+
+For any task that changes workspace files, the agent must:
+
+1. Update `docs/MASTER_CHANGELOG.md` before final completion.
+2. Add UTC timestamp, concise summary, files changed, verification status, and commit hash (or push blocker).
+3. Stage implementation changes together with `docs/MASTER_CHANGELOG.md` and `docs/MAIN_HANDOVER.md`.
+4. Commit and push to the active remote branch before final response.
+5. If push is blocked, record blocker details and exact recovery command in both `docs/MASTER_CHANGELOG.md` and this Session Log.
+
 ## Phase Documentation Rule (Mandatory)
 
 For every phase and every iteration, agents must keep implementation documentation current.
@@ -58,6 +68,51 @@ When Claude Code Sonnet 4.6 is assigned an audit/review task, the review must be
 5. Do not provide a clean approval without explicit evidence that no material findings remain.
 
 ## Session Log
+
+### 2026-04-19T17:31:30Z | Master changelog rule enforced + pending UI fixes packaged
+- Request summary: User asked to push latest fixes to GitHub and enforce a strict always-update-changelog plus push rule.
+- Work completed:
+  - Added a strict mandatory rule requiring changelog updates and GitHub push in repository instruction files.
+  - Added a strict mandatory master-changelog policy section in this handover file.
+  - Completed pending UI fixes in this batch:
+    - unified bottom controls grouping in sidebar footer,
+    - fixed boxed/grey modal backdrop by removing transform-based shell wrapper animation,
+    - normalized user-monitoring ALL/FLAGGED/ACTIVE filter button sizing.
+- Files changed:
+  - AGENTS.md
+  - docs/MAIN_HANDOVER.md
+  - app/oracle/settings/page.tsx
+  - app/oracle/users/page.tsx
+  - app/page.tsx
+  - components/layout/AppShell.tsx
+  - components/layout/Sidebar.tsx
+  - docs/MASTER_CHANGELOG.md
+- Verification commands and results:
+  - `get_errors` on edited UI files: no errors found.
+  - `npm run lint`: pass with warnings only; no lint errors.
+- Open issues/blockers:
+  - Existing unrelated lint warnings remain in `app/dev/admin/page.tsx`, `app/oracle/queue/page.tsx`, `app/oracle/users/[clerkId]/page.tsx`, and image optimization warning in `app/settings/page.tsx`.
+- Next steps:
+  - Commit and push this complete change set to `origin/development`.
+  - Use `docs/MASTER_CHANGELOG.md` for every future workspace-changing task.
+
+### 2026-04-19T17:25:56Z | Settings-bottom restoration + PolygonScan alignment fix
+- Request summary: User reported that user/oracle settings should stay at the bottom and the PolygonScan icon/text were visually misaligned.
+- Work completed:
+  - Restored settings link placement to the sidebar footer zone so both `Settings` and `Oracle Settings` remain at the bottom section.
+  - Fixed PolygonScan action alignment by using a centered inline-flex anchor layout with explicit line-height and icon shrink handling.
+- Files changed:
+  - components/layout/Sidebar.tsx
+  - app/oracle/settings/page.tsx
+  - docs/MAIN_HANDOVER.md
+- Verification commands and results:
+  - `get_errors` on edited files: no errors found.
+  - `npm run lint`: pass with warnings only; no lint errors.
+- Open issues/blockers:
+  - Existing unrelated lint warnings remain in `app/dev/admin/page.tsx`, `app/oracle/queue/page.tsx`, `app/oracle/users/[clerkId]/page.tsx`, and image optimization warning in `app/settings/page.tsx`.
+- Next steps:
+  - Visual QA on sidebar footer settings placement in both user and oracle modes.
+  - Visual QA of PolygonScan button alignment on `/oracle/settings` in light and dark themes.
 
 ### 2026-04-19T17:20:21Z | e041 layout alignment + blue tint cleanup
 - Request summary: User requested alignment with the `e041e46` layout baseline while keeping current features, and asked to remove remaining blue-tinted UI artifacts.

@@ -142,8 +142,8 @@ function OracleUsersContent() {
               variant={filter === f.key ? "default" : "outline"}
               onClick={() => setFilter(f.key)}
               className={cn(
-                "h-9 text-xs px-3",
-                filter !== f.key && "border-stone dark:border-white/5 text-[#8a8480] dark:text-[#7a7470]"
+                "h-9 min-w-[96px] px-4 rounded-lg justify-center whitespace-nowrap",
+                filter !== f.key && "border-stone/50 dark:border-white/10 text-[#8a8480] dark:text-[#7a7470]"
               )}
             >
               {f.label}
