@@ -135,22 +135,7 @@ export default function Sidebar() {
               </div>
             ))}
 
-            {/* Settings */}
-            <div className="mt-4">
-              <Link
-                href={settingsItem.href}
-                prefetch={true}
-                className={cn(
-                  "flex items-center gap-[9px] px-[10px] py-2 rounded-[7px] w-full text-[13px] transition-all duration-150",
-                  isActive(settingsItem.href)
-                    ? "bg-white dark:bg-[#211f1c] text-primary dark:text-[#E89874] font-semibold shadow-sm"
-                    : "text-[#8a8480] dark:text-[#7a7470] hover:bg-white/70 dark:hover:bg-[#211f1c] hover:text-on_surface dark:hover:text-[#e8e6e2]"
-                )}
-              >
-                <settingsItem.icon size={15} className="shrink-0" />
-                <span>{settingsItem.label}</span>
-              </Link>
-            </div>
+            <div className="flex-1" />
 
             {/* Switch to Oracle (real role, not yet in oracle mode) */}
             {hasOracleRole && !isOracleMode && (
@@ -168,6 +153,21 @@ export default function Sidebar() {
 
       {/* ── Footer area ── */}
       <div className="px-2 pb-2 pt-1 space-y-1.5">
+
+        {/* Settings at the bottom */}
+        <Link
+          href={settingsItem.href}
+          prefetch={true}
+          className={cn(
+            "flex items-center gap-[9px] px-[10px] py-2 rounded-[7px] w-full text-[13px] transition-all duration-150",
+            isActive(settingsItem.href)
+              ? "bg-white dark:bg-[#211f1c] text-primary dark:text-[#E89874] font-semibold shadow-sm"
+              : "text-[#8a8480] dark:text-[#7a7470] hover:bg-white/70 dark:hover:bg-[#211f1c] hover:text-on_surface dark:hover:text-[#e8e6e2]"
+          )}
+        >
+          <settingsItem.icon size={15} className="shrink-0" />
+          <span>{settingsItem.label}</span>
+        </Link>
 
         {/* Oracle active pill + exit */}
         {isOracleMode && (

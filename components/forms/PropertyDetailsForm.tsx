@@ -1,6 +1,6 @@
 "use client";
 
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { cn } from "@/lib/utils";
 import {
@@ -10,6 +10,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from "@/components/ui/select";
 
 const labelClass =
   "block text-label-sm text-on_surface_variant dark:text-[#9ba3b8] mb-1.5 font-medium";
@@ -27,6 +34,7 @@ export default function PropertyDetailsForm({
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors, isValid },
   } = useForm<PropertyDetailsFormValues>({
     resolver: zodResolver(propertyDetailsSchema),
@@ -117,20 +125,22 @@ export default function PropertyDetailsForm({
           <label className={labelClass}>
             Property Type <span className="text-error">*</span>
           </label>
-          <select
-            {...register("type")}
-            className={cn(
-              "flex w-full bg-sand dark:bg-[#211f1c] dark:text-[#e8eaf0] dark:border-[#2a2520] dark:focus:border-[#E89874] rounded-md border-0 border-b border-outline_variant/20",
-              "focus:border-primary focus-visible:outline-none",
-              "px-4 py-3 text-body-md text-on_surface dark:text-[#e8eaf0] cursor-pointer transition-colors",
-              errors.type && "border-error"
+          <Controller
+            name="type"
+            control={control}
+            render={({ field }) => (
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <SelectTrigger className={cn("h-11", errors.type && "border-error")}>
+                  <SelectValue placeholder="Select type…" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Residential">Residential</SelectItem>
+                  <SelectItem value="Commercial">Commercial</SelectItem>
+                  <SelectItem value="Agricultural">Agricultural</SelectItem>
+                </SelectContent>
+              </Select>
             )}
-          >
-            <option value="">Select type…</option>
-            <option value="Residential">Residential</option>
-            <option value="Commercial">Commercial</option>
-            <option value="Agricultural">Agricultural</option>
-          </select>
+          />
           {errors.type && (
             <span className={errorClass}>{errors.type.message}</span>
           )}
@@ -150,7 +160,7 @@ export default function PropertyDetailsForm({
 
       {/* Submit */}
       <div className="flex justify-end pt-2 xl:pt-4">
-        <Button type="submit" disabled={!isValid}>
+        <Button type="submit" disabled={!isValid} size="lg" className="px-8 font-bold uppercase tracking-wider text-xs">
           Next: Upload Documents →
         </Button>
       </div>

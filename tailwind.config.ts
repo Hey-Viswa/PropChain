@@ -86,58 +86,66 @@ const config = {
       },
 
       fontFamily: {
-        display: ["var(--font-dm-serif)", "Georgia", "serif"],
-        body:    ["var(--font-dm-sans)",  "system-ui", "sans-serif"],
+        display: ["var(--font-fraunces)", "serif"],
+        body:    ["var(--font-manrope)",  "sans-serif"],
       },
 
+      // ── Systemic Fluid Scaling (Auto-Scaling) ──────────────
+      // clamp(min, preferred, max)
+      // preferred is calculated to scale linearly between 375px and 1440px
       fontSize: {
-        display: [
-          "clamp(2.5rem, 4vw, 3.5rem)",
-          { lineHeight: "1.06", letterSpacing: "-0.025em", fontWeight: "400" },
+        "fluid-display": [
+          "clamp(3.5rem, 2.3rem + 7.5vw, 9rem)",
+          { lineHeight: "0.92", letterSpacing: "-0.04em", fontWeight: "800" },
         ],
-        "headline-lg": [
-          "clamp(1.5rem, 2.5vw, 2rem)",
-          { lineHeight: "1.15", letterSpacing: "-0.02em", fontWeight: "400" },
+        "fluid-h1": [
+          "clamp(2.5rem, 1.8rem + 3vw, 4.5rem)",
+          { lineHeight: "1.1", letterSpacing: "-0.03em", fontWeight: "700" },
         ],
-        "headline-md": [
-          "clamp(1.25rem, 2vw, 1.5rem)",
-          { lineHeight: "1.25", letterSpacing: "-0.015em", fontWeight: "400" },
+        "fluid-h2": [
+          "clamp(2rem, 1.5rem + 2.5vw, 3.5rem)",
+          { lineHeight: "1.2", letterSpacing: "-0.025em", fontWeight: "600" },
         ],
-        "title-md": [
-          "clamp(1rem, 1.5vw, 1.125rem)",
-          { lineHeight: "1.4", fontWeight: "600" },
-        ],
-        "body-md": [
-          "clamp(0.8rem, 1.2vw, 0.875rem)",
+        "fluid-body": [
+          "clamp(0.875rem, 0.8rem + 0.5vw, 1.125rem)",
           { lineHeight: "1.6", fontWeight: "400" },
         ],
-        "label-sm": [
-          "clamp(0.7rem, 1vw, 0.75rem)",
-          { lineHeight: "1.4", letterSpacing: "0.04em", fontWeight: "500" },
+        "fluid-label": [
+          "clamp(0.7rem, 0.65rem + 0.25vw, 0.8rem)",
+          { lineHeight: "1.4", letterSpacing: "0.08em", fontWeight: "600" },
         ],
+      },
+
+      spacing: {
+        // Fluid spacing tokens for consistent "breathing" space
+        "fluid-gap": "clamp(1rem, 0.5rem + 2vw, 3rem)",
+        "fluid-padding": "clamp(1.25rem, 1rem + 3vw, 5rem)",
+        "fluid-section": "clamp(4rem, 2rem + 8vw, 10rem)",
       },
 
       boxShadow: {
-        floating: "0 8px 24px rgba(26,25,24,0.08)",
-        card:     "0 2px 8px rgba(26,25,24,0.05)",
-        sm:       "0 1px 3px rgba(26,25,24,0.06)",
+        // Premium layered shadows
+        floating: "0 2px 4px rgba(26,25,24,0.02), 0 12px 32px rgba(26,25,24,0.08), 0 24px 64px rgba(26,25,24,0.04)",
+        card:     "0 1px 3px rgba(26,25,24,0.04), 0 4px 12px rgba(26,25,24,0.03)",
+        sm:       "0 1px 2px rgba(26,25,24,0.05)",
       },
 
       borderRadius: {
         lg: "0.625rem",
-        md: "0.375rem",
-        sm: "0.25rem",
+        xl: "1rem",
+        "2xl": "1.5rem",
+        "3xl": "2.5rem",
       },
 
       animation: {
-        "fade-up": "fadeUp 220ms ease-out forwards",
-        "fade-in": "fadeIn 180ms ease-out forwards",
-        shimmer:   "shimmer 1.5s infinite linear",
+        "fade-up": "fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards",
+        "fade-in": "fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards",
+        shimmer:   "shimmer 2s infinite linear",
       },
 
       keyframes: {
         fadeUp: {
-          "0%":   { opacity: "0", transform: "translateY(10px)" },
+          "0%":   { opacity: "0", transform: "translateY(20px)" },
           "100%": { opacity: "1", transform: "translateY(0)" },
         },
         fadeIn: {

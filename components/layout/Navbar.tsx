@@ -63,16 +63,16 @@ export default function Navbar() {
     <>
       <header
         className={cn(
-          "sticky top-0 z-40 h-[52px] flex items-center justify-between",
-          "px-4 sm:px-6 md:px-7",
-          "bg-cream/90 dark:bg-[#0f0e0d]/90 backdrop-blur-[10px]",
-          "border-b border-stone dark:border-[#2a2520]"
+          "sticky top-0 z-40 h-[60px] flex items-center justify-between",
+          "px-4 sm:px-6 md:px-8",
+          "bg-cream/90 dark:bg-[#0f0e0d]/90 backdrop-blur-[12px]",
+          "border-b border-stone/50 dark:border-[#2a2520]"
         )}
       >
         {/* Mobile logo (visible only when sidebar is hidden) */}
-        <div className="md:hidden flex items-center gap-2 mr-3 flex-shrink-0">
-          <PropChainMark size={22} />
-          <span className="font-display text-[14px] text-on_surface dark:text-[#e8e6e2] tracking-tight">
+        <div className="md:hidden flex items-center gap-2 flex-shrink-0">
+          <PropChainMark size={24} />
+          <span className="font-display text-[15px] text-on_surface dark:text-[#e8e6e2] tracking-tight font-bold">
             Prop<span className="text-primary">Chain</span>
           </span>
         </div>

@@ -18,8 +18,8 @@ export default function ThemeToggle() {
       aria-label="Toggle theme">
       <div className="transition-transform duration-300 ease-out rotate-0 dark:-rotate-12">
         {isDark
-          ? <Sun className="w-4 h-4 transition-all duration-300" />
-          : <Moon className="w-4 h-4 transition-all duration-300" />
+          ? <Sun className="w-5 h-5 transition-all duration-300" />
+          : <Moon className="w-5 h-5 transition-all duration-300" />
         }
       </div>
     </button>

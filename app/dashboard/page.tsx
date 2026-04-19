@@ -3,40 +3,54 @@
 import { useAuth } from "@/hooks/useAuth";
 import { useKYC } from "@/hooks/useKYC";
 import { useWallet } from "@/hooks/useWallet";
+import { useOracleAccessStore } from "@/store/useOracleAccessStore";
 import { Suspense, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Download, Calendar, ShieldAlert, Wallet, X, ArrowRight, TrendingUp, TrendingDown } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
+import { 
+  Download, Calendar, ShieldAlert, Wallet, X, ArrowRight, 
+  TrendingUp, TrendingDown, Clock, ShieldCheck, 
+  Activity, BarChart3, Database, Globe
+} from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import PortfolioChart from "./components/PortfolioChart";
 import VerificationSummaryCard from "./components/AIIntelligenceCard";
 import NetworkTelemetry from "./components/NetworkTelemetry";
 import AssetSpiderChart from "@/components/shared/AssetSpiderChart";
 import KYCModal from "@/components/shared/KYCModal";
 import OracleAccessCard from "@/components/shared/OracleAccessCard";
+import { cn } from "@/lib/utils";
 
 export default function DashboardPage() {
   const { isSignedIn, isLoaded, user } = useAuth();
-  const { isConnected, isConnecting, connect } = useWallet();
+  const { isConnected, isConnecting, connect, chain } = useWallet();
   const { kycVerified, isLoading: kycLoading } = useKYC();
+  const { isOracleMode } = useOracleAccessStore();
 
   const [showKYC, setShowKYC] = useState(false);
   const [kycDismissed, setKycDismissed] = useState(false);
 
   if (!isLoaded) {
     return (
-      <div className="p-8 space-y-4 animate-pulse">
-        {[80, 60, 40].map((w) => (
-          <div key={w} className={`h-4 bg-stone dark:bg-[#2a2520] rounded w-${w}`} />
-        ))}
+      <div className="max-w-[1200px] mx-auto space-y-6 animate-pulse">
+        <div className="h-10 bg-stone dark:bg-[#2a2520] rounded-2xl w-1/3" />
+        <div className="grid grid-cols-4 gap-4">
+          {[1,2,3,4].map(i => <div key={i} className="h-32 bg-stone dark:bg-[#2a2520] rounded-2xl" />)}
+        </div>
+        <div className="h-64 bg-stone dark:bg-[#2a2520] rounded-2xl" />
       </div>
     );
   }
 
   if (!isSignedIn) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-3">
-        <h2 className="text-xl font-bold font-display text-on_surface dark:text-[#e8eaf0]">Please sign in</h2>
-        <p className="text-on_surface_variant dark:text-[#9ba3b8]">You must be signed in to view this page.</p>
+      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 text-center px-6">
+        <div className="w-16 h-16 rounded-3xl bg-primary/10 flex items-center justify-center mb-2">
+          <ShieldCheck className="w-8 h-8 text-primary" />
+        </div>
+        <h2 className="text-2xl font-bold font-display text-on_surface dark:text-[#e8eaf0]">Secure Access Required</h2>
+        <p className="text-on_surface_variant dark:text-[#9ba3b8] max-w-sm">
+          Please sign in to your PropChain account to access your institutional dashboard and asset registry.
+        </p>
       </div>
     );
   }
@@ -44,195 +58,247 @@ export default function DashboardPage() {
   const showKycBanner = isConnected && !kycVerified && !kycLoading && !kycDismissed;
 
   return (
-    <div className="space-y-5 sm:space-y-6">
+    <div className="max-w-[1200px] mx-auto space-y-6 pb-10">
+      
+      {/* ── BANNERS ── */}
+      <div className="space-y-4">
+        {!isConnected && (
+          <Card className="border-dashed border-2 border-primary/30 bg-primary_fixed/10 dark:bg-[#3D1F10]/10 overflow-hidden rounded-2xl">
+            <CardContent className="p-6 flex flex-col sm:flex-row items-center gap-6">
+              <div className="w-12 h-12 rounded-2xl bg-primary/10 dark:bg-[#3D1F10] flex items-center justify-center shrink-0">
+                <Wallet className="w-6 h-6 text-primary dark:text-[#E89874]" />
+              </div>
+              <div className="flex-1 text-center sm:text-left">
+                <h3 className="text-base font-bold text-on_surface dark:text-[#e8eaf0]">Connect Institutional Wallet</h3>
+                <p className="text-sm text-on_surface_variant dark:text-[#9ba3b8] mt-1">
+                  Link your hardware or institutional wallet to manage property NFTs and sign legal attestations.
+                </p>
+              </div>
+              <Button onClick={connect} disabled={isConnecting} size="lg" className="w-full sm:w-auto px-8 rounded-xl shadow-floating">
+                {isConnecting ? "Connecting…" : "Connect Wallet"}
+              </Button>
+            </CardContent>
+          </Card>
+        )}
 
-      {/* ── WALLET CONNECT BANNER ── */}
-      {!isConnected && (
-        <div className="rounded-xl border-2 border-dashed border-primary/30 dark:border-[#3D1F10] bg-primary_fixed/30 dark:bg-[#3D1F10]/20 p-5 sm:p-6">
-          <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
-            <div className="w-12 h-12 rounded-xl bg-primary/10 dark:bg-[#3D1F10] flex items-center justify-center flex-shrink-0">
-              <Wallet className="w-6 h-6 text-primary dark:text-[#E89874]" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-title-sm font-bold text-on_surface dark:text-[#e8eaf0]">
-                Connect your wallet to get started
-              </p>
-              <p className="text-body-sm text-on_surface_variant dark:text-[#9ba3b8] mt-0.5">
-                Link a wallet to manage properties, view portfolio, and sign transactions.
-              </p>
-            </div>
-            <Button
-              onClick={connect}
-              disabled={isConnecting}
-              className="flex-shrink-0 bg-primary text-on_primary hover:opacity-90 shadow-none gap-2"
-            >
-              <Wallet className="w-4 h-4" />
-              {isConnecting ? "Connecting…" : "Connect Wallet"}
-              {!isConnecting && <ArrowRight className="w-4 h-4" />}
-            </Button>
-          </div>
-        </div>
-      )}
+        {showKycBanner && (
+          <Card className="bg-secondary_fixed/10 dark:bg-[#3d2800]/10 border-secondary/20 rounded-2xl">
+            <CardContent className="p-5 flex items-start gap-4">
+              <div className="w-10 h-10 rounded-2xl bg-secondary_fixed dark:bg-[#3d2800] flex items-center justify-center shrink-0">
+                <ShieldAlert className="w-5 h-5 text-secondary dark:text-[#f59e0b]" />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-sm font-bold text-on_surface dark:text-[#e8eaf0]">Regulatory Compliance Required</h3>
+                <p className="text-xs text-on_surface_variant dark:text-[#9ba3b8] mt-1">
+                  Complete your identity verification to enable asset minting and cross-border transfers.
+                </p>
+                <div className="mt-3 flex items-center gap-4">
+                  <button onClick={() => setShowKYC(true)} className="text-xs font-bold text-secondary dark:text-[#f59e0b] hover:underline flex items-center gap-1">
+                    Start KYC Audit <ArrowRight className="w-3 h-3" />
+                  </button>
+                  <button onClick={() => setKycDismissed(true)} className="text-xs font-medium text-on_surface_variant/60 hover:text-on_surface">
+                    Remind me later
+                  </button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+      </div>
 
-      {/* ── KYC BANNER ── */}
-      {showKycBanner && (
-        <div className="rounded-xl bg-secondary_fixed/30 dark:bg-[#3d2800]/30 border border-secondary/20 dark:border-[#5c3a00] p-4 sm:p-5">
-          <div className="flex items-start gap-4">
-            <div className="w-10 h-10 rounded-xl bg-secondary_fixed dark:bg-[#3d2800] flex items-center justify-center flex-shrink-0 mt-0.5">
-              <ShieldAlert className="w-5 h-5 text-secondary dark:text-[#f59e0b]" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-title-sm font-bold text-on_surface dark:text-[#e8eaf0]">
-                Complete KYC Verification
-              </p>
-              <p className="text-body-sm text-on_surface_variant dark:text-[#9ba3b8] mt-0.5">
-                Identity verification is required to register and transfer properties on-chain.
-              </p>
-              <button
-                onClick={() => setShowKYC(true)}
-                className="mt-3 inline-flex items-center gap-1.5 text-label-sm font-semibold text-secondary dark:text-[#f59e0b] hover:opacity-80 transition-opacity"
-              >
-                Start verification <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
-            <button
-              onClick={() => setKycDismissed(true)}
-              className="p-1.5 rounded-lg text-on_surface_variant dark:text-[#9ba3b8] hover:bg-surface_container dark:hover:bg-[#1c2333] transition-colors flex-shrink-0"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
-      )}
+      <KYCModal isOpen={showKYC} onClose={() => setShowKYC(false)} onVerified={() => setShowKYC(false)} />
 
-      <KYCModal
-        isOpen={showKYC}
-        onClose={() => setShowKYC(false)}
-        onVerified={() => setShowKYC(false)}
-      />
-
-      {/* ── PAGE HEADER ── */}
-      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+      {/* ── HEADER ── */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl xl:text-4xl font-bold font-display text-on_surface dark:text-[#e8eaf0] tracking-tight leading-tight">
-            Good morning, {user?.firstName ?? "there"}.
+          <h1 className="text-3xl font-bold font-display text-on_surface dark:text-[#e8eaf0] tracking-tight">
+            {isOracleMode ? "Oracle Control Center" : `Welcome, ${user?.firstName ?? "User"}`}
           </h1>
-          <p className="text-body-sm sm:text-body-md text-on_surface_variant dark:text-[#9ba3b8] mt-1 max-w-xl">
-            Real-time performance metrics for asset liquidity and verification throughput.
+          <p className="text-sm text-on_surface_variant dark:text-[#9ba3b8] mt-1">
+            {isOracleMode 
+              ? "System-wide verification throughput and network consensus metrics."
+              : "Global real estate liquidity metrics and your fractional portfolio overview."}
           </p>
         </div>
-        <div className="flex items-center gap-2 flex-shrink-0">
-          <Button variant="outline" className="h-9 px-3 sm:px-4 bg-white dark:bg-[#1a1916] border-stone dark:border-[#2a2520] shadow-none text-on_surface dark:text-[#e8eaf0] text-sm">
-            <Calendar className="mr-1.5 h-3.5 w-3.5 text-on_surface_variant dark:text-[#9ba3b8]" />
-            <span className="hidden sm:inline">Last 30 Days</span>
-            <span className="sm:hidden">30d</span>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm" className="h-10 px-4 bg-white dark:bg-[#1a1916] border-stone dark:border-[#2a2520] text-xs font-bold uppercase tracking-widest rounded-xl">
+            <Calendar className="mr-2 h-3.5 w-3.5" />
+            Live View
           </Button>
-          <Button className="h-9 px-3 sm:px-4 bg-primary text-on_primary shadow-none hover:opacity-90 text-sm">
-            <Download className="mr-1.5 h-3.5 w-3.5" />
-            <span className="hidden sm:inline">Export Report</span>
-            <span className="sm:hidden">Export</span>
+          <Button size="sm" className="h-10 px-6 text-xs font-bold uppercase tracking-widest rounded-xl shadow-floating">
+            <Download className="mr-2 h-3.5 w-3.5" />
+            Report
           </Button>
         </div>
       </div>
 
-      {/* ── ORACLE ACCESS CARD ── */}
-      <OracleAccessCard />
+      {!isOracleMode && <OracleAccessCard />}
 
-      {/* ── STATS GRID ── */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 xl:gap-5">
-        <StatCard
-          label="Total Value Locked"
-          value="$4.28B"
-          delta="+12.4%"
-          deltaPositive
-          accent="primary"
-          icon={<TvlIcon />}
-        />
-        <StatCard
-          label="Asset Liquidity"
-          value="88.2%"
-          delta="+4.1%"
-          deltaPositive
-          accent="secondary"
-          icon={<LiquidityIcon />}
-        />
-        <StatCard
-          label="Avg. Verification"
-          value="14.8m"
-          delta="-2.5m"
-          deltaPositive
-          accent="neutral"
-          icon={<ClockIcon />}
-        />
-        <StatCard
-          label="Integrity Score"
-          value="AA+"
-          delta="99.9%"
-          deltaPositive
-          accent="success"
-          icon={<ShieldCheckIcon />}
-        />
-      </div>
+      {/* ── ROLE-BASED DASHBOARD CONTENT ── */}
+      {isOracleMode ? (
+        <OracleDashboardView />
+      ) : (
+        <UserDashboardView />
+      )}
 
-      {/* ── CHARTS ROW ── */}
-      <Suspense fallback={<div className="h-48 bg-stone dark:bg-[#2a2520] rounded-xl animate-pulse" />}>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-4 xl:gap-5">
-          <div className="lg:col-span-2 bg-white dark:bg-[#1a1916] rounded-xl p-5 sm:p-6 border border-stone dark:border-[#2a2520]">
-            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3 mb-6">
-              <div>
-                <h3 className="text-base font-bold font-display text-on_surface dark:text-[#e8eaf0]">Portfolio Growth</h3>
-                <p className="text-xs text-on_surface_variant dark:text-[#9ba3b8] mt-0.5">Asset minting vs secondary market volume</p>
-              </div>
-              <div className="flex items-center gap-4 text-xs font-medium text-on_surface_variant dark:text-[#9ba3b8]">
-                <div className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-primary" />Minted</div>
-                <div className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-secondary" />Volume</div>
-              </div>
-            </div>
-            <PortfolioChart />
-          </div>
-
-          <div className="bg-white dark:bg-[#1a1916] rounded-xl p-5 border border-stone dark:border-[#2a2520] flex flex-col">
-            <div className="mb-5">
-              <p className="text-base font-bold font-display text-on_surface dark:text-[#e8eaf0]">Asset Composition</p>
-              <p className="text-xs text-on_surface_variant dark:text-[#9ba3b8] mt-0.5">System-wide registry distribution</p>
-            </div>
-            <div className="flex-1 flex items-start">
-              <AssetSpiderChart />
-            </div>
-          </div>
-        </div>
-      </Suspense>
-
-      {/* ── BOTTOM ROW ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-4 xl:gap-5">
-        {/* Regional Activity */}
-        <div className="lg:col-span-2 bg-white dark:bg-[#1a1916] rounded-xl p-5 sm:p-6 border border-stone dark:border-[#2a2520] overflow-hidden relative min-h-[280px] sm:min-h-[320px] flex flex-col">
-          <div className="relative z-10">
-            <h3 className="text-base font-bold font-display text-on_surface dark:text-[#e8eaf0]">Regional Activity</h3>
-            <p className="text-xs text-on_surface_variant dark:text-[#9ba3b8] mt-0.5">Real-time hotspots by transaction density</p>
-          </div>
-          <div className="absolute inset-x-0 bottom-0 top-16 flex items-center justify-center opacity-80 mix-blend-multiply dark:mix-blend-normal dark:opacity-95">
-            <div className="w-[300px] sm:w-[400px] h-[300px] sm:h-[400px] rounded-full bg-surface_container_high/50 dark:bg-[#1f2532] shadow-inner flex items-center justify-center relative overflow-hidden">
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_30%,#fff_70%)] dark:bg-[radial-gradient(circle_at_center,transparent_35%,#0f1117_75%)] z-10" />
-              <div className="w-[150%] h-[150%] rounded-full border-4 border-outline_variant/20 -rotate-45" />
-              <div className="absolute w-[150%] h-[150%] rounded-[100%] border-2 border-outline_variant/10 rotate-12" />
-              <div className="absolute w-full h-[30%] border-y-2 border-outline_variant/20" />
-              <div className="absolute w-[30%] h-full border-x-2 border-outline_variant/20" />
-              <div className="absolute top-[30%] left-[25%] bg-primary text-white text-[9px] sm:text-[10px] font-bold px-2 sm:px-3 py-1 rounded-full z-20 shadow-sm">Singapore: High</div>
-              <div className="absolute top-[60%] left-[50%] bg-[#835500] text-white text-[9px] sm:text-[10px] font-bold px-2 sm:px-3 py-1 rounded-full z-20 shadow-sm opacity-90">London: Emerging</div>
-              <div className="absolute bottom-[20%] right-[25%] bg-primary/80 text-white text-[9px] sm:text-[10px] font-bold px-2 sm:px-3 py-1 rounded-full z-20 shadow-sm">New York: Peak</div>
-            </div>
-          </div>
-          <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-white dark:from-[#1a1916] to-transparent z-10" />
-        </div>
-        <VerificationSummaryCard />
-      </div>
-
-      {/* ── TELEMETRY TABLE ── */}
+      {/* ── TELEMETRY (Common) ── */}
       <NetworkTelemetry />
     </div>
   );
 }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   ORACLE VIEW
+   ────────────────────────────────────────────────────────────────────────── */
+function OracleDashboardView() {
+  return (
+    <div className="space-y-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <StatCard
+          label="Pending Queue"
+          value="24"
+          delta="-4"
+          deltaPositive
+          accent="primary"
+          icon={<Activity className="w-4 h-4" />}
+          subtext="Submissions to review"
+        />
+        <StatCard
+          label="Verification Time"
+          value="1.2s"
+          delta="-0.3s"
+          deltaPositive
+          accent="success"
+          icon={<Clock className="w-4 h-4" />}
+          subtext="Avg. AI processing"
+        />
+        <StatCard
+          label="Oracle Consensus"
+          value="99.9%"
+          delta="100%"
+          deltaPositive
+          accent="secondary"
+          icon={<ShieldCheck className="w-4 h-4" />}
+          subtext="Node health status"
+        />
+        <StatCard
+          label="Data Stored"
+          value="4.2TB"
+          delta="+12GB"
+          deltaPositive
+          accent="neutral"
+          icon={<Database className="w-4 h-4" />}
+          subtext="IPFS registry size"
+        />
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <Card className="lg:col-span-2 rounded-2xl overflow-hidden shadow-card border-stone/50">
+          <CardHeader>
+            <CardTitle className="text-base">System Throughput</CardTitle>
+            <CardDescription>Real-time verification volume vs node capacity</CardDescription>
+          </CardHeader>
+          <CardContent className="h-[300px]">
+            <PortfolioChart />
+          </CardContent>
+        </Card>
+        
+        <VerificationSummaryCard />
+      </div>
+    </div>
+  );
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   USER VIEW
+   ────────────────────────────────────────────────────────────────────────── */
+function UserDashboardView() {
+  return (
+    <div className="space-y-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <StatCard
+          label="Portfolio Value"
+          value="$1.24M"
+          delta="+8.2%"
+          deltaPositive
+          accent="primary"
+          icon={<BarChart3 className="w-4 h-4" />}
+          subtext="Real-world asset value"
+        />
+        <StatCard
+          label="Monthly Yield"
+          value="$8,420"
+          delta="+12%"
+          deltaPositive
+          accent="success"
+          icon={<TrendingUp className="w-4 h-4" />}
+          subtext="Rental distributions"
+        />
+        <StatCard
+          label="Active Stakes"
+          value="12"
+          delta="0"
+          deltaPositive
+          accent="secondary"
+          icon={<ShieldCheck className="w-4 h-4" />}
+          subtext="Properties verified"
+        />
+        <StatCard
+          label="Liquidity Score"
+          value="A+"
+          delta="+1.2%"
+          deltaPositive
+          accent="neutral"
+          icon={<Globe className="w-4 h-4" />}
+          subtext="Instant exit potential"
+        />
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <Card className="lg:col-span-2 rounded-2xl overflow-hidden shadow-card border-stone/50">
+          <CardHeader>
+            <CardTitle className="text-base">Portfolio Performance</CardTitle>
+            <CardDescription>Asset appreciation and yield growth (30d)</CardDescription>
+          </CardHeader>
+          <CardContent className="h-[300px]">
+            <PortfolioChart />
+          </CardContent>
+        </Card>
+
+        <Card className="rounded-2xl overflow-hidden shadow-card border-stone/50">
+          <CardHeader>
+            <CardTitle className="text-base">Asset Composition</CardTitle>
+            <CardDescription>Registry distribution by type</CardDescription>
+          </CardHeader>
+          <CardContent className="h-[300px] flex items-center justify-center">
+            <AssetSpiderChart />
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="bg-white dark:bg-[#1a1916] rounded-2xl p-6 border border-stone dark:border-[#2a2520] overflow-hidden relative min-h-[320px] flex flex-col shadow-card">
+        <div className="relative z-10">
+          <h3 className="text-lg font-bold font-display text-on_surface dark:text-[#e8eaf0]">Global Registry Hotspots</h3>
+          <p className="text-sm text-on_surface_variant dark:text-[#9ba3b8] mt-1">Real-time property minting density by jurisdiction</p>
+        </div>
+        <div className="absolute inset-x-0 bottom-0 top-16 flex items-center justify-center opacity-80 mix-blend-multiply dark:mix-blend-normal dark:opacity-95">
+          <div className="w-[400px] h-[400px] rounded-full bg-surface_container_high/30 dark:bg-[#1f2532]/30 shadow-inner flex items-center justify-center relative overflow-hidden">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_30%,#fff_70%)] dark:bg-[radial-gradient(circle_at_center,transparent_35%,#0f1117_75%)] z-10" />
+            <div className="w-[150%] h-[150%] rounded-full border border-primary/10 -rotate-45" />
+            <div className="absolute top-[30%] left-[25%] bg-primary text-white text-[10px] font-bold px-3 py-1 rounded-full z-20 shadow-lg">Singapore: High</div>
+            <div className="absolute top-[60%] left-[50%] bg-secondary text-white text-[10px] font-bold px-3 py-1 rounded-full z-20 shadow-lg opacity-90">London: Active</div>
+            <div className="absolute bottom-[20%] right-[25%] bg-primary/80 text-white text-[10px] font-bold px-3 py-1 rounded-full z-20 shadow-lg">New York: Peak</div>
+          </div>
+        </div>
+        <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-white dark:from-[#1a1916] to-transparent z-10" />
+      </div>
+    </div>
+  );
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   SHARED COMPONENTS
+   ────────────────────────────────────────────────────────────────────────── */
 
 interface StatCardProps {
   label: string;
@@ -245,47 +311,35 @@ interface StatCardProps {
 }
 
 function StatCard({ label, value, delta, deltaPositive, accent, icon, subtext }: StatCardProps) {
-  const iconBg = {
-    primary:   "bg-primary_fixed dark:bg-[#3D1F10] text-primary dark:text-[#E89874]",
-    secondary: "bg-secondary/10 text-secondary",
-    neutral:   "bg-sand dark:bg-[#2a2520] text-on_surface_variant dark:text-[#9b9690]",
-    success:   "bg-success/10 text-success",
+  const accentStyles = {
+    primary:   "bg-primary/5 text-primary border-primary/10",
+    secondary: "bg-secondary/5 text-secondary border-secondary/10",
+    neutral:   "bg-stone/10 text-on_surface_variant border-stone/20 dark:bg-white/5",
+    success:   "bg-success/5 text-success border-success/10",
   }[accent];
 
   return (
-    <Card className="p-4 sm:p-5 border-stone dark:border-[#2a2520]">
-      <div className="flex justify-between items-start mb-3">
-        <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${iconBg}`}>
-          {icon}
+    <Card className="rounded-2xl border-stone/50 dark:border-[#2a2520] transition-all hover:shadow-card group overflow-hidden">
+      <CardContent className="p-5">
+        <div className="flex justify-between items-start mb-4">
+          <div className={cn("w-10 h-10 rounded-2xl flex items-center justify-center border transition-colors group-hover:scale-110 duration-300", accentStyles)}>
+            {icon}
+          </div>
+          <div className={cn("flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full border", 
+            deltaPositive ? "text-success bg-success/5 border-success/10" : "text-error bg-error/5 border-error/10"
+          )}>
+            {deltaPositive ? <TrendingUp className="w-2.5 h-2.5" /> : <TrendingDown className="w-2.5 h-2.5" />}
+            {delta}
+          </div>
         </div>
-        <div className={`flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full ${
-          deltaPositive ? "text-success bg-success/10" : "text-error bg-error/10"
-        }`}>
-          {deltaPositive
-            ? <TrendingUp className="w-2.5 h-2.5" />
-            : <TrendingDown className="w-2.5 h-2.5" />
-          }
-          {delta}
+        <div>
+          <p className="text-[10px] font-bold uppercase tracking-widest text-on_surface_variant dark:text-[#9ba3b8] mb-1">{label}</p>
+          <p className="text-2xl font-bold font-display text-on_surface dark:text-[#e8eaf0] tracking-tight">{value}</p>
+          {subtext && (
+            <p className="text-[10px] text-on_surface_variant/60 dark:text-[#6d6861] mt-2 font-medium">{subtext}</p>
+          )}
         </div>
-      </div>
-      <p className="text-[10px] sm:text-[11px] text-on_surface_variant dark:text-[#9b9690] font-semibold uppercase tracking-[0.06em] mb-1.5 leading-tight">{label}</p>
-      <p className="text-xl sm:text-2xl xl:text-[28px] font-bold font-display text-on_surface dark:text-[#e8e6e2] tracking-tight leading-none">{value}</p>
-      {subtext && (
-        <p className="text-[10px] text-on_surface_variant/60 dark:text-[#6b6560] mt-1.5">{subtext}</p>
-      )}
+      </CardContent>
     </Card>
   );
-}
-
-function TvlIcon() {
-  return <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" /><polyline points="9 22 9 12 15 12 15 22" /></svg>;
-}
-function LiquidityIcon() {
-  return <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" /></svg>;
-}
-function ClockIcon() {
-  return <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>;
-}
-function ShieldCheckIcon() {
-  return <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /><path d="m9 12 2 2 4-4" /></svg>;
 }

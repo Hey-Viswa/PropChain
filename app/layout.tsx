@@ -4,25 +4,25 @@ import Web3Providers from "@/components/layout/Web3Providers";
 import AppShellWrapper from "@/components/layout/AppShellWrapper";
 import { Toaster } from "@/components/ui/toaster";
 import NextTopLoader from "nextjs-toploader";
-import { DM_Serif_Display, DM_Sans } from "next/font/google";
+import { Fraunces, Manrope } from "next/font/google";
 import { Suspense } from "react";
 import "./globals.css";
 
-const dmSerifDisplay = DM_Serif_Display({
+const fraunces = Fraunces({
   subsets:  ["latin"],
   display:  "swap",
   preload:  true,
-  variable: "--font-dm-serif",
-  weight:   ["400"],
+  variable: "--font-fraunces",
+  weight:   ["400", "500", "600", "700", "800", "900"],
   style:    ["normal", "italic"],
 });
 
-const dmSans = DM_Sans({
+const manrope = Manrope({
   subsets:  ["latin"],
   display:  "swap",
   preload:  true,
-  variable: "--font-dm-sans",
-  weight:   ["300", "400", "500", "600", "700"],
+  variable: "--font-manrope",
+  weight:   ["200", "300", "400", "500", "600", "700", "800"],
 });
 
 export default function RootLayout({
@@ -35,9 +35,9 @@ export default function RootLayout({
       <html
         lang="en"
         suppressHydrationWarning
-        className={`${dmSerifDisplay.variable} ${dmSans.variable}`}
+        className={`${fraunces.variable} ${manrope.variable}`}
       >
-        <body className={dmSans.className}>
+        <body className={manrope.className}>
           <ThemeProvider
             attribute="class"
             defaultTheme="light"

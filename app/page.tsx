@@ -41,8 +41,8 @@ function CtaButton({
           variant="outline"
           className={
             darkBg
-              ? "rounded-none h-12 px-8 text-sm font-semibold tracking-widest uppercase border-white/25 text-white hover:bg-white/10 bg-transparent cursor-pointer"
-              : "rounded-none h-12 px-8 text-sm font-semibold tracking-widest uppercase cursor-pointer"
+              ? "rounded-lg h-12 px-8 text-sm font-semibold tracking-widest uppercase border-white/25 text-white hover:bg-white/10 bg-transparent cursor-pointer"
+              : "rounded-lg h-12 px-8 text-sm font-semibold tracking-widest uppercase cursor-pointer"
           }
         >
           Sign In
@@ -159,11 +159,11 @@ const FOOTER_COLS = [
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen flex flex-col font-body bg-cream">
+    <div className="min-h-screen flex flex-col font-body bg-cream selection:bg-primary/10 selection:text-primary">
 
       {/* ── NAVBAR ──────────────────────────────────────────────── */}
-      <header className="sticky top-0 z-50 w-full bg-cream/92 backdrop-blur-md border-b border-stone">
-        <div className="container mx-auto px-6 h-16 flex items-center justify-between">
+      <header className="sticky top-0 z-50 w-full bg-cream/80 backdrop-blur-xl border-b border-stone/50">
+        <div className="container mx-auto px-fluid-gap h-16 flex items-center justify-between">
           <div className="flex items-center gap-8">
             <Link href="/" className="flex items-center gap-2.5 cursor-pointer group">
               <PropChainMark size={26} />
@@ -176,7 +176,7 @@ export default function LandingPage() {
                 <Link
                   key={label}
                   href="#"
-                  className="text-sm font-medium text-on_surface_variant hover:text-on_surface transition-colors duration-150 cursor-pointer"
+                  className="text-[13px] font-bold uppercase tracking-widest text-on_surface_variant hover:text-primary transition-colors duration-150 cursor-pointer"
                 >
                   {label}
                 </Link>
@@ -193,7 +193,7 @@ export default function LandingPage() {
       <main className="flex-1">
 
         {/* ── HERO ────────────────────────────────────────────────── */}
-        <section className="relative bg-[#12100E] overflow-hidden">
+        <section className="relative bg-[#12100E] overflow-hidden section-padding">
           {/* Architectural dot-grid background */}
           <div
             className="absolute inset-0 opacity-[0.045]"
@@ -212,53 +212,47 @@ export default function LandingPage() {
             }}
           />
 
-          <div className="container mx-auto px-6 pt-20 pb-24 lg:pt-28 lg:pb-32 relative z-10">
+          <div className="container mx-auto px-fluid-gap relative z-10">
 
             {/* Pre-headline rule + label */}
-            <div className="flex items-center gap-3 mb-10">
+            <div className="flex items-center gap-3 mb-12 animate-fade-in">
               <div className="h-px w-8 bg-primary" />
-              <span className="text-[10px] font-semibold tracking-[0.22em] text-primary uppercase">
+              <span className="text-[10px] font-bold tracking-[0.3em] text-primary uppercase">
                 Real World Asset Infrastructure
               </span>
             </div>
 
             {/* Massive editorial headline */}
-            <div className="max-w-5xl mb-10">
-              <h1
-                className="font-display leading-[0.92] tracking-[-0.03em] text-[#F5F3F0]"
-                style={{ fontSize: "clamp(3.2rem, 9vw, 7.5rem)" }}
-              >
+            <div className="max-w-6xl mb-12 space-y-2 animate-fade-up">
+              <h1 className="text-display-lg text-[#F5F3F0]">
                 Real Estate.
               </h1>
-              <h1
-                className="font-display leading-[0.92] tracking-[-0.03em] text-primary"
-                style={{ fontSize: "clamp(3.2rem, 9vw, 7.5rem)" }}
-              >
+              <h1 className="text-display-lg text-primary">
                 On&#8209;Chain.
               </h1>
             </div>
 
             {/* Divider */}
-            <div className="w-full max-w-4xl h-px bg-[#FAF9F6]/10 mb-10" />
+            <div className="w-full max-w-4xl h-px bg-[#FAF9F6]/10 mb-12" />
 
             {/* Sub-headline + CTAs */}
-            <div className="flex flex-col lg:flex-row gap-10 lg:gap-24 items-start">
-              <p className="text-[#9B9690] text-base lg:text-lg leading-relaxed max-w-[420px]">
+            <div className="flex flex-col lg:flex-row gap-12 lg:gap-24 items-start animate-fade-up" style={{ animationDelay: '0.1s' }}>
+              <p className="text-[#9B9690] text-lg lg:text-xl leading-relaxed max-w-[480px] text-balance">
                 PropChain transforms physical property into liquid digital assets — unified legal compliance, institutional security, and AI verification on a single protocol.
               </p>
-              <div className="flex flex-col gap-4 flex-shrink-0 min-w-[220px]">
+              <div className="flex flex-col gap-6 flex-shrink-0 min-w-[240px]">
                 <CtaButton
-                  className="bg-primary hover:bg-primary_container text-white rounded-none h-12 px-8 text-sm font-semibold tracking-widest uppercase cursor-pointer"
+                  className="bg-primary hover:bg-primary_container text-white rounded-xl h-14 px-10 text-xs font-bold tracking-[0.2em] uppercase cursor-pointer shadow-floating transition-all active:scale-95"
                   withArrow
                   darkBg
                 />
                 <Link
                   href="#"
-                  className="flex items-center gap-1.5 text-sm text-[#6B6560] hover:text-[#9B9690] transition-colors duration-150 cursor-pointer group"
+                  className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#6B6560] hover:text-primary transition-colors duration-150 cursor-pointer group"
                 >
                   <span>View Network Data</span>
                   <ArrowUpRight
-                    size={13}
+                    size={14}
                     className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-150"
                   />
                 </Link>
@@ -266,16 +260,16 @@ export default function LandingPage() {
             </div>
 
             {/* Stats bar */}
-            <div className="mt-20 pt-10 border-t border-[#FAF9F6]/10 grid grid-cols-2 md:grid-cols-4">
+            <div className="mt-24 pt-12 border-t border-[#FAF9F6]/10 grid grid-cols-2 md:grid-cols-4 gap-y-8 animate-fade-in" style={{ animationDelay: '0.2s' }}>
               {STATS.map(({ value, label }, i) => (
                 <div
                   key={label}
-                  className="px-6 first:pl-0 border-l border-[#FAF9F6]/10 first:border-l-0 py-2"
+                  className="px-8 first:pl-0 border-l border-[#FAF9F6]/10 first:border-l-0"
                 >
-                  <p className="font-display text-3xl lg:text-4xl text-[#F5F3F0] tracking-tight mb-1">
+                  <p className="font-display text-4xl lg:text-5xl text-[#F5F3F0] font-bold tracking-tight mb-2">
                     {value}
                   </p>
-                  <p className="text-[10px] font-medium tracking-[0.14em] uppercase text-[#6B6560]">
+                  <p className="text-[10px] font-bold tracking-[0.2em] uppercase text-[#6B6560]">
                     {label}
                   </p>
                 </div>
@@ -285,14 +279,14 @@ export default function LandingPage() {
         </section>
 
         {/* ── TRUST BAR ───────────────────────────────────────────── */}
-        <section className="bg-sand border-y border-stone py-[18px]">
-          <div className="container mx-auto px-6">
-            <div className="flex flex-wrap items-center gap-x-10 gap-y-2">
-              <span className="text-[9px] font-bold tracking-[0.2em] uppercase text-on_surface_variant/40 flex-shrink-0 pr-2 border-r border-stone">
-                Trusted By
+        <section className="bg-sand/30 border-y border-stone/50 py-6">
+          <div className="container mx-auto px-fluid-gap">
+            <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-4">
+              <span className="text-[9px] font-black tracking-[0.3em] uppercase text-on_surface_variant/30 flex-shrink-0 pr-4 border-r border-stone/50">
+                Institutional Partners
               </span>
               {["Chainlink", "Ethereum L2", "Fireblocks", "Circle", "Coinbase Prime"].map((name) => (
-                <span key={name} className="text-sm font-medium text-on_surface_variant/35 tracking-wide">
+                <span key={name} className="text-[11px] font-bold text-on_surface_variant/40 tracking-[0.15em] uppercase hover:text-primary transition-colors cursor-default">
                   {name}
                 </span>
               ))}
@@ -301,41 +295,38 @@ export default function LandingPage() {
         </section>
 
         {/* ── FEATURES ────────────────────────────────────────────── */}
-        <section className="bg-cream py-24 lg:py-32">
-          <div className="container mx-auto px-6">
+        <section className="bg-cream section-padding">
+          <div className="container mx-auto px-fluid-gap">
             {/* Section header */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6 pb-12 border-b border-stone">
-              <h2
-                className="font-display leading-[1.03] tracking-[-0.025em] text-on_surface max-w-lg"
-                style={{ fontSize: "clamp(2rem, 4vw, 3.25rem)" }}
-              >
+            <div className="flex flex-col md:flex-row md:items-end justify-between mb-20 gap-8 pb-16 border-b border-stone/50">
+              <h2 className="text-fluid-h1 text-on_surface max-w-xl text-balance">
                 The infrastructure layer for property finance.
               </h2>
-              <p className="text-on_surface_variant text-sm max-w-[280px] leading-relaxed">
+              <p className="text-on_surface_variant text-base max-w-[320px] leading-relaxed font-medium">
                 Every component engineered for institutional-grade real estate tokenization at global scale.
               </p>
             </div>
 
             {/* Editorial numbered feature list */}
-            <div>
-              {FEATURES.map((f) => (
+            <div className="space-y-0">
+              {FEATURES.map((f, i) => (
                 <div
                   key={f.num}
-                  className="group flex flex-col md:flex-row md:items-start gap-6 md:gap-12 py-9 border-b border-stone last:border-b-0 hover:bg-sand/50 transition-colors duration-200 px-3 -mx-3 cursor-default"
+                  className="group flex flex-col md:flex-row md:items-start gap-8 md:gap-16 py-12 border-b border-stone/50 last:border-b-0 hover:bg-sand/30 transition-all duration-300 px-6 -mx-6 rounded-2xl cursor-default"
                 >
-                  <span className="font-display text-[3.5rem] leading-none text-primary/20 group-hover:text-primary/50 transition-colors duration-200 w-20 flex-shrink-0 select-none">
+                  <span className="font-display text-[5rem] leading-none font-black text-primary/10 group-hover:text-primary/30 transition-colors duration-300 w-24 flex-shrink-0 select-none">
                     {f.num}
                   </span>
-                  <div className="flex-1 min-w-0 md:pt-1">
-                    <h3 className="font-display text-xl lg:text-2xl text-on_surface mb-3 tracking-tight leading-snug">
+                  <div className="flex-1 min-w-0 md:pt-4">
+                    <h3 className="text-fluid-h2 text-on_surface mb-4">
                       {f.title}
                     </h3>
-                    <p className="text-on_surface_variant text-sm leading-relaxed max-w-lg">
+                    <p className="text-on_surface_variant text-base leading-relaxed max-w-xl font-medium">
                       {f.body}
                     </p>
                   </div>
-                  <div className="flex-shrink-0 md:pt-2">
-                    <span className="inline-block border border-stone text-on_surface_variant text-[9px] tracking-[0.14em] uppercase font-semibold px-3 py-1.5">
+                  <div className="flex-shrink-0 md:pt-6">
+                    <span className="inline-block border-2 border-stone text-on_surface_variant text-[10px] tracking-[0.2em] uppercase font-bold px-4 py-2 rounded-lg group-hover:border-primary group-hover:text-primary transition-colors">
                       {f.tag}
                     </span>
                   </div>
@@ -400,12 +391,12 @@ export default function LandingPage() {
               </div>
               <div className="flex flex-col sm:flex-row gap-3 flex-shrink-0">
                 <CtaButton
-                  className="bg-white text-primary hover:bg-white/90 rounded-none h-12 px-8 text-sm font-semibold tracking-widest uppercase cursor-pointer"
+                  className="bg-white text-primary hover:bg-white/90 rounded-lg h-12 px-8 text-sm font-semibold tracking-widest uppercase cursor-pointer"
                   withArrow
                 />
                 <Button
                   variant="outline"
-                  className="rounded-none h-12 px-8 text-sm font-semibold tracking-widest uppercase border-white/25 text-white hover:bg-white/10 bg-transparent cursor-pointer"
+                  className="rounded-lg h-12 px-8 text-sm font-semibold tracking-widest uppercase border-white/25 text-white hover:bg-white/10 bg-transparent cursor-pointer"
                 >
                   Developer Hub
                 </Button>

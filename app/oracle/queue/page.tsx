@@ -1,7 +1,10 @@
 "use client";
 
 import { Suspense, useEffect, useState } from "react";
-import { ListTodo, CheckSquare, XSquare, Clock, RefreshCw } from "lucide-react";
+import { 
+  ListTodo, CheckSquare, XSquare, Clock, RefreshCw, 
+  AlertTriangle, ShieldCheck, ChevronRight, FileText, Search
+} from "lucide-react";
 import OracleGuard from "@/components/shared/OracleGuard";
 import { useOracleContract } from "@/hooks/useOracleContract";
 import { useToast } from "@/hooks/use-toast";
@@ -17,6 +20,13 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 
 type PropertyItem = {
@@ -94,147 +104,163 @@ export default function OracleQueuePage() {
 
   return (
     <OracleGuard>
-      <div className="space-y-5">
+      <div className="max-w-5xl mx-auto space-y-6 pb-20">
+        
         {/* Header */}
-        <div className="flex items-start justify-between gap-4">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold font-display text-on_surface dark:text-[#e8e6e2] tracking-tight">
+            <h1 className="text-3xl font-bold font-display text-on_surface dark:text-[#e8eaf0] tracking-tight">
               Verification Queue
             </h1>
-            <p className="text-sm text-[#8a8480] dark:text-[#7a7470] mt-1">
-              Pending properties requiring oracle sign-off.
+            <p className="text-sm text-on_surface_variant dark:text-[#9ba3b8] mt-1">
+              Institutional review of pending on-chain property registrations.
             </p>
           </div>
           <Button
-            variant="ghost"
+            variant="outline"
             size="sm"
             onClick={fetchPending}
             disabled={loading}
-            className="gap-1.5 text-xs h-8 text-[#8a8480] hover:text-on_surface"
+            className="h-10 px-5 font-bold uppercase tracking-widest text-[10px] bg-white dark:bg-[#1a1916] border-stone dark:border-[#2a2520]"
           >
-            <RefreshCw className={cn("w-3.5 h-3.5", loading && "animate-spin")} />
-            Refresh
+            <RefreshCw className={cn("mr-2 h-3.5 w-3.5", loading && "animate-spin")} />
+            Refresh Queue
           </Button>
         </div>
 
-        {/* Stat cards */}
-        <div className="grid grid-cols-3 gap-3 sm:gap-4">
-          <Card>
-            <CardContent className="p-4">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-[#8a8480] dark:text-[#7a7470] mb-1.5">Pending</p>
-              <p className="text-2xl font-bold text-on_surface dark:text-[#e8e6e2]">{properties.length}</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-warning mb-1.5">High Priority</p>
-              <p className="text-2xl font-bold text-warning">0</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-success mb-1.5">Processed Today</p>
-              <p className="text-2xl font-bold text-success">0</p>
-            </CardContent>
-          </Card>
+        {/* Stats Row */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <StatMini label="Pending" value={properties.length} accent="primary" />
+          <StatMini label="Processing" value="0" accent="neutral" />
+          <StatMini label="Finalized Today" value="0" accent="success" />
         </div>
 
         {/* Queue list */}
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base">Active Tasks</CardTitle>
-            <CardDescription>Review and sign each submission on-chain</CardDescription>
+        <Card className="border-stone dark:border-[#2a2520] shadow-sm">
+          <CardHeader className="pb-4 border-b border-stone/50 dark:border-white/5">
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-base font-display">Active Submissions</CardTitle>
+                <CardDescription>Verify legal documents and ULPIN validity</CardDescription>
+              </div>
+              <div className="relative hidden md:block">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-on_surface_variant/40" />
+                <Input placeholder="Filter queue..." className="h-9 w-[200px] pl-9 text-xs rounded-lg" />
+              </div>
+            </div>
           </CardHeader>
           <CardContent className="p-0">
             {loading ? (
-              <div className="p-6 space-y-3">
+              <div className="p-12 space-y-4">
                 {[...Array(3)].map((_, i) => (
-                  <div key={i} className="h-16 rounded-xl bg-sand dark:bg-[#211f1c] animate-pulse" />
+                  <div key={i} className="h-20 rounded-2xl bg-sand dark:bg-[#211f1c] animate-pulse" />
                 ))}
               </div>
             ) : properties.length === 0 ? (
-              <div className="py-14 flex flex-col items-center gap-3 text-center px-6">
-                <div className="w-10 h-10 rounded-full bg-success/10 flex items-center justify-center">
-                  <CheckSquare className="w-5 h-5 text-success" />
+              <div className="py-24 flex flex-col items-center gap-4 text-center px-6">
+                <div className="w-16 h-16 rounded-3xl bg-success/10 flex items-center justify-center">
+                  <ShieldCheck className="w-8 h-8 text-success" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-on_surface dark:text-[#e8e6e2]">Queue is clear</p>
-                  <p className="text-xs text-[#8a8480] dark:text-[#7a7470] mt-0.5">No pending properties to review.</p>
+                  <h3 className="text-lg font-bold text-on_surface dark:text-[#e8eaf0]">Queue Fully Processed</h3>
+                  <p className="text-sm text-on_surface_variant dark:text-[#9ba3b8] mt-1 max-w-xs">All submitted assets have been verified by the oracle network.</p>
                 </div>
               </div>
             ) : (
-              <div>
-                {properties.map((p, i) => (
-                  <div key={p._id}>
-                    {i > 0 && <Separator />}
-                    <div className="p-5 space-y-3">
-                      <div className="flex items-start gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-primary_fixed dark:bg-[#3D1F10] flex items-center justify-center shrink-0 mt-0.5">
-                          <ListTodo className="w-4 h-4 text-primary dark:text-[#E89874]" />
+              <div className="divide-y divide-stone/50 dark:divide-white/5">
+                {properties.map((p) => (
+                  <div key={p._id} className="p-6 transition-colors hover:bg-sand/30 dark:hover:bg-white/[0.02]">
+                    <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
+                      <div className="flex items-start gap-4">
+                        <div className="w-11 h-11 rounded-2xl bg-primary_fixed dark:bg-[#3D1F10] flex items-center justify-center shrink-0">
+                          <ListTodo className="w-5 h-5 text-primary dark:text-[#E89874]" />
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-semibold text-on_surface dark:text-[#e8e6e2] truncate">
+                        <div className="min-w-0">
+                          <p className="font-bold text-on_surface dark:text-[#e8eaf0] truncate">
                             {p.physicalAddress}
                           </p>
-                          <div className="flex items-center gap-2 mt-1">
-                            <Badge variant="outline" className="text-[10px] border-stone dark:border-[#2a2520] text-[#8a8480]">
-                              Token #{p.tokenId}
+                          <div className="flex flex-wrap items-center gap-2 mt-2">
+                            <Badge variant="outline" className="font-mono text-[10px] border-stone dark:border-[#2a2520] text-on_surface_variant">
+                              NFT #{p.tokenId}
                             </Badge>
-                            <Badge variant="outline" className="text-[10px] border-warning/30 text-warning bg-warning/5">
-                              Pending
+                            <Badge className="bg-primary/10 text-primary text-[9px] font-bold uppercase tracking-widest border-primary/20">
+                              Awaiting Oracle Signature
                             </Badge>
                           </div>
                         </div>
                       </div>
 
-                      {rejectingId === p._id ? (
-                        <div className="space-y-2 pl-11">
+                      <div className="flex items-center gap-2 shrink-0 self-end md:self-start">
+                        <Button variant="outline" size="sm" className="h-9 px-4 text-xs font-bold uppercase tracking-wider" asChild>
+                          <a href={p.documentUrl} target="_blank" rel="noopener noreferrer">
+                            <FileText className="mr-1.5 h-3.5 w-3.5" />
+                            View Docs
+                          </a>
+                        </Button>
+                        <Separator orientation="vertical" className="h-6 mx-1 hidden md:block" />
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="h-9 px-4 text-xs font-bold text-error hover:bg-error/10 uppercase tracking-wider"
+                          onClick={() => setRejectingId(p._id)}
+                        >
+                          Decline
+                        </Button>
+                        <Button
+                          size="sm"
+                          className="h-9 px-5 bg-primary text-on_primary shadow-sm font-bold uppercase tracking-wider text-xs"
+                          onClick={() => handleApprove(p._id, p.tokenId)}
+                        >
+                          Sign & Approve
+                        </Button>
+                      </div>
+                    </div>
+
+                    {rejectingId === p._id && (
+                      <div className="mt-6 ml-0 md:ml-15 p-6 rounded-2xl bg-error/5 border border-error/10 animate-in fade-in slide-in-from-top-4 duration-300">
+                        <div className="flex items-center gap-2 mb-4 text-error">
+                          <AlertTriangle className="w-4 h-4" />
+                          <p className="text-xs font-bold uppercase tracking-widest">Rejection Protocol</p>
+                        </div>
+                        <div className="space-y-4">
+                          <Select onValueChange={setRejectReason}>
+                            <SelectTrigger className="w-full bg-white dark:bg-[#1a1916]">
+                              <SelectValue placeholder="Select official rejection reason..." />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="Insufficient documentation">Insufficient documentation</SelectItem>
+                              <SelectItem value="Mismatch in legal titles">Mismatch in legal titles</SelectItem>
+                              <SelectItem value="Invalid digital signature">Invalid digital signature</SelectItem>
+                              <SelectItem value="ULPIN does not match records">ULPIN does not match records</SelectItem>
+                              <SelectItem value="Fraudulent activity detected">Fraudulent activity detected</SelectItem>
+                            </SelectContent>
+                          </Select>
                           <Textarea
-                            placeholder="Reason for rejection…"
-                            value={rejectReason}
+                            placeholder="Additional institutional notes (optional)..."
+                            className="text-sm h-24 bg-white dark:bg-[#1a1916] resize-none"
                             onChange={(e) => setRejectReason(e.target.value)}
-                            className="text-sm h-20 resize-none"
                           />
-                          <div className="flex gap-2">
+                          <div className="flex justify-end gap-3">
                             <Button
                               size="sm"
-                              variant="outline"
-                              className="text-xs h-7"
+                              variant="ghost"
+                              className="h-9 px-4 text-[10px] font-bold uppercase tracking-widest"
                               onClick={() => { setRejectingId(null); setRejectReason(""); }}
                             >
-                              Cancel
+                              Abort
                             </Button>
                             <Button
                               size="sm"
-                              className="text-xs h-7 bg-error text-white hover:bg-error/90"
+                              variant="destructive"
+                              className="h-9 px-6 font-bold uppercase tracking-widest text-[10px] shadow-lg"
                               onClick={() => handleReject(p._id, p.tokenId)}
                             >
-                              <XSquare className="w-3 h-3 mr-1" />
-                              Confirm Reject
+                              Finalize Rejection
                             </Button>
                           </div>
                         </div>
-                      ) : (
-                        <div className="flex gap-2 pl-11">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            className="text-xs h-7 text-error border-error/30 hover:bg-error_container"
-                            onClick={() => setRejectingId(p._id)}
-                          >
-                            Decline
-                          </Button>
-                          <Button
-                            size="sm"
-                            className="text-xs h-7 bg-primary text-white hover:bg-primary/90"
-                            onClick={() => handleApprove(p._id, p.tokenId)}
-                          >
-                            <CheckSquare className="w-3 h-3 mr-1" />
-                            Sign & Approve
-                          </Button>
-                        </div>
-                      )}
-                    </div>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
@@ -243,5 +269,20 @@ export default function OracleQueuePage() {
         </Card>
       </div>
     </OracleGuard>
+  );
+}
+
+function StatMini({ label, value, accent }: { label: string, value: number | string, accent: "primary" | "success" | "neutral" }) {
+  const styles = {
+    primary: "border-primary/20 bg-primary/5 text-primary",
+    success: "border-success/20 bg-success/5 text-success",
+    neutral: "border-stone dark:border-[#2a2520] bg-sand dark:bg-[#1a1916]",
+  }[accent];
+
+  return (
+    <div className={cn("p-4 rounded-xl border flex items-center justify-between", styles)}>
+      <span className="text-[10px] font-bold uppercase tracking-widest opacity-70">{label}</span>
+      <span className="text-xl font-bold font-display">{value}</span>
+    </div>
   );
 }
