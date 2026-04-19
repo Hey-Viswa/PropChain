@@ -17,9 +17,9 @@ const config = {
     extend: {
       colors: {
         // ── Signature terracotta accent ────────────────────────
-        primary:                   "#D97757",
+        primary:                   "rgb(var(--primary) / <alpha-value>)",
         primary_container:         "#C4602A",
-        on_primary:                "#ffffff",
+        on_primary:                "rgb(var(--primary-foreground) / <alpha-value>)",
         primary_fixed:             "#F6EAE3",
         on_primary_fixed:          "#6B2F14",
 
@@ -58,30 +58,30 @@ const config = {
         on_warning:        "#ffffff",
 
         // ── shadcn compatibility ───────────────────────────────
-        border:     "#E5E1DA",
-        input:      "#E5E1DA",
-        ring:       "#D97757",
-        background: "#FAF9F6",
-        foreground: "#1A1918",
+        border:     "rgb(var(--border) / <alpha-value>)",
+        input:      "rgb(var(--input) / <alpha-value>)",
+        ring:       "rgb(var(--ring) / <alpha-value>)",
+        background: "rgb(var(--background) / <alpha-value>)",
+        foreground: "rgb(var(--foreground) / <alpha-value>)",
         card: {
-          DEFAULT:    "#ffffff",
-          foreground: "#1A1918",
+          DEFAULT:    "rgb(var(--card) / <alpha-value>)",
+          foreground: "rgb(var(--card-foreground) / <alpha-value>)",
         },
         popover: {
-          DEFAULT:    "#ffffff",
-          foreground: "#1A1918",
+          DEFAULT:    "rgb(var(--popover) / <alpha-value>)",
+          foreground: "rgb(var(--popover-foreground) / <alpha-value>)",
         },
         muted: {
-          DEFAULT:    "#E5E1DA",
-          foreground: "#6D6861",
+          DEFAULT:    "rgb(var(--muted) / <alpha-value>)",
+          foreground: "rgb(var(--muted-foreground) / <alpha-value>)",
         },
         accent: {
-          DEFAULT:    "#F0EDE7",
-          foreground: "#1A1918",
+          DEFAULT:    "rgb(var(--accent) / <alpha-value>)",
+          foreground: "rgb(var(--accent-foreground) / <alpha-value>)",
         },
         destructive: {
-          DEFAULT:    "#B84040",
-          foreground: "#ffffff",
+          DEFAULT:    "rgb(var(--destructive) / <alpha-value>)",
+          foreground: "rgb(var(--destructive-foreground) / <alpha-value>)",
         },
       },
 

@@ -47,8 +47,8 @@ export function useTheme() {
           clipPath: isDark ? [...clipPath].reverse() : clipPath,
         },
         {
-          duration: 500,
-          easing: "cubic-bezier(0.4, 0, 0.2, 1)",
+          duration: 580,
+          easing: "cubic-bezier(0.22, 1, 0.36, 1)",
           pseudoElement: isDark
             ? "::view-transition-old(root)"
             : "::view-transition-new(root)",

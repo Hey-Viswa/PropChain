@@ -59,6 +59,31 @@ When Claude Code Sonnet 4.6 is assigned an audit/review task, the review must be
 
 ## Session Log
 
+### 2026-04-19T17:14:04Z | Lost UI/theming recovery after reset
+- Request summary: User reported post-reset loss of Claude session changes and requested restoration from session history.
+- Work completed:
+  - Restored post-reset-lost files from backup branch snapshot (`backup/pre-reset-20260419-223518`): landing page, globals CSS, theme hook, and sidebar.
+  - Corrected landing CTA link target to `/network` to match the intended navigation behavior.
+  - Rewired Tailwind semantic compatibility tokens to CSS-variable-based values (`rgb(var(--token) / <alpha-value>)`) so light/dark theme variables drive runtime colors.
+  - Added missing global theme polish: `color-scheme` declarations, WebKit autofill color override, and `@keyframes shake` used by modal error animation.
+  - Fixed existing lint error in mint details page by importing `AlertTriangle` icon used in JSX.
+- Files changed:
+  - app/page.tsx
+  - app/globals.css
+  - hooks/useTheme.ts
+  - components/layout/Sidebar.tsx
+  - tailwind.config.ts
+  - app/mint/details/page.tsx
+  - docs/MAIN_HANDOVER.md
+- Verification commands and results:
+  - `get_errors` on edited files: no errors found.
+  - `npm run lint`: passed with warnings only; no lint errors remain.
+- Open issues/blockers:
+  - Existing unrelated lint warnings remain in `app/dev/admin/page.tsx`, `app/oracle/queue/page.tsx`, `app/oracle/users/[clerkId]/page.tsx`, and `app/settings/page.tsx`.
+- Next steps:
+  - Run visual QA for landing page and sidebar in both themes.
+  - Run `npm run build` to validate full production build after recovered theming changes.
+
 ### 2026-04-19T12:01:54Z | Per-phase documentation discipline enforced
 - Request summary: User requested mandatory documentation for every phase and iteration, including work done, technologies used, implementation method, and lessons learned to improve agent correctness over time.
 - Work completed:

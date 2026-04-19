@@ -4,6 +4,8 @@
 
 @layer base {
   :root {
+    color-scheme: light;
+
     /* shadcn tokens — mapped to warm Anthropic palette */
     --background:         250 249 246;   /* #FAF9F6 cream */
     --foreground:         26 25 24;      /* #1A1918 charcoal */
@@ -28,6 +30,8 @@
   }
 
   .dark {
+    color-scheme: dark;
+
     --background:         15 14 13;
     --foreground:         232 230 226;
     --card:               26 22 16;      /* #1a1610 (approx rgb 26 22 16) */
@@ -74,9 +78,50 @@
   }
 }
 
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+textarea:-webkit-autofill:active,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus,
+select:-webkit-autofill:active {
+  -webkit-text-fill-color: rgb(var(--foreground)) !important;
+  -webkit-box-shadow: 0 0 0 1000px rgb(var(--input)) inset !important;
+  box-shadow: 0 0 0 1000px rgb(var(--input)) inset !important;
+  caret-color: rgb(var(--foreground));
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  15% {
+    transform: translateX(-6px) rotate(-0.5deg);
+  }
+  30% {
+    transform: translateX(5px) rotate(0.5deg);
+  }
+  45% {
+    transform: translateX(-4px);
+  }
+  60% {
+    transform: translateX(3px);
+  }
+  75% {
+    transform: translateX(-2px);
+  }
+}
+
 /* ── View Transitions ────────────────────────────────────────────────────────── */
 ::view-transition-old(root),
 ::view-transition-new(root) {
+  will-change: clip-path;
   animation: none;
   mix-blend-mode: normal;
   display: block;
@@ -87,6 +132,7 @@
   z-index: 1;
 }
 .dark::view-transition-new(root) {
+  will-change: clip-path;
   z-index: 9999;
 }
 
@@ -95,6 +141,7 @@
   z-index: 9999;
 }
 ::view-transition-new(root) {
+  will-change: clip-path;
   z-index: 1;
 }
 

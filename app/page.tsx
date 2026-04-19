@@ -12,6 +12,7 @@ import { SignInButton, SignUpButton, UserButton, useUser } from "@clerk/nextjs";
 import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import ThemeToggle from "@/components/shared/ThemeToggle";
 
 // ── Components ──────────────────────────────────────────────────────────────
 
@@ -59,7 +60,7 @@ function ProfileOrLogin() {
 
   return isSignedIn ? (
     <div className="h-10 w-10 flex items-center justify-center">
-      <UserButton afterSignOutUrl="/" />
+      <UserButton />
     </div>
   ) : (
     <SignInButton mode="modal">
@@ -143,28 +144,28 @@ const FOOTER_COLS = [
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen flex flex-col font-body bg-cream selection:bg-primary/10 selection:text-primary">
+    <div className="min-h-screen flex flex-col font-body bg-background text-foreground selection:bg-primary/10 selection:text-primary">
 
       {/* ── NAVBAR ──────────────────────────────────────────────── */}
-      <header className="sticky top-0 z-50 w-full bg-cream/80 backdrop-blur-xl border-b border-stone/50">
+      <header className="sticky top-0 z-50 w-full bg-background/80 backdrop-blur-xl border-b border-border">
         <div className="container mx-auto px-fluid-gap h-16 flex items-center justify-between">
           <div className="flex items-center gap-8">
             <Link href="/" className="flex items-center gap-2.5 cursor-pointer group">
               <PropChainMark size={26} />
-              <span className="font-display text-[17px] tracking-tight text-on_surface font-bold">
+              <span className="font-display text-[17px] tracking-tight text-foreground font-bold">
                 Prop<span className="text-primary">Chain</span>
               </span>
             </Link>
             <nav className="hidden md:flex gap-6">
               {[
-                { l: "Network",  h: "/dashboard" },
-                { l: "Docs",     h: "https://docs.propchain.com" },
+                { l: "Network",  h: "/network" },
+                { l: "Docs",     h: "/docs" },
                 { l: "Registry", h: "/registry" }
               ].map((link) => (
                 <Link
                   key={link.l}
                   href={link.h}
-                  className="text-[11px] font-bold uppercase tracking-[0.2em] text-on_surface_variant hover:text-primary transition-colors duration-150 cursor-pointer"
+                  className="text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground hover:text-primary transition-colors duration-150 cursor-pointer"
                 >
                   {link.l}
                 </Link>
@@ -172,6 +173,9 @@ export default function LandingPage() {
             </nav>
           </div>
           <div className="flex items-center gap-3">
+            <div className="pr-4 border-r border-border h-8 flex items-center">
+              <ThemeToggle />
+            </div>
             <ProfileOrLogin />
             <NavCta />
           </div>
@@ -181,7 +185,7 @@ export default function LandingPage() {
       <main className="flex-1">
 
         {/* ── HERO ────────────────────────────────────────────────── */}
-        <section className="relative bg-[#12100E] overflow-hidden section-padding">
+        <section className="relative bg-[#12100E] dark:bg-[#080706] overflow-hidden section-padding">
           {/* Architectural dot-grid background */}
           <div
             className="absolute inset-0 opacity-[0.045]"
@@ -227,7 +231,7 @@ export default function LandingPage() {
                   darkBg
                 />
                 <Link
-                  href="/dashboard"
+                  href="/network"
                   className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-[#9B9690] hover:text-white transition-colors duration-150 cursor-pointer group whitespace-nowrap"
                 >
                   <span>View Network Data</span>
