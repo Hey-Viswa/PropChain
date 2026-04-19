@@ -12,10 +12,10 @@ export default function PropertyCard({ property }: PropertyCardProps) {
   return (
     <div
       className={cn(
-        "bg-white dark:bg-[#1a1916] rounded-xl p-5",
-        "border border-stone dark:border-[#2a2520]",
-        "hover:-translate-y-0.5 hover:border-pebble dark:hover:border-[#3a342e] hover:shadow-[0_8px_24px_rgba(26,25,24,0.07)] dark:hover:shadow-[0_8px_24px_rgba(0,0,0,0.3)]",
-        "transition-all duration-200 ease-out cursor-pointer flex flex-col gap-0"
+        "bg-white dark:bg-card rounded-2xl p-6",
+        "border border-stone dark:border-white/5",
+        "hover:-translate-y-1 hover:border-primary/30",
+        "transition-all duration-300 ease-out cursor-pointer flex flex-col gap-0 shadow-sm hover:shadow-card"
       )}
     >
       {/* Row 1: Address + Status */}

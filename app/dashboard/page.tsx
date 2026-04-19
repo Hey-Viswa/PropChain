@@ -32,11 +32,11 @@ export default function DashboardPage() {
   if (!isLoaded) {
     return (
       <div className="max-w-[1200px] mx-auto space-y-6 animate-pulse">
-        <div className="h-10 bg-stone dark:bg-[#2a2520] rounded-2xl w-1/3" />
+        <div className="h-10 bg-stone dark:bg-card rounded-2xl w-1/3" />
         <div className="grid grid-cols-4 gap-4">
-          {[1,2,3,4].map(i => <div key={i} className="h-32 bg-stone dark:bg-[#2a2520] rounded-2xl" />)}
+          {[1,2,3,4].map(i => <div key={i} className="h-32 bg-stone dark:bg-card rounded-2xl" />)}
         </div>
-        <div className="h-64 bg-stone dark:bg-[#2a2520] rounded-2xl" />
+        <div className="h-64 bg-stone dark:bg-card rounded-2xl" />
       </div>
     );
   }
@@ -121,7 +121,7 @@ export default function DashboardPage() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" className="h-10 px-4 bg-white dark:bg-[#1a1916] border-stone dark:border-[#2a2520] text-xs font-bold uppercase tracking-widest rounded-xl">
+          <Button variant="outline" size="sm" className="h-10 px-4 bg-white dark:bg-card border-stone dark:border-white/5 text-xs font-bold uppercase tracking-widest rounded-xl">
             <Calendar className="mr-2 h-3.5 w-3.5" />
             Live View
           </Button>
@@ -276,21 +276,21 @@ function UserDashboardView() {
         </Card>
       </div>
 
-      <div className="bg-white dark:bg-[#1a1916] rounded-2xl p-6 border border-stone dark:border-[#2a2520] overflow-hidden relative min-h-[320px] flex flex-col shadow-card">
+      <div className="bg-white dark:bg-card rounded-2xl p-6 border border-stone dark:border-white/5 overflow-hidden relative min-h-[320px] flex flex-col shadow-card">
         <div className="relative z-10">
           <h3 className="text-lg font-bold font-display text-on_surface dark:text-[#e8eaf0]">Global Registry Hotspots</h3>
           <p className="text-sm text-on_surface_variant dark:text-[#9ba3b8] mt-1">Real-time property minting density by jurisdiction</p>
         </div>
         <div className="absolute inset-x-0 bottom-0 top-16 flex items-center justify-center opacity-80 mix-blend-multiply dark:mix-blend-normal dark:opacity-95">
-          <div className="w-[400px] h-[400px] rounded-full bg-surface_container_high/30 dark:bg-[#1f2532]/30 shadow-inner flex items-center justify-center relative overflow-hidden">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_30%,#fff_70%)] dark:bg-[radial-gradient(circle_at_center,transparent_35%,#0f1117_75%)] z-10" />
+          <div className="w-[400px] h-[400px] rounded-full bg-sand dark:bg-white/5 shadow-inner flex items-center justify-center relative overflow-hidden">
+            <div className="absolute inset-0 bg-white/5 dark:bg-black/10 z-10" />
             <div className="w-[150%] h-[150%] rounded-full border border-primary/10 -rotate-45" />
             <div className="absolute top-[30%] left-[25%] bg-primary text-white text-[10px] font-bold px-3 py-1 rounded-full z-20 shadow-lg">Singapore: High</div>
             <div className="absolute top-[60%] left-[50%] bg-secondary text-white text-[10px] font-bold px-3 py-1 rounded-full z-20 shadow-lg opacity-90">London: Active</div>
-            <div className="absolute bottom-[20%] right-[25%] bg-primary/80 text-white text-[10px] font-bold px-3 py-1 rounded-full z-20 shadow-lg">New York: Peak</div>
+            <div className="absolute bottom-[20%] right-[25%] bg-primary text-white text-[10px] font-bold px-3 py-1 rounded-full z-20 shadow-lg">New York: Peak</div>
           </div>
         </div>
-        <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-white dark:from-[#1a1916] to-transparent z-10" />
+        <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-white dark:from-card to-transparent z-10" />
       </div>
     </div>
   );
@@ -319,7 +319,7 @@ function StatCard({ label, value, delta, deltaPositive, accent, icon, subtext }:
   }[accent];
 
   return (
-    <Card className="rounded-2xl border-stone/50 dark:border-[#2a2520] transition-all hover:shadow-card group overflow-hidden">
+    <Card className="rounded-2xl border-stone/50 dark:border-white/5 transition-all hover:border-primary/20 dark:hover:bg-white/[0.02] group overflow-hidden">
       <CardContent className="p-5">
         <div className="flex justify-between items-start mb-4">
           <div className={cn("w-10 h-10 rounded-2xl flex items-center justify-center border transition-colors group-hover:scale-110 duration-300", accentStyles)}>
@@ -336,7 +336,7 @@ function StatCard({ label, value, delta, deltaPositive, accent, icon, subtext }:
           <p className="text-[10px] font-bold uppercase tracking-widest text-on_surface_variant dark:text-[#9ba3b8] mb-1">{label}</p>
           <p className="text-2xl font-bold font-display text-on_surface dark:text-[#e8eaf0] tracking-tight">{value}</p>
           {subtext && (
-            <p className="text-[10px] text-on_surface_variant/60 dark:text-[#6d6861] mt-2 font-medium">{subtext}</p>
+            <p className="text-[11px] text-on_surface_variant/60 dark:text-[#6d6861] mt-2 font-medium">{subtext}</p>
           )}
         </div>
       </CardContent>

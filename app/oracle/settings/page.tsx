@@ -81,35 +81,35 @@ function OracleSettingsContent() {
         
         {/* LEFT COLUMN: IDENTITY & STATUS */}
         <div className="lg:col-span-1 space-y-6">
-          <Card className="border-primary/10">
+          <Card className="border-primary/10 rounded-2xl">
             <CardHeader className="pb-4">
               <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center mb-2">
                 <Shield className="w-5 h-5 text-primary" />
               </div>
-              <CardTitle className="text-base">Node Identity</CardTitle>
-              <CardDescription>On-chain authority status</CardDescription>
+              <CardTitle className="text-base font-bold text-on_surface dark:text-[#e8eaf0]">Node Identity</CardTitle>
+              <CardDescription className="text-on_surface_variant dark:text-muted-foreground">On-chain authority status</CardDescription>
             </CardHeader>
             <CardContent className="space-y-5">
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-wider text-on_surface_variant/60 mb-2">Contract Role</p>
-                <Badge className="bg-primary_fixed text-primary font-mono py-1 px-3">ORACLE_ROLE</Badge>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-on_surface_variant dark:text-muted-foreground mb-2">Contract Role</p>
+                <Badge className="bg-primary_fixed text-primary font-mono py-1 px-3 border border-primary/20">ORACLE_ROLE</Badge>
               </div>
               
               <div className="space-y-3">
-                <div className="p-3 rounded-xl bg-sand dark:bg-[#211f1c] border border-stone/50 dark:border-white/5">
-                  <p className="text-[10px] font-bold text-on_surface_variant/60 uppercase mb-1">Operator Wallet</p>
+                <div className="p-3 rounded-xl bg-sand dark:bg-white/5 border border-stone/50 dark:border-white/5">
+                  <p className="text-[10px] font-bold text-on_surface_variant dark:text-muted-foreground uppercase mb-1">Operator Wallet</p>
                   <div className="flex items-center justify-between gap-2">
-                    <span className="font-mono text-xs truncate">{truncate(address ?? "")}</span>
+                    <span className="font-mono text-xs truncate text-on_surface dark:text-[#e8eaf0]">{truncate(address ?? "")}</span>
                     <Button variant="ghost" size="icon-xs" onClick={() => copyToClipboard(address ?? "", setCopiedWallet, "Wallet")}>
                       {copiedWallet ? <CheckCircle className="w-3 h-3 text-success" /> : <Copy className="w-3 h-3" />}
                     </Button>
                   </div>
                 </div>
 
-                <div className="p-3 rounded-xl bg-sand dark:bg-[#211f1c] border border-stone/50 dark:border-white/5">
-                  <p className="text-[10px] font-bold text-on_surface_variant/60 uppercase mb-1">Registry Contract</p>
+                <div className="p-3 rounded-xl bg-sand dark:bg-white/5 border border-stone/50 dark:border-white/5">
+                  <p className="text-[10px] font-bold text-on_surface_variant dark:text-muted-foreground uppercase mb-1">Registry Contract</p>
                   <div className="flex items-center justify-between gap-2">
-                    <span className="font-mono text-xs truncate">{truncate(CONTRACT_ADDRESS)}</span>
+                    <span className="font-mono text-xs truncate text-on_surface dark:text-[#e8eaf0]">{truncate(CONTRACT_ADDRESS)}</span>
                     <Button variant="ghost" size="icon-xs" onClick={() => copyToClipboard(CONTRACT_ADDRESS, setCopiedContract, "Contract")}>
                       {copiedContract ? <CheckCircle className="w-3 h-3 text-success" /> : <Copy className="w-3 h-3" />}
                     </Button>
@@ -117,7 +117,7 @@ function OracleSettingsContent() {
                 </div>
               </div>
 
-              <Button variant="outline" className="w-full h-10 text-xs font-bold uppercase tracking-wider gap-2" asChild>
+              <Button variant="outline" className="w-full h-10 text-[10px] font-bold uppercase tracking-widest flex items-center justify-center gap-2 rounded-xl border-stone dark:border-white/5" asChild>
                 <a href={`https://mumbai.polygonscan.com/address/${CONTRACT_ADDRESS}`} target="_blank" rel="noopener noreferrer">
                   <Globe className="w-3.5 h-3.5" />
                   Polygonscan
@@ -126,25 +126,25 @@ function OracleSettingsContent() {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="rounded-2xl">
             <CardHeader className="pb-2">
-              <CardTitle className="text-base">System Health</CardTitle>
+              <CardTitle className="text-base font-bold text-on_surface dark:text-[#e8eaf0]">System Health</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between text-sm">
-                <span className="text-on_surface_variant">Node Status</span>
+                <span className="text-on_surface_variant dark:text-muted-foreground">Node Status</span>
                 <span className="flex items-center gap-1.5 text-success font-bold">
                   <div className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
                   Active
                 </span>
               </div>
               <div className="flex items-center justify-between text-sm">
-                <span className="text-on_surface_variant">Sync State</span>
-                <span className="font-medium">100% (Synced)</span>
+                <span className="text-on_surface_variant dark:text-muted-foreground">Sync State</span>
+                <span className="font-bold text-on_surface dark:text-[#e8eaf0]">100% (Synced)</span>
               </div>
               <div className="flex items-center justify-between text-sm">
-                <span className="text-on_surface_variant">Latency</span>
-                <span className="font-medium text-primary">42ms</span>
+                <span className="text-on_surface_variant dark:text-muted-foreground">Latency</span>
+                <span className="font-bold text-primary">42ms</span>
               </div>
             </CardContent>
           </Card>
@@ -168,8 +168,8 @@ function OracleSettingsContent() {
               <div className="px-6 py-5">
                 <div className="flex justify-between items-end mb-4">
                   <div>
-                    <p className="text-sm font-bold">Auto-reject Threshold</p>
-                    <p className="text-xs text-on_surface_variant mt-0.5">Reject if confidence is below {threshold[0]}%</p>
+                    <p className="text-sm font-bold text-on_surface dark:text-[#e8eaf0]">Auto-reject Threshold</p>
+                    <p className="text-xs text-on_surface_variant dark:text-muted-foreground mt-0.5">Reject if confidence is below {threshold[0]}%</p>
                   </div>
                   <span className="text-lg font-display font-bold text-primary">{threshold[0]}%</span>
                 </div>
@@ -182,15 +182,15 @@ function OracleSettingsContent() {
                 />
               </div>
 
-              <Separator />
+              <Separator className="bg-stone/20 dark:bg-white/5" />
 
               <div className="px-6 py-5 flex items-center justify-between gap-4">
                 <div className="flex-1">
-                  <p className="text-sm font-bold">Default Rejection Reason</p>
-                  <p className="text-xs text-on_surface_variant mt-0.5">Preset text for failed property audits</p>
+                  <p className="text-sm font-bold text-on_surface dark:text-[#e8eaf0]">Default Rejection Reason</p>
+                  <p className="text-xs text-on_surface_variant dark:text-muted-foreground mt-0.5">Preset text for failed property audits</p>
                 </div>
                 <Select defaultValue="insufficient">
-                  <SelectTrigger className="w-[240px] h-10">
+                  <SelectTrigger className="w-[240px] h-10 border-stone dark:border-white/5 dark:bg-white/5">
                     <SelectValue placeholder="Select reason" />
                   </SelectTrigger>
                   <SelectContent>
@@ -202,22 +202,22 @@ function OracleSettingsContent() {
                 </Select>
               </div>
 
-              <Separator />
+              <Separator className="bg-stone/20 dark:bg-white/5" />
 
               <div className="px-6 py-5 flex items-center justify-between gap-4">
                 <div className="flex-1">
-                  <p className="text-sm font-bold">Manual Review Trigger</p>
-                  <p className="text-xs text-on_surface_variant mt-0.5">Force oracle review for all cross-border transactions</p>
+                  <p className="text-sm font-bold text-on_surface dark:text-[#e8eaf0]">Manual Review Trigger</p>
+                  <p className="text-xs text-on_surface_variant dark:text-muted-foreground mt-0.5">Force oracle review for all cross-border transactions</p>
                 </div>
                 <Switch checked={manualReview} onCheckedChange={setManualReview} />
               </div>
 
-              <Separator />
+              <Separator className="bg-stone/20 dark:bg-white/5" />
 
               <div className="px-6 py-5 flex items-center justify-between gap-4">
                 <div className="flex-1">
-                  <p className="text-sm font-bold">Fraud Risk Analysis</p>
-                  <p className="text-xs text-on_surface_variant mt-0.5">Real-time flagging for suspicious wallet behaviors</p>
+                  <p className="text-sm font-bold text-on_surface dark:text-[#e8eaf0]">Fraud Risk Analysis</p>
+                  <p className="text-xs text-on_surface_variant dark:text-muted-foreground mt-0.5">Real-time flagging for suspicious wallet behaviors</p>
                 </div>
                 <Switch checked={highlightFraud} onCheckedChange={setHighlightFraud} />
               </div>

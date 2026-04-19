@@ -13,7 +13,7 @@ export default function VerificationSummaryCard() {
     <div className="lg:col-span-1 bg-primary dark:bg-[#3D1F10] rounded-2xl p-6 flex flex-col h-full min-h-[320px]">
 
       <div className="flex items-center gap-2.5 mb-5">
-        <div className="w-7 h-7 rounded-lg bg-white/15 flex items-center justify-center">
+        <div className="w-7 h-7 rounded-xl bg-white/15 flex items-center justify-center">
           <ClipboardList size={14} className="text-white" />
         </div>
         <div>

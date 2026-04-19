@@ -117,7 +117,7 @@ export default function MintStep4() {
 
   if (!details.ulpin) {
     return (
-      <div className="bg-surface_container_lowest dark:bg-[#131820] rounded-xl p-8 text-center max-w-md mx-auto space-y-4 border border-outline_variant/20 shadow-sm mt-12">
+      <div className="bg-card dark:bg-card rounded-xl p-8 text-center max-w-md mx-auto space-y-4 border border-outline_variant/20 shadow-sm mt-12">
         <p className="text-title-md font-semibold text-on_surface dark:text-[#e8eaf0]">Incomplete Data</p>
         <p className="text-body-md text-on_surface_variant dark:text-[#9ba3b8]">Please complete Step 1 first.</p>
         <Link href="/mint/details">
@@ -129,7 +129,7 @@ export default function MintStep4() {
 
   return (
     <div className="grid grid-cols-1 xl:grid-cols-[1fr_360px] 2xl:grid-cols-[1fr_420px] gap-6 xl:gap-8">
-      <div className="bg-surface_container_lowest dark:bg-[#131820] rounded-xl p-6 xl:p-8 space-y-5 shadow-card h-fit">
+      <div className="bg-card dark:bg-card rounded-xl p-6 xl:p-8 space-y-5 shadow-card h-fit">
         <p className="text-headline-md font-semibold text-on_surface dark:text-[#e8eaf0] font-display">
           Review Your Submission
         </p>
@@ -178,7 +178,7 @@ export default function MintStep4() {
         </div>
       </div>
 
-      <div className="bg-surface_container_lowest dark:bg-[#131820] rounded-xl p-5 xl:p-6 sticky top-24 h-fit shadow-card space-y-4">
+      <div className="bg-card dark:bg-card rounded-xl p-5 xl:p-6 sticky top-24 h-fit shadow-card space-y-4">
         <p className="text-title-md font-semibold text-on_surface dark:text-[#e8eaf0] font-display">
           Transaction Summary
         </p>

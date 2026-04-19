@@ -145,7 +145,7 @@ export default function OracleQueuePage() {
               </div>
               <div className="relative hidden md:block">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-on_surface_variant/40" />
-                <Input placeholder="Filter queue..." className="h-9 w-[200px] pl-9 text-xs rounded-lg" />
+                <Input placeholder="Filter queue..." className="h-9 w-[200px] pl-9 text-xs rounded-xl" />
               </div>
             </div>
           </CardHeader>

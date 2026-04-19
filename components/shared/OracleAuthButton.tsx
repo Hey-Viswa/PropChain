@@ -35,7 +35,7 @@ export default function OracleAuthButton({ variant = "navbar" }: Props) {
       return (
         <button
           onClick={handleLogout}
-          className="flex items-center gap-1.5 text-xs font-medium text-primary dark:text-[#E89874] bg-primary_fixed dark:bg-[#3D1F10] rounded-full px-3 py-1.5 hover:opacity-80 transition-opacity hidden sm:flex"
+          className="flex items-center gap-1.5 text-xs font-bold text-primary dark:text-[#E89874] bg-primary/10 dark:bg-[#3D1F10] rounded-xl px-4 py-2 hover:opacity-80 transition-opacity hidden sm:flex border border-primary/20"
         >
           <ShieldCheck className="w-3.5 h-3.5" />
           Oracle Mode
@@ -49,7 +49,7 @@ export default function OracleAuthButton({ variant = "navbar" }: Props) {
         <>
           <button
             onClick={() => setShowModal(true)}
-            className="flex items-center gap-1.5 text-xs font-medium text-on_surface_variant dark:text-[#9ba3b8] hover:text-primary dark:hover:text-[#E89874] px-2 py-1.5 rounded-lg hover:bg-surface_container dark:hover:bg-[#2a2520] transition-colors hidden sm:flex"
+            className="flex items-center gap-1.5 text-xs font-bold text-on_surface_variant dark:text-muted-foreground hover:text-primary dark:hover:text-[#E89874] px-3 py-2 rounded-xl hover:bg-stone/10 dark:hover:bg-white/5 transition-colors hidden sm:flex border border-transparent hover:border-stone/30"
           >
             <Shield className="w-3.5 h-3.5" />
             Oracle Access
@@ -71,7 +71,7 @@ export default function OracleAuthButton({ variant = "navbar" }: Props) {
       return (
         <button
           onClick={handleLogout}
-          className="flex items-center gap-2.5 w-full px-3 py-2.5 rounded-lg text-error dark:text-[#f87171] hover:bg-error_container dark:hover:bg-[#2d0a0a] transition-colors text-sm font-medium"
+          className="flex items-center gap-2.5 w-full px-3 py-2.5 rounded-xl text-error dark:text-[#f87171] hover:bg-error/5 transition-colors text-sm font-bold uppercase tracking-widest"
         >
           <LogOut className="w-4 h-4 flex-shrink-0" />
           Exit Oracle Mode
@@ -86,10 +86,10 @@ export default function OracleAuthButton({ variant = "navbar" }: Props) {
     <>
       <button
         onClick={() => setShowModal(true)}
-        className="flex items-center gap-2 bg-primary text-on_primary rounded-md px-6 py-3 text-base font-medium hover:opacity-90 transition-opacity active:scale-[0.98]"
+        className="flex items-center gap-2 bg-primary text-on_primary rounded-xl px-8 py-4 text-base font-bold uppercase tracking-widest hover:opacity-90 transition-all active:scale-[0.98] shadow-lg"
       >
-        <ShieldCheck className="w-4 h-4" />
-        Enter Oracle Access Code
+        <ShieldCheck className="w-5 h-5" />
+        Authorize Institutional Access
       </button>
       <OracleAccessModal
         isOpen={showModal}

@@ -1,134 +1,80 @@
 "use client";
 
-import { ChevronRight, ShieldCheck, X } from "lucide-react";
-import { useBreadcrumbs } from "@/hooks/useBreadcrumbs";
 import { cn } from "@/lib/utils";
-import { UserButton, useUser } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 import { useWallet } from "@/hooks/useWallet";
-import { useToast } from "@/hooks/use-toast";
-import ThemeToggle from "@/components/shared/ThemeToggle";
-import OracleAccessModal from "@/components/shared/OracleAccessModal";
 import { PropChainMark } from "@/components/shared/PropChainMark";
-import OracleAuthButton from "@/components/shared/OracleAuthButton";
-import { useOracleAccessStore } from "@/store/useOracleAccessStore";
-import { useRouter } from "next/navigation";
-import { useAdminRole } from "@/hooks/useAdminRole";
+import { useBreadcrumbs } from "@/hooks/useBreadcrumbs";
+import Link from "next/link";
 
 export default function Navbar() {
-  const router = useRouter();
   const crumbs = useBreadcrumbs();
-  const { user, isLoaded } = useUser();
-  const { isConnected, isConnecting, truncatedAddress, connect, disconnect, chain } = useWallet();
-  const { isOracle: hasOracleRole } = useAdminRole();
-  const { toast } = useToast();
+  const { isConnected, truncatedAddress, chain } = useWallet();
   const [mounted, setMounted] = useState(false);
-  const [showOracleModal, setShowOracleModal] =
-    useState(false);
-  const { isOracleMode, reset } =
-    useOracleAccessStore();
-  const isInOracleContext =
-    isOracleMode || hasOracleRole;
-
-  useEffect(() => {
-    if (user) {
-      console.log("Clerk user imageUrl:", user.imageUrl);
-    }
-  }, [user]);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (
-        e.ctrlKey &&
-        e.shiftKey &&
-        e.key.toUpperCase() === "O" &&
-        !isInOracleContext
-      ) {
-        e.preventDefault();
-        setShowOracleModal(true);
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [isInOracleContext]);
-
   return (
-    <>
-      <header
-        className={cn(
-          "sticky top-0 z-40 h-[60px] flex items-center justify-between",
-          "px-4 sm:px-6 md:px-8",
-          "bg-cream/90 dark:bg-[#0f0e0d]/90 backdrop-blur-[12px]",
-          "border-b border-stone/50 dark:border-[#2a2520]"
-        )}
-      >
-        {/* Mobile logo (visible only when sidebar is hidden) */}
-        <div className="md:hidden flex items-center gap-2 flex-shrink-0">
+    <header
+      className={cn(
+        "sticky top-0 z-40 h-[60px] flex items-center justify-between",
+        "px-4 sm:px-6 md:px-8",
+        "bg-cream/90 dark:bg-[#0f0e0d]/90 backdrop-blur-[12px]",
+        "border-b border-stone/50 dark:border-white/5"
+      )}
+    >
+      {/* Mobile logo (visible only when sidebar is hidden) */}
+      <div className="md:hidden flex items-center gap-2 flex-shrink-0">
+        <Link href="/" className="flex items-center gap-2">
           <PropChainMark size={24} />
           <span className="font-display text-[15px] text-on_surface dark:text-[#e8e6e2] tracking-tight font-bold">
             Prop<span className="text-primary">Chain</span>
           </span>
-        </div>
+        </Link>
+      </div>
 
-        {/* Breadcrumbs — desktop */}
-        <nav className="hidden md:flex items-center gap-1.5 min-w-0">
-          {crumbs.map((crumb, i) => (
-            <span key={i} className="flex items-center gap-1.5 min-w-0">
-              {i > 0 && (
-                <span className="text-pebble dark:text-[#6b6560] text-[13px] shrink-0">/</span>
+      {/* Breadcrumbs — desktop */}
+      <nav className="hidden md:flex items-center gap-2 min-w-0">
+        {crumbs.map((crumb, i) => (
+          <span key={i} className="flex items-center gap-2 min-w-0">
+            {i > 0 && (
+              <span className="text-stone dark:text-white/10 text-[13px] shrink-0">/</span>
+            )}
+            <span
+              className={cn(
+                "text-[12px] font-black uppercase tracking-widest truncate",
+                i === crumbs.length - 1
+                  ? "text-primary dark:text-[#E89874]"
+                  : "text-on_surface_variant/40 dark:text-muted-foreground/30"
               )}
-              <span
-                className={cn(
-                  "text-[13px] truncate",
-                  i === crumbs.length - 1
-                    ? "text-on_surface dark:text-[#e8e6e2] font-semibold"
-                    : "text-on_surface_variant/60 dark:text-[#6b6560]"
-                )}
-              >
-                {crumb.label}
-              </span>
+            >
+              {crumb.label}
             </span>
-          ))}
-        </nav>
+          </span>
+        ))}
+      </nav>
 
-        {/* Spacer so right-side items push to the right on mobile */}
-        <div className="flex-1 md:hidden" />
+      {/* Spacer */}
+      <div className="flex-1 md:hidden" />
 
-        <div className="flex items-center gap-2 flex-shrink-0">
-          {/* Network */}
-          <div className="hidden sm:flex items-center px-[10px] py-1 rounded-full border border-stone dark:border-[#2a2520] text-[11px] font-medium text-on_surface_variant dark:text-[#9b9690]">
-            {chain?.name ?? "No Network"}
-          </div>
-
-          {/* Wallet address */}
-          {mounted && isConnected && (
-            <span className="hidden sm:inline bg-sand dark:bg-[#1a1916] border border-stone dark:border-[#2a2520] rounded-[6px] px-[9px] py-1 text-[10px] font-mono text-on_surface_variant dark:text-[#9b9690]">
+      <div className="flex items-center gap-4 flex-shrink-0">
+        {/* Network & Wallet status — institutional pill */}
+        {mounted && isConnected && (
+          <div className="flex items-center gap-3 bg-sand/50 dark:bg-white/5 px-4 py-1.5 rounded-full border border-stone/30 dark:border-white/10 shadow-sm">
+            <div className="flex items-center gap-1.5 pr-3 border-r border-stone/30 dark:border-white/10">
+               <div className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
+               <span className="text-[10px] font-black uppercase tracking-widest text-on_surface/60 dark:text-[#e8eaf0]/60">
+                 {chain?.name || "Mainnet"}
+               </span>
+            </div>
+            <span className="font-mono text-[11px] font-bold text-primary dark:text-[#E89874]">
               {truncatedAddress}
             </span>
-          )}
-
-          {/* Oracle mode button */}
-          {mounted && <OracleAuthButton variant="navbar" />}
-
-          {/* Theme toggle */}
-          <ThemeToggle />
-
-          {/* Clerk avatar */}
-          {isLoaded && user && <UserButton />}
-        </div>
-      </header>
-
-      <OracleAccessModal
-        isOpen={showOracleModal}
-        onClose={() => setShowOracleModal(false)}
-      />
-    </>
+          </div>
+        )}
+      </div>
+    </header>
   );
 }

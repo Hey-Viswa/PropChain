@@ -2,88 +2,72 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, ArrowUpRight } from "lucide-react";
-import { SignInButton, SignUpButton, useUser, UserButton } from "@clerk/nextjs";
+import { 
+  ArrowUpRight, ArrowRight, ShieldCheck, 
+  ChevronRight, Globe, BarChart3, Database, 
+  Activity, Zap, Box
+} from "lucide-react";
 import { PropChainMark } from "@/components/shared/PropChainMark";
+import { SignInButton, SignUpButton, UserButton, useUser } from "@clerk/nextjs";
+import { useAuth } from "@/hooks/useAuth";
+import { Card, CardContent } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
-// ── Auth-aware CTA ──────────────────────────────────────────────────────────
+// ── Components ──────────────────────────────────────────────────────────────
 
-function CtaButton({
-  className,
-  withArrow,
-  darkBg,
-}: {
-  className?: string;
-  withArrow?: boolean;
-  darkBg?: boolean;
-}) {
-  const { isSignedIn } = useUser();
+function CtaButton({ className, withArrow = false, darkBg = false }: { className?: string; withArrow?: boolean; darkBg?: boolean }) {
+  const { isSignedIn } = useAuth();
+  const label = isSignedIn ? "Go to Dashboard" : "Initiate Protocol";
 
-  if (isSignedIn) {
-    return (
-      <Link href="/dashboard">
-        <Button className={className}>
-          Go to Dashboard {withArrow && <ArrowRight size={15} className="ml-2" />}
-        </Button>
-      </Link>
-    );
-  }
-
-  return (
-    <div className="flex gap-3 w-full flex-col sm:flex-row">
-      <SignUpButton mode="modal">
-        <Button className={className}>
-          Get Started {withArrow && <ArrowRight size={15} className="ml-2" />}
-        </Button>
-      </SignUpButton>
-      <SignInButton mode="modal">
-        <Button
-          variant="outline"
-          className={
-            darkBg
-              ? "rounded-lg h-12 px-8 text-sm font-semibold tracking-widest uppercase border-white/25 text-white hover:bg-white/10 bg-transparent cursor-pointer"
-              : "rounded-lg h-12 px-8 text-sm font-semibold tracking-widest uppercase cursor-pointer"
-          }
-        >
-          Sign In
-        </Button>
-      </SignInButton>
-    </div>
+  return isSignedIn ? (
+    <Link href="/dashboard" className="w-full sm:w-auto">
+      <Button className={cn("rounded-xl h-14 px-10 text-[10px] font-bold tracking-[0.2em] uppercase cursor-pointer shadow-floating transition-all active:scale-95 flex items-center justify-center", className)}>
+        {label} {withArrow && <ArrowRight className="ml-2 w-4 h-4" />}
+      </Button>
+    </Link>
+  ) : (
+    <SignUpButton mode="modal">
+      <Button className={cn("rounded-xl h-14 px-10 text-[10px] font-bold tracking-[0.2em] uppercase cursor-pointer shadow-floating transition-all active:scale-95 flex items-center justify-center", className)}>
+        {label} {withArrow && <ArrowRight className="ml-2 w-4 h-4" />}
+      </Button>
+    </SignUpButton>
   );
 }
 
 function NavCta() {
-  const { isSignedIn } = useUser();
-  if (isSignedIn) {
-    return (
-      <Link href="/dashboard">
-        <Button className="rounded-full shadow-none px-6 h-9 cursor-pointer">
-          Dashboard
-        </Button>
-      </Link>
-    );
-  }
-  return (
-    <div className="flex gap-2">
-      <SignInButton mode="modal">
-        <Button variant="ghost" className="rounded-full shadow-none px-4 h-9 cursor-pointer text-sm">
-          Sign In
-        </Button>
-      </SignInButton>
-      <SignUpButton mode="modal">
-        <Button className="rounded-full shadow-none px-5 h-9 cursor-pointer text-sm">
-          Get Started
-        </Button>
-      </SignUpButton>
-    </div>
+  const { isSignedIn, isLoaded } = useAuth();
+  if (!isLoaded) return <div className="h-10 w-24 bg-stone/20 rounded-xl animate-pulse" />;
+
+  return isSignedIn ? (
+    <Link href="/dashboard">
+      <Button size="sm" className="bg-primary hover:bg-primary_container text-white rounded-xl h-10 px-6 text-[10px] font-bold tracking-widest uppercase cursor-pointer transition-all active:scale-95">
+        Dashboard
+      </Button>
+    </Link>
+  ) : (
+    <SignUpButton mode="modal">
+      <Button size="sm" className="bg-primary hover:bg-primary_container text-white rounded-xl h-10 px-6 text-[10px] font-bold tracking-widest uppercase cursor-pointer transition-all active:scale-95">
+        Institutional Access
+      </Button>
+    </SignUpButton>
   );
 }
 
 function ProfileOrLogin() {
-  const { isSignedIn, isLoaded } = useUser();
-  if (!isLoaded) return <div className="w-8 h-8 rounded-full bg-stone animate-pulse" />;
-  if (isSignedIn) return <UserButton />;
-  return null;
+  const { isSignedIn, isLoaded } = useAuth();
+  if (!isLoaded) return <div className="h-10 w-10 bg-stone/20 rounded-xl animate-pulse" />;
+
+  return isSignedIn ? (
+    <div className="h-10 w-10 flex items-center justify-center">
+      <UserButton afterSignOutUrl="/" />
+    </div>
+  ) : (
+    <SignInButton mode="modal">
+      <Button variant="ghost" className="text-on_surface_variant hover:text-primary rounded-xl h-10 px-4 text-[10px] font-bold tracking-widest uppercase cursor-pointer">
+        Log In
+      </Button>
+    </SignInButton>
+  );
 }
 
 // ── Static data ─────────────────────────────────────────────────────────────
@@ -167,18 +151,22 @@ export default function LandingPage() {
           <div className="flex items-center gap-8">
             <Link href="/" className="flex items-center gap-2.5 cursor-pointer group">
               <PropChainMark size={26} />
-              <span className="font-display text-[17px] tracking-tight text-on_surface">
+              <span className="font-display text-[17px] tracking-tight text-on_surface font-bold">
                 Prop<span className="text-primary">Chain</span>
               </span>
             </Link>
             <nav className="hidden md:flex gap-6">
-              {["Network", "Docs", "Registry"].map((label) => (
+              {[
+                { l: "Network",  h: "/dashboard" },
+                { l: "Docs",     h: "https://docs.propchain.com" },
+                { l: "Registry", h: "/registry" }
+              ].map((link) => (
                 <Link
-                  key={label}
-                  href="#"
-                  className="text-[13px] font-bold uppercase tracking-widest text-on_surface_variant hover:text-primary transition-colors duration-150 cursor-pointer"
+                  key={link.l}
+                  href={link.h}
+                  className="text-[11px] font-bold uppercase tracking-[0.2em] text-on_surface_variant hover:text-primary transition-colors duration-150 cursor-pointer"
                 >
-                  {label}
+                  {link.l}
                 </Link>
               ))}
             </nav>
@@ -201,14 +189,6 @@ export default function LandingPage() {
               backgroundImage:
                 "radial-gradient(circle, #FAF9F6 1px, transparent 1px)",
               backgroundSize: "40px 40px",
-            }}
-          />
-          {/* Subtle warm glow — top right */}
-          <div
-            className="absolute top-0 right-0 w-[600px] h-[500px] opacity-[0.08] pointer-events-none"
-            style={{
-              background:
-                "radial-gradient(ellipse at top right, #D97757 0%, transparent 65%)",
             }}
           />
 
@@ -236,19 +216,19 @@ export default function LandingPage() {
             <div className="w-full max-w-4xl h-px bg-[#FAF9F6]/10 mb-12" />
 
             {/* Sub-headline + CTAs */}
-            <div className="flex flex-col lg:flex-row gap-12 lg:gap-24 items-start animate-fade-up" style={{ animationDelay: '0.1s' }}>
+            <div className="flex flex-col lg:flex-row gap-12 lg:gap-24 items-center animate-fade-up" style={{ animationDelay: '0.1s' }}>
               <p className="text-[#9B9690] text-lg lg:text-xl leading-relaxed max-w-[480px] text-balance">
                 PropChain transforms physical property into liquid digital assets — unified legal compliance, institutional security, and AI verification on a single protocol.
               </p>
-              <div className="flex flex-col gap-6 flex-shrink-0 min-w-[240px]">
+              <div className="flex flex-col sm:flex-row items-center gap-8 flex-shrink-0">
                 <CtaButton
-                  className="bg-primary hover:bg-primary_container text-white rounded-xl h-14 px-10 text-xs font-bold tracking-[0.2em] uppercase cursor-pointer shadow-floating transition-all active:scale-95"
+                  className="bg-primary hover:bg-primary_container text-white rounded-xl h-14 px-10 text-[10px] font-bold tracking-[0.2em] uppercase cursor-pointer shadow-floating transition-all active:scale-95 flex items-center justify-center"
                   withArrow
                   darkBg
                 />
                 <Link
-                  href="#"
-                  className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#6B6560] hover:text-primary transition-colors duration-150 cursor-pointer group"
+                  href="/dashboard"
+                  className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-[#9B9690] hover:text-white transition-colors duration-150 cursor-pointer group whitespace-nowrap"
                 >
                   <span>View Network Data</span>
                   <ArrowUpRight
@@ -282,11 +262,11 @@ export default function LandingPage() {
         <section className="bg-sand/30 border-y border-stone/50 py-6">
           <div className="container mx-auto px-fluid-gap">
             <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-4">
-              <span className="text-[9px] font-black tracking-[0.3em] uppercase text-on_surface_variant/30 flex-shrink-0 pr-4 border-r border-stone/50">
+              <span className="text-[9px] font-black tracking-[0.3em] uppercase text-on_surface_variant flex-shrink-0 pr-4 border-r border-stone/50">
                 Institutional Partners
               </span>
               {["Chainlink", "Ethereum L2", "Fireblocks", "Circle", "Coinbase Prime"].map((name) => (
-                <span key={name} className="text-[11px] font-bold text-on_surface_variant/40 tracking-[0.15em] uppercase hover:text-primary transition-colors cursor-default">
+                <span key={name} className="text-[11px] font-bold text-on_surface_variant tracking-[0.15em] uppercase hover:text-primary transition-colors cursor-default">
                   {name}
                 </span>
               ))}
@@ -298,11 +278,11 @@ export default function LandingPage() {
         <section className="bg-cream section-padding">
           <div className="container mx-auto px-fluid-gap">
             {/* Section header */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between mb-20 gap-8 pb-16 border-b border-stone/50">
-              <h2 className="text-fluid-h1 text-on_surface max-w-xl text-balance">
+            <div className="flex flex-col md:flex-row md:items-start justify-between mb-24 gap-12 pb-16 border-b border-stone/50">
+              <h2 className="text-fluid-h1 text-on_surface max-w-2xl text-balance font-bold leading-[1.1]">
                 The infrastructure layer for property finance.
               </h2>
-              <p className="text-on_surface_variant text-base max-w-[320px] leading-relaxed font-medium">
+              <p className="text-on_surface_variant text-lg max-w-[380px] leading-relaxed font-medium md:pt-2">
                 Every component engineered for institutional-grade real estate tokenization at global scale.
               </p>
             </div>
@@ -326,7 +306,7 @@ export default function LandingPage() {
                     </p>
                   </div>
                   <div className="flex-shrink-0 md:pt-6">
-                    <span className="inline-block border-2 border-stone text-on_surface_variant text-[10px] tracking-[0.2em] uppercase font-bold px-4 py-2 rounded-lg group-hover:border-primary group-hover:text-primary transition-colors">
+                    <span className="inline-block border-2 border-stone text-on_surface_variant text-[10px] tracking-[0.2em] uppercase font-bold px-4 py-2 rounded-xl group-hover:border-primary group-hover:text-primary transition-colors">
                       {f.tag}
                     </span>
                   </div>
@@ -337,36 +317,33 @@ export default function LandingPage() {
         </section>
 
         {/* ── PROCESS ─────────────────────────────────────────────── */}
-        <section className="bg-[#12100E] py-24 lg:py-32">
-          <div className="container mx-auto px-6">
+        <section className="bg-[#12100E] section-padding">
+          <div className="container mx-auto px-fluid-gap">
             {/* Section header */}
-            <div className="mb-16">
-              <div className="flex items-center gap-3 mb-5">
+            <div className="mb-20">
+              <div className="flex items-center gap-3 mb-6">
                 <div className="h-px w-8 bg-primary" />
-                <span className="text-[10px] font-semibold tracking-[0.22em] text-primary uppercase">
-                  How It Works
+                <span className="text-[10px] font-bold tracking-[0.3em] text-primary uppercase">
+                  Institutional Protocol
                 </span>
               </div>
-              <h2
-                className="font-display text-[#F5F3F0] tracking-[-0.025em] leading-tight max-w-xl"
-                style={{ fontSize: "clamp(1.8rem, 3.5vw, 2.75rem)" }}
-              >
+              <h2 className="text-fluid-h1 text-[#F5F3F0] max-w-2xl font-bold leading-[1.1]">
                 From deed to digital asset in three steps.
               </h2>
             </div>
 
             {/* 3-step bordered grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 border border-[#FAF9F6]/10 divide-y md:divide-y-0 md:divide-x divide-[#FAF9F6]/10">
+            <div className="grid grid-cols-1 md:grid-cols-3 border border-[#FAF9F6]/10 divide-y md:divide-y-0 md:divide-x divide-[#FAF9F6]/10 rounded-3xl overflow-hidden">
               {PROCESS.map((s) => (
-                <div key={s.step} className="p-8 lg:p-10 flex flex-col gap-8">
-                  <span className="font-display text-[5rem] leading-none text-primary/15 select-none">
+                <div key={s.step} className="p-10 lg:p-12 flex flex-col gap-10 hover:bg-white/[0.02] transition-colors">
+                  <span className="font-display text-[6rem] leading-none text-primary/10 select-none font-black">
                     {s.step}
                   </span>
                   <div>
-                    <h3 className="font-display text-[1.2rem] text-[#F5F3F0] mb-3 tracking-tight">
+                    <h3 className="font-display text-2xl text-[#F5F3F0] mb-4 font-bold tracking-tight">
                       {s.title}
                     </h3>
-                    <p className="text-[#6B6560] text-sm leading-relaxed">{s.body}</p>
+                    <p className="text-[#9B9690] text-base leading-relaxed font-medium">{s.body}</p>
                   </div>
                 </div>
               ))}
@@ -375,67 +352,66 @@ export default function LandingPage() {
         </section>
 
         {/* ── CTA BAND ────────────────────────────────────────────── */}
-        <section className="bg-primary py-20 lg:py-28">
-          <div className="container mx-auto px-6">
-            <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-12">
-              <div>
-                <h2
-                  className="font-display text-white leading-[1.02] tracking-[-0.025em] mb-5"
-                  style={{ fontSize: "clamp(2rem, 4vw, 3.5rem)" }}
-                >
-                  Ready to tokenize your first asset?
+        <section className="bg-primary section-padding relative overflow-hidden">
+          <div className="container mx-auto px-fluid-gap relative z-10">
+            <div className="flex flex-col lg:flex-row items-center justify-between gap-16">
+              <div className="text-center lg:text-left">
+                <h2 className="text-fluid-h1 text-white font-bold leading-[1.05] tracking-tight mb-6">
+                  Ready to tokenize?
                 </h2>
-                <p className="text-white/65 text-base max-w-md leading-relaxed">
-                  Join 12,000+ investors and developers building on the PropChain registry.
+                <p className="text-white/80 text-xl max-w-xl leading-relaxed font-medium">
+                  Join 12,000+ institutional partners building the future of property finance on PropChain.
                 </p>
               </div>
-              <div className="flex flex-col sm:flex-row gap-3 flex-shrink-0">
+              <div className="flex flex-col sm:flex-row gap-6 flex-shrink-0">
                 <CtaButton
-                  className="bg-white text-primary hover:bg-white/90 rounded-lg h-12 px-8 text-sm font-semibold tracking-widest uppercase cursor-pointer"
+                  className="bg-white text-primary hover:bg-stone/10 rounded-xl h-16 px-12 text-xs font-black tracking-widest uppercase cursor-pointer shadow-2xl"
                   withArrow
                 />
                 <Button
                   variant="outline"
-                  className="rounded-lg h-12 px-8 text-sm font-semibold tracking-widest uppercase border-white/25 text-white hover:bg-white/10 bg-transparent cursor-pointer"
+                  className="rounded-xl h-16 px-10 text-xs font-black tracking-widest uppercase border-white/30 text-white hover:bg-white/10 bg-transparent cursor-pointer"
                 >
-                  Developer Hub
+                  Network Status
                 </Button>
               </div>
             </div>
           </div>
+          {/* subtle decoration */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-white/5 rounded-full blur-3xl" />
         </section>
 
       </main>
 
       {/* ── FOOTER ──────────────────────────────────────────────── */}
-      <footer className="bg-[#0E0C0B] border-t border-[#FAF9F6]/8 pt-16 pb-10">
-        <div className="container mx-auto px-6">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+      <footer className="bg-[#0E0C0B] border-t border-[#FAF9F6]/8 pt-20 pb-12">
+        <div className="container mx-auto px-fluid-gap">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-16 mb-20">
             {/* Brand col */}
             <div className="md:col-span-1">
-              <Link href="/" className="inline-flex items-center gap-2.5 mb-5 cursor-pointer">
-                <PropChainMark size={22} />
-                <span className="font-display text-[16px] tracking-tight text-[#F5F3F0]">
+              <Link href="/" className="inline-flex items-center gap-2.5 mb-8 cursor-pointer group">
+                <PropChainMark size={28} />
+                <span className="font-display text-[18px] font-black tracking-tight text-[#F5F3F0]">
                   Prop<span className="text-primary">Chain</span>
                 </span>
               </Link>
-              <p className="text-sm text-[#5A5450] leading-relaxed max-w-[200px]">
-                The institutional gateway for RWA tokenization on-chain.
+              <p className="text-base text-[#6d6861] leading-relaxed max-w-[220px] font-medium">
+                The global gateway for institutional RWA tokenization.
               </p>
             </div>
 
             {/* Link cols */}
             {FOOTER_COLS.map((col) => (
               <div key={col.title}>
-                <h4 className="text-[9px] font-bold tracking-[0.18em] uppercase text-[#6B6560] mb-5">
+                <h4 className="text-[10px] font-black tracking-[0.25em] uppercase text-[#6B6560] mb-8">
                   {col.title}
                 </h4>
-                <ul className="space-y-3">
+                <ul className="space-y-4">
                   {col.links.map((l) => (
                     <li key={l}>
                       <Link
                         href="#"
-                        className="text-sm text-[#5A5450] hover:text-[#F5F3F0] transition-colors duration-150 cursor-pointer"
+                        className="text-[13px] font-bold text-[#5A5450] hover:text-white transition-colors duration-150 cursor-pointer"
                       >
                         {l}
                       </Link>
@@ -447,14 +423,14 @@ export default function LandingPage() {
           </div>
 
           {/* Bottom bar */}
-          <div className="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-[#FAF9F6]/8 text-[11px] text-[#3A3530]">
-            <p>© 2026 PropChain. All rights reserved.</p>
-            <div className="flex gap-6 mt-4 md:mt-0">
-              {["Privacy Policy", "Terms of Service", "Cookie Settings"].map((l) => (
+          <div className="flex flex-col md:flex-row justify-between items-center pt-10 border-t border-[#FAF9F6]/8 text-[11px] font-bold text-[#3A3530] uppercase tracking-widest">
+            <p>© 2026 PropChain Institutional. SEC Compliant.</p>
+            <div className="flex gap-8 mt-6 md:mt-0">
+              {["Privacy", "Terms", "Compliance"].map((l) => (
                 <Link
                   key={l}
                   href="#"
-                  className="hover:text-[#5A5450] transition-colors duration-150 cursor-pointer"
+                  className="hover:text-[#6d6861] transition-colors duration-150 cursor-pointer"
                 >
                   {l}
                 </Link>

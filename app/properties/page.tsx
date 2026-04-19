@@ -2,12 +2,14 @@
 
 import PageHeader from "@/components/shared/PageHeader";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, Search, LayoutGrid, List, Filter as FilterIcon, Maximize2, Building2, MapPin, Shield } from "lucide-react";
+import { PlusCircle, Search, LayoutGrid, List, Filter as FilterIcon, Maximize2, Building2, MapPin, Shield, TrendingUp } from "lucide-react";
 import Link from "next/link";
 import { usePropertyStore } from "@/store/usePropertyStore";
 import PropertyCard from "@/components/shared/PropertyCard";
 import { useReadProperties } from "@/hooks/useReadProperties";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Card, CardContent } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
 export default function PropertiesPage() {
   const storeProperties = usePropertyStore(s => s.properties);
@@ -30,7 +32,6 @@ export default function PropertiesPage() {
     hasEncumbrance:  p.hasEncumbrance,
   })) as any[];
 
-  // Fallback to store if no on-chain properties while disconnected or starting
   const displayProperties = properties.length > 0 ? mappedProperties : storeProperties;
   
   const filteredProperties = filterStatus === "all" 
@@ -38,22 +39,22 @@ export default function PropertiesPage() {
     : displayProperties.filter(p => p.status === filterStatus);
 
   return (
-    <div className="w-full">
+    <div className="w-full max-w-[1400px] mx-auto pb-20">
       <div className="space-y-8">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
           <div>
-            <h1 className="text-display font-bold text-on_surface dark:text-[#e8eaf0] font-display leading-tight tracking-tight text-3xl sm:text-4xl mb-1">
-              My Properties
+            <h1 className="text-3xl sm:text-4xl font-bold font-display text-on_surface dark:text-[#e8eaf0] tracking-tight">
+              My Institutional Portfolio
             </h1>
-            <p className="text-body-md text-on_surface_variant dark:text-[#9ba3b8]">
-              Manage your portfolio of tokenized real estate assets. Monitor verification status and real-time valuations across your registry.
+            <p className="text-sm text-on_surface_variant text-on_surface_variant dark:text-muted-foreground mt-1">
+              Manage your verified real estate assets and monitor on-chain valuations.
             </p>
           </div>
           <div>
             <Link href="/mint">
-              <Button className="h-10 px-6 bg-primary text-on_primary shadow-floating">
-                <PlusCircle className="mr-2 h-4 w-4" />
+              <Button className="h-10 px-6 bg-primary text-on_primary shadow-floating text-[10px] font-bold uppercase tracking-widest rounded-xl">
+                <PlusCircle className="mr-2 h-3.5 w-3.5" />
                 Tokenize New Asset
               </Button>
             </Link>
@@ -61,116 +62,122 @@ export default function PropertiesPage() {
         </div>
 
         {/* Stats Row */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 xl:gap-6">
-          <div className="bg-surface_container_lowest dark:bg-[#131820] rounded-2xl p-6 shadow-[0_8px_24px_rgba(0,0,0,0.02)] border border-outline_variant/10">
-            <div className="flex justify-between items-start mb-4">
-              <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
-                 <div className="w-3 h-3 rounded-sm border-[1.5px] border-primary" />
-              </div>
-              <span className="text-xs font-semibold text-success bg-success/10 px-2 py-0.5 rounded-full">+12.4%</span>
-            </div>
-            <p className="text-3xl font-bold font-display text-on_surface dark:text-[#e8eaf0] tracking-tight mb-1">$42,850,000</p>
-            <p className="text-[10px] font-bold text-on_surface_variant dark:text-[#9ba3b8] uppercase tracking-widest">Total Portfolio Valuation</p>
-          </div>
-
-          <div className="bg-surface_container_lowest dark:bg-[#131820] rounded-2xl p-6 shadow-[0_8px_24px_rgba(0,0,0,0.02)] border border-outline_variant/10">
-            <div className="flex justify-between items-start mb-4">
-              <div className="w-8 h-8 rounded-lg bg-[#835500]/10 flex items-center justify-center text-[#835500]">
-                 <Building2 size={16} />
-              </div>
-              <span className="text-xs font-semibold text-primary">18 Assets</span>
-            </div>
-            <p className="text-2xl font-bold font-display text-on_surface dark:text-[#e8eaf0] tracking-tight mb-1">Minted Assets</p>
-            <p className="text-[10px] font-bold text-on_surface_variant dark:text-[#9ba3b8] uppercase tracking-widest">Successfully tokenized</p>
-          </div>
-
-          <div className="bg-surface_container_lowest dark:bg-[#131820] rounded-2xl p-6 shadow-[0_8px_24px_rgba(0,0,0,0.02)] border border-outline_variant/10">
-            <div className="flex justify-between items-start mb-4">
-              <div className="w-8 h-8 rounded-lg bg-[hsl(199,89%,48%)]/10 flex items-center justify-center text-[hsl(199,89%,48%)]">
-                 <span className="text-lg leading-none">📋</span>
-              </div>
-              <span className="text-xs font-semibold text-on_surface_variant dark:text-[#9ba3b8]">3 Pending</span>
-            </div>
-            <p className="text-2xl font-bold font-display text-on_surface dark:text-[#e8eaf0] tracking-tight mb-1">In Verification</p>
-            <p className="text-[10px] font-bold text-on_surface_variant dark:text-[#9ba3b8] uppercase tracking-widest">Current audit queue</p>
-          </div>
-
-          <div className="bg-[#1e2738] rounded-2xl p-6 shadow-floating text-white relative flex flex-col justify-between overflow-hidden">
-            <div className="relative z-10">
-              <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center mb-4">
-                 <Shield size={16} />
-              </div>
-              <p className="text-2xl font-bold font-display tracking-tight leading-tight">Portfolio<br/>Health</p>
-            </div>
-            <div className="relative z-10 w-full mt-4">
-              <div className="flex items-center gap-3">
-                <div className="h-1 flex-1 bg-white/20 rounded-full overflow-hidden">
-                  <div className="h-full w-[94%] bg-[#0ea5e9] rounded-full" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <Card className="rounded-2xl border-stone/50 dark:bg-card dark:border-white/5 shadow-sm overflow-hidden">
+            <CardContent className="p-6">
+              <div className="flex justify-between items-start mb-4">
+                <div className="w-9 h-9 rounded-xl bg-primary/5 flex items-center justify-center text-primary border border-primary/10">
+                   <TrendingUp size={16} />
                 </div>
-                <span className="text-xs font-bold text-white">94%</span>
+                <span className="text-[10px] font-bold text-success bg-success/5 border border-success/10 px-2 py-0.5 rounded-full">+12.4%</span>
               </div>
-            </div>
-          </div>
+              <p className="text-2xl font-bold font-display text-on_surface dark:text-[#e8eaf0] tracking-tight mb-1">$42.85M</p>
+              <p className="text-[10px] font-bold text-on_surface_variant text-on_surface_variant dark:text-muted-foreground uppercase tracking-[0.15em] opacity-60">Portfolio Valuation</p>
+            </CardContent>
+          </Card>
+
+          <Card className="rounded-2xl border-stone/50 dark:bg-card dark:border-white/5 shadow-sm overflow-hidden">
+            <CardContent className="p-6">
+              <div className="flex justify-between items-start mb-4">
+                <div className="w-9 h-9 rounded-xl bg-secondary/5 flex items-center justify-center text-secondary border border-secondary/10">
+                   <Building2 size={16} />
+                </div>
+                <span className="text-[10px] font-bold text-primary uppercase tracking-widest opacity-60">18 Assets</span>
+              </div>
+              <p className="text-2xl font-bold font-display text-on_surface dark:text-[#e8eaf0] tracking-tight mb-1">Minted Assets</p>
+              <p className="text-[10px] font-bold text-on_surface_variant text-on_surface_variant dark:text-muted-foreground uppercase tracking-[0.15em] opacity-60">Verified On-Chain</p>
+            </CardContent>
+          </Card>
+
+          <Card className="rounded-2xl border-stone/50 dark:bg-card dark:border-white/5 shadow-sm overflow-hidden">
+            <CardContent className="p-6">
+              <div className="flex justify-between items-start mb-4">
+                <div className="w-9 h-9 rounded-xl bg-stone/10 dark:bg-white/5 flex items-center justify-center text-on_surface_variant border border-stone/20 dark:border-white/5">
+                   <Shield size={16} />
+                </div>
+                <span className="text-[10px] font-bold text-on_surface_variant text-on_surface_variant dark:text-muted-foreground uppercase tracking-widest opacity-60">3 Pending</span>
+              </div>
+              <p className="text-2xl font-bold font-display text-on_surface dark:text-[#e8eaf0] tracking-tight mb-1">In Verification</p>
+              <p className="text-[10px] font-bold text-on_surface_variant text-on_surface_variant dark:text-muted-foreground uppercase tracking-[0.15em] opacity-60">Active Audits</p>
+            </CardContent>
+          </Card>
+
+          <Card className="rounded-2xl bg-primary border-none shadow-floating overflow-hidden relative">
+            <CardContent className="p-6 text-on_primary flex flex-col justify-center h-full">
+              <div className="relative z-10">
+                <div className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center mb-4">
+                   <Shield size={16} />
+                </div>
+                <p className="text-2xl font-bold font-display tracking-tight leading-tight mb-3">Portfolio<br/>Compliance</p>
+                <div className="flex items-center gap-3">
+                  <div className="h-1.5 flex-1 bg-white/20 rounded-full overflow-hidden">
+                    <div className="h-full w-[94%] bg-white rounded-full" />
+                  </div>
+                  <span className="text-[11px] font-black">94%</span>
+                </div>
+              </div>
+              <div className="absolute right-[-10%] top-[-20%] w-32 h-32 bg-white/10 rounded-full blur-3xl" />
+            </CardContent>
+          </Card>
         </div>
 
         {/* Toolbar */}
-        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 py-2">
-          <div className="flex gap-2 w-full sm:w-auto">
-            <button 
-              onClick={() => setFilter('all')}
-              className={filterStatus === 'all' ? "rounded-full px-4 py-1.5 text-[0.75rem] font-medium bg-primary text-on_primary cursor-pointer transition-colors" : "rounded-full px-4 py-1.5 text-[0.75rem] font-medium bg-surface_container dark:bg-[#1c2333] text-on_surface_variant dark:text-[#9ba3b8] cursor-pointer hover:bg-surface_container_high transition-colors"}>
-              All <span className="bg-surface_container dark:bg-[#1c2333] px-1.5 py-0.5 rounded-md ml-1 text-[10px]">{displayProperties.length}</span>
-            </button>
-            <button 
-              onClick={() => setFilter('verified')}
-              className={filterStatus === 'verified' ? "rounded-full px-4 py-1.5 text-[0.75rem] font-medium bg-primary text-on_primary cursor-pointer transition-colors" : "rounded-full px-4 py-1.5 text-[0.75rem] font-medium bg-surface_container dark:bg-[#1c2333] text-on_surface_variant dark:text-[#9ba3b8] cursor-pointer hover:bg-surface_container_high transition-colors"}>
-              Verified
-            </button>
-            <button 
-              onClick={() => setFilter('awaiting_oracle')}
-              className={filterStatus === 'awaiting_oracle' ? "rounded-full px-4 py-1.5 text-[0.75rem] font-medium bg-primary text-on_primary cursor-pointer transition-colors" : "rounded-full px-4 py-1.5 text-[0.75rem] font-medium bg-surface_container dark:bg-[#1c2333] text-on_surface_variant dark:text-[#9ba3b8] cursor-pointer hover:bg-surface_container_high transition-colors"}>
-              Awaiting Oracle
-            </button>
-            <button 
-              onClick={() => setFilter('needs_review')}
-              className={filterStatus === 'needs_review' ? "rounded-full px-4 py-1.5 text-[0.75rem] font-medium bg-primary text-on_primary cursor-pointer transition-colors" : "rounded-full px-4 py-1.5 text-[0.75rem] font-medium bg-surface_container dark:bg-[#1c2333] text-on_surface_variant dark:text-[#9ba3b8] cursor-pointer hover:bg-surface_container_high transition-colors"}>
-              Needs Review
-            </button>
-            <button 
-              onClick={() => setFilter('rejected')}
-              className={filterStatus === 'rejected' ? "rounded-full px-4 py-1.5 text-[0.75rem] font-medium bg-primary text-on_primary cursor-pointer transition-colors" : "rounded-full px-4 py-1.5 text-[0.75rem] font-medium bg-surface_container dark:bg-[#1c2333] text-on_surface_variant dark:text-[#9ba3b8] cursor-pointer hover:bg-surface_container_high transition-colors"}>
-              Rejected
-            </button>
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-6 py-4 border-y border-stone/30 dark:border-white/5">
+          <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+            {[
+              { id: 'all', label: 'All Assets', count: displayProperties.length },
+              { id: 'verified', label: 'Verified' },
+              { id: 'awaiting_oracle', label: 'Awaiting Oracle' },
+              { id: 'needs_review', label: 'Needs Review' },
+              { id: 'rejected', label: 'Rejected' },
+            ].map((btn) => (
+              <button 
+                key={btn.id}
+                onClick={() => setFilter(btn.id as any)}
+                className={cn(
+                  "rounded-xl px-4 py-2 text-[10px] font-bold uppercase tracking-widest transition-all",
+                  filterStatus === btn.id 
+                    ? "bg-primary text-on_primary shadow-sm" 
+                    : "bg-sand dark:bg-card border border-stone/50 dark:border-white/5 text-on_surface_variant text-on_surface_variant dark:text-muted-foreground hover:bg-stone/20"
+                )}
+              >
+                {btn.label} {btn.count !== undefined && <span className="ml-1 opacity-50">({btn.count})</span>}
+              </button>
+            ))}
           </div>
           
-          <div className="flex items-center gap-3 self-end sm:self-auto">
-            <button className="w-8 h-8 rounded bg-primary/10 text-primary flex items-center justify-center"><LayoutGrid size={16} /></button>
-            <button className="w-8 h-8 rounded text-on_surface_variant dark:text-[#9ba3b8] hover:bg-surface_container dark:hover:bg-[#1c2333] dark:bg-[#1c2333] flex items-center justify-center"><List size={16} /></button>
-            <div className="w-px h-6 bg-outline_variant/20 mx-1" />
-            <button className="text-sm font-bold text-primary flex items-center gap-1.5 px-2">
-              <FilterIcon size={14} /> Advanced Filters
+          <div className="flex items-center gap-4 self-end sm:self-auto">
+            <div className="flex bg-sand dark:bg-card p-1 rounded-xl border border-stone/50 dark:border-white/5">
+              <button className="w-8 h-8 rounded-xl bg-white dark:bg-white/10 text-primary shadow-sm flex items-center justify-center transition-all"><LayoutGrid size={15} /></button>
+              <button className="w-8 h-8 rounded-xl text-on_surface_variant dark:text-[#6b6560] hover:text-on_surface flex items-center justify-center transition-all"><List size={15} /></button>
+            </div>
+            <div className="w-px h-6 bg-stone/30 dark:bg-white/5 mx-1" />
+            <button className="text-[10px] font-bold text-primary uppercase tracking-[0.2em] flex items-center gap-2 hover:opacity-80 transition-opacity">
+              <FilterIcon size={14} /> Advanced
             </button>
           </div>
         </div>
 
         {/* Grid */}
         {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <Skeleton className="h-[200px] w-full rounded-xl" />
-            <Skeleton className="h-[200px] w-full rounded-xl" />
-            <Skeleton className="h-[200px] w-full rounded-xl" />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <Skeleton className="h-[240px] w-full rounded-2xl bg-stone/10 dark:bg-card" />
+            <Skeleton className="h-[240px] w-full rounded-2xl bg-stone/10 dark:bg-card" />
+            <Skeleton className="h-[240px] w-full rounded-2xl bg-stone/10 dark:bg-card" />
           </div>
         ) : filteredProperties.length === 0 ? (
-          <div className="flex flex-col items-center justify-center text-center p-12 bg-surface_container_lowest dark:bg-[#131820] rounded-xl border border-outline_variant/20 shadow-sm mt-8">
-            <Building2 size={48} className="text-on_surface_variant dark:text-[#9ba3b8] mb-4 mx-auto opacity-50" />
-            <p className="text-title-md font-semibold text-on_surface dark:text-[#e8eaf0]">No properties found</p>
-            <p className="text-body-md text-on_surface_variant dark:text-[#9ba3b8] mb-6">Mint your first property to get started.</p>
+          <Card className="flex flex-col items-center justify-center text-center p-20 border-stone/50 dark:bg-card dark:border-white/5 shadow-sm mt-8">
+            <div className="w-20 h-20 rounded-3xl bg-stone/10 dark:bg-white/5 flex items-center justify-center mb-6">
+              <Building2 size={40} className="text-on_surface_variant dark:text-[#6b6560] opacity-40" />
+            </div>
+            <p className="text-xl font-bold font-display text-on_surface dark:text-[#e8eaf0] mb-2">No Institutional Assets Found</p>
+            <p className="text-sm text-on_surface_variant text-on_surface_variant dark:text-muted-foreground mb-8 max-w-xs">Initialize your first on-chain property registration to begin building your portfolio.</p>
             <Link href="/mint">
-              <Button>Start Process &rarr;</Button>
+              <Button className="rounded-xl h-11 px-8 text-[10px] font-bold uppercase tracking-widest bg-primary text-white">Start Tokenization &rarr;</Button>
             </Link>
-          </div>
+          </Card>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredProperties.map((property) => (
               <PropertyCard key={property.id} property={property} />
             ))}
@@ -178,21 +185,15 @@ export default function PropertiesPage() {
             {/* Card Add New */}
             <Link
               href="/mint"
-              className="rounded-2xl border-[1.5px] border-dashed border-outline_variant/40 bg-surface_container_lowest dark:bg-[#131820] flex flex-col items-center justify-center min-h-[400px] hover:border-primary/50 hover:bg-primary/5 transition-colors group cursor-pointer p-8"
+              className="rounded-2xl border-2 border-dashed border-stone/50 dark:bg-card dark:border-white/10 flex flex-col items-center justify-center min-h-[300px] hover:border-primary/50 hover:bg-primary/5 transition-all group cursor-pointer p-8 relative overflow-hidden"
             >
-              <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                <Building2 size={24} />
-                <div className="absolute bottom-2.5 right-2 w-3.5 h-3.5 bg-white rounded-full flex items-center justify-center">
-                  <PlusCircle size={12} className="text-primary fill-primary" />
-                </div>
+              <div className="w-14 h-14 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <PlusCircle size={28} />
               </div>
-              <h3 className="text-lg font-bold font-display text-on_surface dark:text-[#e8eaf0] mb-2">Add New Property</h3>
-              <p className="text-sm text-on_surface_variant dark:text-[#9ba3b8] text-center max-w-[200px] mb-6">
-                Submit your property documents for verification and tokenization.
+              <h3 className="text-lg font-bold font-display text-on_surface dark:text-[#e8eaf0] mb-2">Add Asset</h3>
+              <p className="text-[11px] text-on_surface_variant text-on_surface_variant dark:text-muted-foreground text-center max-w-[180px] font-medium leading-relaxed opacity-60">
+                Submit documents for decentralized verification.
               </p>
-              <span className="text-sm font-bold text-primary flex items-center gap-1.5 hover:underline">
-                Start Process &rarr;
-              </span>
             </Link>
           </div>
         )}

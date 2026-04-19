@@ -27,7 +27,7 @@ export default function MapboxLocationMap({
     return (
       <div
         className={cn(
-          "relative flex h-full w-full items-center justify-center rounded-xl bg-surface_container dark:bg-[#1c2333]",
+          "relative flex h-full w-full items-center justify-center rounded-xl bg-stone/10 dark:bg-card",
           className
         )}
       >
@@ -68,12 +68,12 @@ export default function MapboxLocationMap({
       </Map>
 
       {label ? (
-        <div className="absolute left-3 top-3 rounded-md bg-white/90 dark:bg-[#10141f]/90 px-2.5 py-1.5 text-[11px] font-medium text-on_surface dark:text-[#e8eaf0] shadow-sm backdrop-blur">
+        <div className="absolute left-3 top-3 rounded-xl bg-white/90 dark:bg-[#10141f]/90 px-2.5 py-1.5 text-[11px] font-medium text-on_surface dark:text-[#e8eaf0] shadow-sm backdrop-blur">
           {label}
         </div>
       ) : null}
 
-      <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-white/45 dark:from-[#131820]/70 to-transparent pointer-events-none" />
+      <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-white/45 dark:from-[dark:bg-card]/70 to-transparent pointer-events-none" />
     </div>
   );
 }

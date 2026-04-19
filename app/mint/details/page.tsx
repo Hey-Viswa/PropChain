@@ -77,7 +77,7 @@ export default function MintStep1() {
       </div>
 
       {/* Main Form Card */}
-      <div className="bg-white dark:bg-[#131820] rounded-3xl p-8 xl:p-12 shadow-card border border-stone dark:border-[#2a2520]">
+      <div className="bg-white dark:bg-card rounded-3xl p-8 xl:p-12 shadow-card border border-stone dark:border-[#2a2520]">
         <div className="flex items-center gap-3 mb-10 border-b border-stone dark:border-[#2a2520] pb-6">
           <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
             <Info size={20} className="text-primary" />
@@ -198,9 +198,9 @@ export default function MintStep1() {
              </div>
              
              {/* Map Status Bar */}
-             <div className="absolute bottom-6 inset-x-6 bg-white/90 dark:bg-[#131820]/90 backdrop-blur-xl rounded-xl p-4 flex justify-between items-center shadow-floating border border-stone/50 dark:border-white/5">
+             <div className="absolute bottom-6 inset-x-6 bg-white/90 dark:bg-card/90 backdrop-blur-xl rounded-xl p-4 flex justify-between items-center shadow-floating border border-stone/50 dark:border-white/5">
                <div className="flex items-center gap-3">
-                 <div className="w-8 h-8 rounded-lg bg-secondary/10 flex items-center justify-center">
+                 <div className="w-8 h-8 rounded-xl bg-secondary/10 flex items-center justify-center">
                    <Target size={16} className="text-secondary" />
                  </div>
                  <span className="text-[10px] font-bold text-on_surface dark:text-[#e8eaf0] uppercase tracking-widest">Geofence Sync Enabled</span>
@@ -263,7 +263,7 @@ function InfoBadge({ icon, title, desc, accent }: { icon: any, title: string, de
 
   return (
     <div className={cn("flex items-start gap-4 p-5 rounded-2xl border", styles)}>
-      <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center shrink-0", 
+      <div className={cn("w-8 h-8 rounded-xl flex items-center justify-center shrink-0", 
         accent === "primary" ? "bg-primary text-white" : accent === "secondary" ? "bg-secondary text-white" : "bg-on_surface_variant text-white"
       )}>
         {icon}

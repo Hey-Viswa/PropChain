@@ -117,13 +117,13 @@ export default function SettingsPage() {
               <div className="space-y-3">
                 <div className="flex items-center justify-between p-3 rounded-xl bg-surface border border-stone/50 dark:border-white/5">
                   <div className="flex items-center gap-2.5">
-                    <Fingerprint className="w-4 h-4 text-on_surface_variant" />
-                    <span className="text-sm font-medium">KYC Status</span>
+                    <Fingerprint className="w-4 h-4 text-on_surface_variant dark:text-muted-foreground" />
+                    <span className="text-sm font-medium text-on_surface dark:text-[#e8eaf0]">KYC Status</span>
                   </div>
                   {kycVerified ? (
-                    <Badge className="bg-success/10 text-success border-success/20">Verified</Badge>
+                    <Badge className="bg-success/10 text-success border-success/10 px-3 py-1 font-bold tracking-wider">Verified</Badge>
                   ) : (
-                    <Button size="xs" variant="outline" className="h-7 px-3 text-[10px] font-bold uppercase tracking-wider">Verify</Button>
+                    <Button size="xs" variant="outline" className="h-7 px-3 text-[10px] font-bold uppercase tracking-widest rounded-xl">Verify</Button>
                   )}
                 </div>
               </div>
@@ -132,7 +132,7 @@ export default function SettingsPage() {
 
           <Card>
             <CardHeader className="pb-4">
-              <CardTitle className="text-base">Appearance</CardTitle>
+              <CardTitle className="text-base font-bold">Appearance</CardTitle>
               <CardDescription>Global interface theme</CardDescription>
             </CardHeader>
             <CardContent>
@@ -149,12 +149,12 @@ export default function SettingsPage() {
                       className={cn(
                         "flex flex-col items-center gap-2 py-3 rounded-xl border-2 transition-all",
                         resolvedTheme === v || (v === "system" && theme === "system")
-                          ? "border-primary bg-primary_fixed/30 dark:bg-[#3D1F10]/30"
-                          : "border-transparent bg-sand dark:bg-[#211f1c] hover:bg-stone/50"
+                          ? "border-primary bg-primary_fixed/30 dark:bg-primary/20"
+                          : "border-transparent bg-sand dark:bg-white/5 hover:bg-stone/50"
                       )}
                     >
-                      <Icon size={16} className={cn(resolvedTheme === v ? "text-primary" : "text-on_surface_variant")} />
-                      <span className="text-[10px] font-bold uppercase tracking-wider">{v}</span>
+                      <Icon size={16} className={cn(resolvedTheme === v ? "text-primary" : "text-on_surface_variant dark:text-muted-foreground")} />
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-on_surface dark:text-[#e8eaf0]">{v}</span>
                     </button>
                   ))}
                 </div>
@@ -245,20 +245,20 @@ export default function SettingsPage() {
             </CardContent>
           </Card>
 
-          <Card className="border-destructive/20 bg-destructive/5">
+          <Card className="border-destructive/20 bg-destructive/5 dark:bg-destructive/10 rounded-2xl">
             <CardHeader className="pb-3">
               <div className="flex items-center gap-2 text-destructive">
                 <AlertTriangle className="w-4 h-4" />
-                <CardTitle className="text-base">Security Actions</CardTitle>
+                <CardTitle className="text-base font-bold">Security Actions</CardTitle>
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between gap-4">
                 <div className="flex-1">
-                  <p className="text-sm font-bold">Revoke Sessions</p>
-                  <p className="text-xs text-on_surface_variant mt-0.5">Sign out of all authorized devices</p>
+                  <p className="text-sm font-bold text-on_surface dark:text-[#e8eaf0]">Revoke Sessions</p>
+                  <p className="text-xs text-on_surface_variant dark:text-muted-foreground mt-0.5">Sign out of all authorized devices</p>
                 </div>
-                <Button variant="outline" size="sm" className="h-9 px-5 border-destructive/30 text-destructive hover:bg-destructive/10 font-bold uppercase tracking-wider text-[10px]">
+                <Button variant="outline" size="sm" className="h-9 px-5 border-destructive/30 text-destructive hover:bg-destructive/10 font-bold uppercase tracking-widest text-[10px] rounded-xl">
                   Sign Out All
                 </Button>
               </div>

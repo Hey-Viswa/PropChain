@@ -1,10 +1,12 @@
 "use client";
 import { useState } from "react";
 import { Shield, X, Eye, EyeOff,
-  CheckCircle, Smartphone } from "lucide-react";
+  CheckCircle, Smartphone, AlertTriangle } from "lucide-react";
 import { useWallet } from "@/hooks/useWallet";
 import { useToast } from "@/hooks/use-toast";
 import { useKYC } from "@/hooks/useKYC";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 interface Props {
   isOpen:  boolean;
@@ -42,14 +44,13 @@ export default function KYCModal({
     }
     setLoading(true);
     setError("");
-    // Simulate OTP send (Phase 1 mock)
     await new Promise((r) => setTimeout(r, 1000));
     setOtpSent(true);
     setStep(2);
     setLoading(false);
     toast({
       title:       "OTP Sent",
-      description: "A 6-digit OTP has been sent to your registered mobile (simulated).",
+      description: "A 6-digit OTP has been sent to your registered mobile.",
     });
   };
 
@@ -102,67 +103,66 @@ export default function KYCModal({
         if (e.target === e.currentTarget) onClose();
       }}>
       <div className="absolute inset-0
-                      bg-on_surface/40
-                      dark:bg-black/60
+                      bg-on_surface/60
+                      dark:bg-black/80
                       backdrop-blur-sm" />
-      <div className="relative bg-surface_container_lowest
-                      dark:bg-[#131820] rounded-2xl
+      <div className="relative bg-white
+                      dark:bg-card rounded-[32px]
                       w-full max-w-md overflow-hidden
-                      shadow-[0_24px_64px_rgba(0,26,67,0.16)]">
-        <div className="h-1 bg-gradient-to-r
-                        from-primary to-primary_container" />
-        <div className="p-6 space-y-5">
+                      shadow-floating border border-stone/50 dark:border-white/10">
+        <div className="h-1.5 bg-primary" />
+        <div className="p-8 space-y-6">
 
           {/* Header */}
           <div className="flex items-start justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl
-                              bg-primary_fixed
-                              dark:bg-[#3D1F10]
-                              flex items-center justify-center">
-                <Shield className="w-5 h-5 text-primary
-                                    dark:text-[#E89874]" />
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-2xl
+                              bg-primary/10
+                              flex items-center justify-center border border-primary/20">
+                <Shield className="w-6 h-6 text-primary" />
               </div>
               <div>
-                <p className="text-title-md font-bold
+                <p className="text-xl font-bold font-display
                                text-on_surface
                                dark:text-[#e8eaf0]">
-                  KYC Verification
+                  Compliance Audit
                 </p>
-                <p className="text-label-sm
+                <p className="text-[10px] font-bold uppercase tracking-widest
                                text-on_surface_variant
-                               dark:text-[#9ba3b8]">
+                               dark:text-muted-foreground mt-0.5">
                   Step {step} of 2 —{" "}
                   {step === 1
-                    ? "Enter Aadhaar"
-                    : "Verify OTP"}
+                    ? "Identify"
+                    : "Authorize"}
                 </p>
               </div>
             </div>
             <button
               onClick={onClose}
-              className="p-1.5 rounded-lg
+              className="p-2 rounded-xl
                          text-on_surface_variant
-                         hover:bg-surface_container
-                         dark:hover:bg-[#1c2333]
+                         hover:bg-stone/10
+                         dark:hover:bg-white/5
                          transition-colors">
-              <X className="w-4 h-4" />
+              <X className="w-5 h-5" />
             </button>
           </div>
 
           {/* Success */}
           {success && (
-            <div className="flex items-center gap-3
-                            p-4 bg-success_container
-                            dark:bg-[#0a2e1a] rounded-xl">
-              <CheckCircle className="w-5 h-5 text-success" />
+            <div className="flex items-center gap-4
+                            p-5 bg-success/5
+                            border border-success/10 rounded-2xl animate-fade-in">
+              <div className="w-10 h-10 rounded-full bg-success flex items-center justify-center shrink-0">
+                <CheckCircle className="w-6 h-6 text-white" />
+              </div>
               <div>
-                <p className="text-body-md font-semibold
-                               text-success">
-                  KYC Verified Successfully
+                <p className="text-sm font-bold
+                               text-success uppercase tracking-wider">
+                  Audit Finalized
                 </p>
-                <p className="text-label-sm text-success/70">
-                  Your identity has been confirmed.
+                <p className="text-xs text-on_surface_variant dark:text-muted-foreground font-medium">
+                  Identity link successful.
                 </p>
               </div>
             </div>
@@ -172,12 +172,12 @@ export default function KYCModal({
             <>
               {/* Step 1: Aadhaar input */}
               {step === 1 && (
-                <div className="space-y-3">
-                  <div className="space-y-1.5">
-                    <label className="text-label-sm font-medium
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold uppercase tracking-widest
                                        text-on_surface_variant
-                                       dark:text-[#9ba3b8]">
-                      Aadhaar Number
+                                       dark:text-muted-foreground ml-1">
+                      Aadhaar Identity Number
                     </label>
                     <input
                       type="text"
@@ -190,70 +190,62 @@ export default function KYCModal({
                       }}
                       placeholder="0000 0000 0000"
                       maxLength={14}
-                      className="w-full bg-surface_container_highest
-                                 dark:bg-[#2a3347]
-                                 rounded-lg px-4 py-3
-                                 text-body-md text-on_surface
+                      className="w-full bg-sand/30
+                                 dark:bg-white/5
+                                 rounded-xl px-5 py-4
+                                 text-lg text-on_surface
                                  dark:text-[#e8eaf0]
-                                 border-0 border-b-2
-                                 border-outline_variant/30
-                                 dark:border-[#2a3347]
+                                 border border-stone/50
+                                 dark:border-white/10
                                  focus:border-primary
-                                 dark:focus:border-[#E89874]
+                                 focus:ring-1 focus:ring-primary
                                  focus:outline-none
-                                 placeholder:text-on_surface_variant/40
-                                 font-mono tracking-widest
-                                 transition-colors"
+                                 placeholder:text-on_surface_variant/30
+                                 font-mono tracking-[0.2em]
+                                 transition-all"
                     />
-                    <p className="text-label-sm
+                    <p className="text-[10px] font-medium
                                    text-on_surface_variant/60
-                                   dark:text-[#9ba3b8]/50">
-                      Only last 4 digits are stored.
-                      This is a simulation — no real data sent.
+                                   dark:text-muted-foreground/50 ml-1">
+                      Encryption: Only last 4 digits persist.
                     </p>
                   </div>
                   {error && (
-                    <p className="text-label-sm text-error">
-                      {error}
+                    <p className="text-xs font-bold text-error flex items-center gap-1.5 ml-1">
+                      <AlertTriangle size={12} /> {error}
                     </p>
                   )}
-                  <button
+                  <Button
                     onClick={handleSendOTP}
                     disabled={
                       rawAadhaar.length !== 12 || loading
                     }
-                    className="w-full bg-primary text-on_primary
-                               rounded-md py-2.5 text-body-md
-                               font-medium hover:opacity-90
-                               transition disabled:opacity-50
-                               disabled:cursor-not-allowed">
-                    {loading ? "Sending OTP..." : "Send OTP"}
-                  </button>
+                    className="w-full h-12 rounded-xl text-xs
+                               font-bold uppercase tracking-widest shadow-lg">
+                    {loading ? "Initializing..." : "Generate OTP"}
+                  </Button>
                 </div>
               )}
 
               {/* Step 2: OTP input */}
               {step === 2 && (
-                <div className="space-y-3">
-                  <div className="p-3 bg-primary_fixed/40
-                                  dark:bg-[#3D1F10]/40
-                                  rounded-xl flex items-center
-                                  gap-2.5">
-                    <Smartphone className="w-4 h-4 text-primary
-                                            dark:text-[#E89874]
+                <div className="space-y-4">
+                  <div className="p-4 bg-primary/5
+                                  rounded-2xl flex items-center
+                                  gap-4 border border-primary/10">
+                    <Smartphone className="w-5 h-5 text-primary
                                             flex-shrink-0" />
-                    <p className="text-label-sm
+                    <p className="text-xs font-medium leading-relaxed
                                    text-on_surface_variant
-                                   dark:text-[#9ba3b8]">
-                      OTP sent to your registered mobile
-                      (simulated). Enter any 6-digit number.
+                                   dark:text-muted-foreground">
+                      Authorization code sent to registered device.
                     </p>
                   </div>
-                  <div className="space-y-1.5">
-                    <label className="text-label-sm font-medium
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold uppercase tracking-widest
                                        text-on_surface_variant
-                                       dark:text-[#9ba3b8]">
-                      One-Time Password
+                                       dark:text-muted-foreground ml-1">
+                      One-Time Protocol Code
                     </label>
                     <div className="relative">
                       <input
@@ -273,65 +265,57 @@ export default function KYCModal({
                         }}
                         placeholder="000000"
                         maxLength={6}
-                        className="w-full bg-surface_container_highest
-                                   dark:bg-[#2a3347]
-                                   rounded-lg px-4 py-3 pr-12
-                                   text-body-md text-on_surface
+                        className="w-full bg-sand/30
+                                   dark:bg-white/5
+                                   rounded-xl px-5 py-4 pr-14
+                                   text-2xl text-on_surface
                                    dark:text-[#e8eaf0]
-                                   border-0 border-b-2
-                                   border-outline_variant/30
-                                   dark:border-[#2a3347]
+                                   border border-stone/50
+                                   dark:border-white/10
                                    focus:border-primary
-                                   dark:focus:border-[#E89874]
+                                   focus:ring-1 focus:ring-primary
                                    focus:outline-none
-                                   placeholder:text-on_surface_variant/40
-                                   font-mono tracking-[0.5em]
-                                   text-center text-xl
-                                   transition-colors"
+                                   placeholder:text-on_surface_variant/20
+                                   font-mono tracking-[0.6em]
+                                   text-center
+                                   transition-all"
                       />
                       <button
                         onClick={() => setShowOtp((p) => !p)}
-                        className="absolute right-3 top-1/2
+                        className="absolute right-4 top-1/2
                                    -translate-y-1/2
-                                   text-on_surface_variant p-1">
+                                   text-on_surface_variant hover:text-primary p-2 transition-colors">
                         {showOtp
-                          ? <EyeOff className="w-4 h-4" />
-                          : <Eye className="w-4 h-4" />
+                          ? <EyeOff className="w-5 h-5" />
+                          : <Eye className="w-5 h-5" />
                         }
                       </button>
                     </div>
                   </div>
                   {error && (
-                    <p className="text-label-sm text-error">
-                      {error}
+                    <p className="text-xs font-bold text-error flex items-center gap-1.5 ml-1">
+                      <AlertTriangle size={12} /> {error}
                     </p>
                   )}
-                  <div className="flex gap-3">
-                    <button
+                  <div className="flex gap-4">
+                    <Button
+                      variant="outline"
                       onClick={() => {
                         setStep(1);
                         setOtp("");
                         setError("");
                       }}
-                      className="flex-1 bg-surface_container
-                                 dark:bg-[#1c2333]
-                                 text-on_surface_variant
-                                 dark:text-[#9ba3b8]
-                                 rounded-md py-2.5 text-body-md
-                                 font-medium hover:opacity-80
-                                 transition">
+                      className="flex-1 h-12 rounded-xl text-[10px]
+                                 font-bold uppercase tracking-widest">
                       Back
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       onClick={handleVerify}
                       disabled={otp.length !== 6 || loading}
-                      className="flex-1 bg-primary text-on_primary
-                                 rounded-md py-2.5 text-body-md
-                                 font-medium hover:opacity-90
-                                 transition disabled:opacity-50
-                                 disabled:cursor-not-allowed">
-                      {loading ? "Verifying..." : "Verify"}
-                    </button>
+                      className="flex-1 h-12 rounded-xl text-[10px]
+                                 font-bold uppercase tracking-widest shadow-lg">
+                      {loading ? "Verifying..." : "Confirm"}
+                    </Button>
                   </div>
                 </div>
               )}

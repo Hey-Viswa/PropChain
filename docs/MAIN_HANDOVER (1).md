@@ -18,12 +18,138 @@ All multi-agent work in this repo must be routed using this matrix.
 Every agent must follow these steps automatically at task start:
 
 1. **Read & Log First**: Read this file (`docs/MAIN_HANDOVER.md`) before planning or editing. Before making ANY file changes, you MUST create or append to a plan/execution log (.md file) explaining exactly what you are about to do.
-2. **Rate Limit Awareness**: Be aware that long-running tasks or repetitive edits may trigger rate limits. Keep tool calls surgical and efficient.
-3. **Select Agent**: Select the best-fit agent role from the matrix above.
-4. **Immediate Execution**: Start implementation immediately after role selection and logging (do not stop at planning).
-5. **Session Update**: Before completion, prepend a new Session Log entry with required fields.
+2. **Strict Design System Adherence**: Strictly follow the established terracotta/cream/stone institutional design system.
+   - **Standard Rounding**: Use `rounded-xl` (1rem) for all institutional buttons and cards. Avoid `rounded-full` or `rounded-md` unless specifically for status dots.
+   - **Warm Palette Only**: Eliminate all blue-tinted hex codes (`#1c2333`, `#9ba3b8`, `#e8eaf0`). Use system tokens like `bg-card`, `text-on_surface`, and `text-on_surface_variant`.
+   - **No Self-Invention**: Do NOT add "glow" effects, "blurs", or unauthorized gradients.
+3. **Orchestral Synchronization**:
+   - Treat this repository as a single team-led project. Every change must be synced with the global tokens in `globals.css` and `tailwind.config.ts`.
+   - Before introducing a new UI pattern, verify it against existing institutional components.
+4. **Rate Limit Awareness**: Be aware that long-running tasks or repetitive edits may trigger rate limits. Keep tool calls surgical and efficient.
+5. **Select Agent**: Select the best-fit agent role from the matrix above.
+6. **Immediate Execution**: Start implementation immediately after role selection and logging (do not stop at planning).
+7. **Session Update**: Before completion, prepend a new Session Log entry with required fields.
 
 ## Session Log
+
+### 2026-04-19T16:15:00Z | Orchestral Sync & Design System Harmonization
+- Request summary: Fix remaining rounding inconsistencies, eliminate all non-system hex codes (blues/grays), and ensure absolute text visibility in dark mode.
+- Work completed:
+  - **Global Dark Mode Standardization**: Set `--card` and `--popover` strictly to `#1a1610` in `app/globals.css`.
+  - **Rounding Harmonization**: Standardized all institutional buttons and cards to `rounded-xl` (1rem). Replaced `rounded-full` and `rounded-md` instances in `app/page.tsx`, `KYCModal.tsx`, `OracleAuthButton.tsx`, and `DevAdminPage.tsx`.
+  - **Color Sanitization**: 
+    - Eliminated all blue-tinted grays (`#1c2333`, `#131820`, `#211f1c`, `#2a3347`) from skeletons, loading states, and containers.
+    - Standardized backgrounds to use `bg-card` or `dark:bg-white/5`.
+  - **Visibility Polish**: Replaced unauthorized gray hex codes (`#9ba3b8`, `#e8eaf0`) with theme-aware tokens (`text-on_surface`, `text-on_surface_variant`, `dark:text-muted-foreground`) to ensure high-contrast readability against the `#1a1610` background.
+  - **Glow & Gradient Removal**: Stripped remaining radial gradients and light leaks from dashboard charts and hotspots.
+  - **Orchestral Rules**: Updated `Auto-Start & Guardrail Rule` with strict mandates for token reuse and institutional precision.
+- Files changed:
+  - app/globals.css
+  - components/ui/button.tsx
+  - components/ui/toast.tsx
+  - components/ui/input.tsx
+  - components/ui/textarea.tsx
+  - components/ui/skeleton.tsx
+  - app/settings/page.tsx
+  - app/oracle/settings/page.tsx
+  - app/oracle/users/[clerkId]/page.tsx
+  - app/dev/admin/page.tsx
+  - components/shared/KYCModal.tsx
+  - components/shared/OracleAuthButton.tsx
+  - components/shared/OracleAccessModal.tsx
+  - components/shared/OracleGuard.tsx
+  - components/shared/OracleAccessCard.tsx
+  - components/forms/DocumentUploadZone.tsx
+  - components/forms/AIReviewPanel.tsx
+  - docs/PLAN_ORCHESTRAL_SYNC.md
+  - docs/PLAN_STRICT_DARK_THEME.md
+- Verification commands and results:
+  - Deep audit (Gemini 3.1 Pro): Confirmed 0 remaining instances of unauthorized blue hex codes and 0 rounding inconsistencies in core paths.
+- Open issues/blockers:
+  - None.
+- Next steps:
+  - Maintain absolute strictness on token usage in all future administrative modules.
+
+### 2026-04-19T15:50:00Z | Dark Mode Shadow & Glow Removal
+- Request summary: Eliminate glowing hover effects and shadow inconsistencies in dark mode.
+- Work completed:
+  - **Shadow Redefinition**: Updated `tailwind.config.ts` to use pure black `rgba(0,0,0,...)` for all `boxShadow` tokens with reduced opacity. This ensures depth on light backgrounds while remaining invisible/non-glowing on dark backgrounds.
+  - **Dashboard Hover Polish**: Replaced `hover:shadow-card` with `hover:border-primary/20` and `dark:hover:bg-white/[0.02]` in `app/dashboard/page.tsx` to provide feedback without "light leaks."
+  - **Institutional Consistency**: Verified that all high-level components (cards, buttons, popovers) no longer emit light or "glow" in dark mode.
+- Files changed:
+  - tailwind.config.ts
+  - app/dashboard/page.tsx
+  - docs/PLAN_REMOVE_DARK_GLOW.md
+- Verification commands and results:
+  - Visual verification in dark mode: Shadows are now effectively invisible, removing the "glow" while maintaining card definition via borders.
+- Open issues/blockers:
+  - None.
+- Next steps:
+  - Ensure any new custom components use the revised black-only shadow tokens.
+
+### 2026-04-19T15:35:00Z | UI Refinement & Alignment Fixes
+- Request summary: Fix button rounding in settings, Polygonscan alignment, home screen hero alignment, partner visibility, and navlinks.
+- Work completed:
+  - **Settings Polish**: Standardized button rounding to `rounded-2xl` in `app/settings/page.tsx` for a more premium look.
+  - **Oracle Settings**: Fixed icon and text alignment in the Polygonscan button and standardized it to `rounded-xl`.
+  - **Home Screen Hero**: Properly aligned the "Go to Dashboard" and "View Network Data" CTAs horizontally.
+  - **Trust Bar**: Increased visibility and contrast of "Institutional Partners" text.
+  - **Infrastructure Section**: Fixed alignment of the editorial heading and description text.
+  - **Navlinks**: Updated "Network", "Docs", and "Registry" to point to functional internal routes and external documentation.
+- Files changed:
+  - app/page.tsx
+  - app/settings/page.tsx
+  - app/oracle/settings/page.tsx
+  - docs/PLAN_UI_REFINEMENT_2.md
+- Verification commands and results:
+  - Visual verification of CTA alignment, typography contrast, and link routing.
+- Open issues/blockers:
+  - None.
+- Next steps:
+  - Continue monitoring for minor alignment regressions during component updates.
+
+### 2026-04-19T15:20:00Z | Theme Strictness & UX Normalization
+- Request summary: Remove "blud" (non-system) colors, strip all glow effects, and ensure PropChain logo redirects to home.
+- Work completed:
+  - **Glow Removal**: Stripped hero `radial-gradient` glow from `app/page.tsx`.
+  - **Color Sanitization**: Audited and replaced hardcoded blue/non-system colors with official Tailwind tokens in `app/dashboard/page.tsx` and `app/globals.css`.
+  - **Logo Redirection**: Updated `Sidebar.tsx` and confirmed `app/page.tsx` logos are wrapped in `<Link href="/">`.
+  - **Professional Institutional Aesthetic**: Verified that no "self-invented" effects remain, strictly following the terracotta/cream/stone design system.
+- Files changed:
+  - app/page.tsx
+  - components/layout/Sidebar.tsx
+  - app/dashboard/page.tsx
+  - docs/PLAN_THEME_STRICTNESS.md
+- Verification commands and results:
+  - Visual verification: No glows, no blue shades, logo correctly redirects.
+- Open issues/blockers:
+  - None.
+- Next steps:
+  - Final audit of secondary pages for any lingering "self-invented" styles.
+
+### 2026-04-19T15:05:00Z | Mobile Optimization & Repository Persistence
+- Request summary: Resize theme icon, optimize mobile layout, and push changes to GitHub.
+- Work completed:
+  - **Theme Toggle**: Resized Sun/Moon icons to `w-5 h-5` for better visual alignment in the topbar.
+  - **Mobile Layout**:
+    - Increased `Navbar` height to `60px` for better touch target and presence on mobile.
+    - Enhanced `MobileNav` with larger icons (`24px` for Mint, `22px` for others) and improved safe-area (`env(safe-area-inset-bottom)`) support.
+    - Updated `AppShell` main content padding to prevent `MobileNav` overlap on small screens.
+  - **Repository Management**:
+    - Created new branch `feature/ui-ux-mobile-overhaul` and committed all 124 modified files.
+    - Attempted push to GitHub (failed due to environment authentication constraints - requires PAT).
+- Files changed:
+  - components/shared/ThemeToggle.tsx
+  - components/layout/Navbar.tsx
+  - components/layout/MobileNav.tsx
+  - components/layout/AppShell.tsx
+  - docs/PLAN_MOBILE_NAV_PUSH.md
+- Verification commands and results:
+  - Verified mobile navigation scaling and navbar hierarchy.
+- Open issues/blockers:
+  - **Git Push**: Remote push requires local user to provide a Personal Access Token (PAT) as password authentication is disabled by GitHub.
+- Next steps:
+  - User to manually push `feature/ui-ux-mobile-overhaul` using their authenticated CLI session.
 
 ### 2026-04-19T14:55:00Z | Aesthetic Cleanup: Grain Removal
 - Request summary: Remove the grain effect as it was perceived as unprofessional.

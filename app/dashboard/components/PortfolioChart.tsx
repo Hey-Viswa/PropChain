@@ -30,7 +30,7 @@ export default function PortfolioChart() {
             >
               {/* Tooltip */}
               {isHov && (
-                <div className="absolute mb-1 z-10 pointer-events-none bg-on_surface dark:bg-[#e8e6e2] text-cream dark:text-[#1a1916] rounded-lg px-2.5 py-1.5 text-[10px] font-semibold shadow-floating whitespace-nowrap -translate-y-[calc(100%+8px)]">
+                <div className="absolute mb-1 z-10 pointer-events-none bg-on_surface dark:bg-[#e8e6e2] text-cream dark:text-[#1a1916] rounded-xl px-2.5 py-1.5 text-[10px] font-semibold shadow-floating whitespace-nowrap -translate-y-[calc(100%+8px)]">
                   Minted {col.minted}% · Vol {col.volume}%
                 </div>
               )}
@@ -47,9 +47,9 @@ export default function PortfolioChart() {
                   className="flex-1 rounded-t-[3px] transition-all duration-300"
                   style={{
                     height: `${(col.minted / MAX) * 100}%`,
-                    background: isHov
+                    backgroundColor: isHov
                       ? "#C4602A"
-                      : "linear-gradient(to top, #D97757, #E89874)",
+                      : "#D97757",
                   }}
                 />
               </div>
