@@ -47,6 +47,26 @@ Update this file for every implementation task before final completion.
   - get_errors on edited files: no errors found.
   - npm run lint: pass with warnings only; no lint errors.
 - Commit:
+  fa1200d
+- Push status:
+  pushed to origin/development
+- Notes/blockers:
+  None so far.
+
+## 2026-04-19T17:50:19Z | Single consolidated work-history automation
+- Summary:
+  Implemented end-of-session auto-generation of one consolidated start-to-current work document (`docs/WORK_HISTORY.md`) and enforced this flow in agent rules while preserving `docs/PropChain_System_Plan.md` as read-only.
+- Files changed:
+  - scripts/update-session-docs.mjs
+  - package.json
+  - AGENTS.md
+  - docs/WORK_HISTORY.md
+  - docs/MAIN_HANDOVER.md
+  - docs/MASTER_CHANGELOG.md
+- Verification:
+  - npm run session:end: pass; updated docs/WORK_HISTORY.md.
+  - git status --short: expected files only.
+- Commit:
   pending
 - Push status:
   pending

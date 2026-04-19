@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "session:end": "node scripts/update-session-docs.mjs",
     "listener": "tsx scripts/eventListener.ts",
     "recovery": "tsx scripts/recoveryWorker.ts"
   },
