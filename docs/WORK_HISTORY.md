@@ -5,16 +5,16 @@ It is the single consolidated work record from project start to now.
 
 ## Snapshot
 
-- Generated UTC: 2026-04-19T17:50:50.340Z
+- Generated UTC: 2026-04-19T17:55:38.316Z
 - Branch: development
-- Total commits on branch: 25
+- Total commits on branch: 26
 - Start point: 8dffa4c | 2026-03-20T08:27:45.000Z | BISWARANJAN GIRI | Initial commit
-- Current point: fa1200d | 2026-04-19T17:42:14.000Z | Hey-Viswa | Fix dark-mode visibility for portfolio compliance card
-- Documentation files indexed: 31
+- Current point: d1755bd | 2026-04-19T17:51:14.000Z | Hey-Viswa | docs: automate single-session consolidated work history
+- Documentation files indexed: 12
 - Protected plan file: docs/PropChain_System_Plan.md (read-only, never modified by automation)
 - Protected plan exists: yes
-- MAIN_HANDOVER session entries indexed: 28
-- MASTER_CHANGELOG entries indexed: 3
+- MAIN_HANDOVER session entries indexed: 29
+- MASTER_CHANGELOG entries indexed: 4
 
 ## Documentation Inventory
 
@@ -24,28 +24,9 @@ It is the single consolidated work record from project start to now.
 - [docs/architecture/oracle-role-assignment.md](docs/architecture/oracle-role-assignment.md)
 - [docs/architecture/README.md](docs/architecture/README.md)
 - [docs/architecture/system-arch.md](docs/architecture/system-arch.md)
-- [docs/CHANGELOG_SESSIONS_1_6.md](docs/CHANGELOG_SESSIONS_1_6.md)
-- [docs/CLAUDE_UI_AUDIT.md](docs/CLAUDE_UI_AUDIT.md)
-- [docs/MAIN_HANDOVER (1).md](docs/MAIN_HANDOVER (1).md)
 - [docs/MAIN_HANDOVER.md](docs/MAIN_HANDOVER.md)
 - [docs/MASTER_CHANGELOG.md](docs/MASTER_CHANGELOG.md)
 - [docs/phase_1_status.md](docs/phase_1_status.md)
-- [docs/PLAN_AUTO_SCALING.md](docs/PLAN_AUTO_SCALING.md)
-- [docs/PLAN_DASHBOARD_POLISH.md](docs/PLAN_DASHBOARD_POLISH.md)
-- [docs/PLAN_DESIGN_SYSTEM_HARMONIZATION.md](docs/PLAN_DESIGN_SYSTEM_HARMONIZATION.md)
-- [docs/PLAN_FIX_SELECT_SYNTAX.md](docs/PLAN_FIX_SELECT_SYNTAX.md)
-- [docs/PLAN_FIX_TRANSFER_BUTTON.md](docs/PLAN_FIX_TRANSFER_BUTTON.md)
-- [docs/PLAN_FONT_MIGRATION.md](docs/PLAN_FONT_MIGRATION.md)
-- [docs/PLAN_MOBILE_NAV_PUSH.md](docs/PLAN_MOBILE_NAV_PUSH.md)
-- [docs/PLAN_ORCHESTRAL_SYNC.md](docs/PLAN_ORCHESTRAL_SYNC.md)
-- [docs/PLAN_REMOVE_DARK_GLOW.md](docs/PLAN_REMOVE_DARK_GLOW.md)
-- [docs/PLAN_REMOVE_GRAIN.md](docs/PLAN_REMOVE_GRAIN.md)
-- [docs/PLAN_RESTRUCTURING_RIPPLE.md](docs/PLAN_RESTRUCTURING_RIPPLE.md)
-- [docs/PLAN_STRICT_DARK_THEME.md](docs/PLAN_STRICT_DARK_THEME.md)
-- [docs/PLAN_STRICT_THEMING_FIX.md](docs/PLAN_STRICT_THEMING_FIX.md)
-- [docs/PLAN_THEME_STRICTNESS.md](docs/PLAN_THEME_STRICTNESS.md)
-- [docs/PLAN_UI_OVERHAUL.md](docs/PLAN_UI_OVERHAUL.md)
-- [docs/PLAN_UI_REFINEMENT_2.md](docs/PLAN_UI_REFINEMENT_2.md)
 - [docs/project_context.md](docs/project_context.md)
 - [docs/PropChain_System_Plan.md](docs/PropChain_System_Plan.md)
 - [docs/WORK_HISTORY.md](docs/WORK_HISTORY.md)
@@ -79,10 +60,49 @@ It is the single consolidated work record from project start to now.
 | 23 | 2026-04-19T17:20:40.000Z | ea177b7 | Hey-Viswa | 4 | fix: align layout baseline and remove blue tint regressions |
 | 24 | 2026-04-19T17:34:48.000Z | d43bdd5 | Hey-Viswa | 8 | chore: enforce master changelog rule and publish UI fixes |
 | 25 | 2026-04-19T17:42:14.000Z | fa1200d | Hey-Viswa | 3 | Fix dark-mode visibility for portfolio compliance card |
+| 26 | 2026-04-19T17:51:14.000Z | d1755bd | Hey-Viswa | 6 | docs: automate single-session consolidated work history |
 
 ## Session Log Mirror (from docs/MAIN_HANDOVER.md)
 
 ## Session Log
+
+### 2026-04-19T17:54:10Z | Docs cleanup: remove unnecessary files
+- Request summary: User requested deletion of unnecessary docs.
+- Work completed:
+  - Removed duplicate and superseded documentation files, including legacy one-off UI execution plans and duplicate handover copy.
+  - Preserved core required docs: `docs/MAIN_HANDOVER.md`, `docs/MASTER_CHANGELOG.md`, `docs/WORK_HISTORY.md`, `docs/project_context.md`.
+  - Preserved protected plan file: `docs/PropChain_System_Plan.md` (not modified).
+- Files changed:
+  - docs/CHANGELOG_SESSIONS_1_6.md (deleted)
+  - docs/CLAUDE_UI_AUDIT.md (deleted)
+  - docs/MAIN_HANDOVER (1).md (deleted)
+  - docs/PLAN_AUTO_SCALING.md (deleted)
+  - docs/PLAN_DASHBOARD_POLISH.md (deleted)
+  - docs/PLAN_DESIGN_SYSTEM_HARMONIZATION.md (deleted)
+  - docs/PLAN_FIX_SELECT_SYNTAX.md (deleted)
+  - docs/PLAN_FIX_TRANSFER_BUTTON.md (deleted)
+  - docs/PLAN_FONT_MIGRATION.md (deleted)
+  - docs/PLAN_MOBILE_NAV_PUSH.md (deleted)
+  - docs/PLAN_ORCHESTRAL_SYNC.md (deleted)
+  - docs/PLAN_REMOVE_DARK_GLOW.md (deleted)
+  - docs/PLAN_REMOVE_GRAIN.md (deleted)
+  - docs/PLAN_RESTRUCTURING_RIPPLE.md (deleted)
+  - docs/PLAN_STRICT_DARK_THEME.md (deleted)
+  - docs/PLAN_STRICT_THEMING_FIX.md (deleted)
+  - docs/PLAN_THEME_STRICTNESS.md (deleted)
+  - docs/PLAN_UI_OVERHAUL.md (deleted)
+  - docs/PLAN_UI_REFINEMENT_2.md (deleted)
+  - docs/MAIN_HANDOVER.md
+  - docs/MASTER_CHANGELOG.md
+  - docs/WORK_HISTORY.md
+- Verification commands and results:
+  - `git rm -- <docs files...>`: pass; files removed from index.
+  - `list_dir docs`: confirms reduced docs set and protected files still present.
+- Open issues/blockers:
+  - None.
+- Next steps:
+  - Run `npm run session:end` to refresh consolidated inventory after deletions.
+  - Commit and push cleanup to `origin/development`.
 
 ### 2026-04-19T17:50:19Z | Single consolidated work-history automation
 - Request summary: User requested one single document containing complete start-to-end work details and automatic updates at session end, with explicit instruction to never touch `docs/PropChain_System_Plan.md`.
@@ -728,6 +748,43 @@ It is the single consolidated work record from project start to now.
 - Verification:
   - npm run session:end: pass; updated docs/WORK_HISTORY.md.
   - git status --short: expected files only.
+- Commit:
+  d1755bd
+- Push status:
+  pushed to origin/development
+- Notes/blockers:
+  None so far.
+
+## 2026-04-19T17:54:10Z | Docs cleanup to enforce single-doc workflow
+- Summary:
+  Deleted unnecessary and superseded docs (legacy plan/audit/duplicate handover files) so active documentation is centered around `docs/WORK_HISTORY.md` as the consolidated record, while preserving required/protected core docs.
+- Files changed:
+  - docs/CHANGELOG_SESSIONS_1_6.md (deleted)
+  - docs/CLAUDE_UI_AUDIT.md (deleted)
+  - docs/MAIN_HANDOVER (1).md (deleted)
+  - docs/PLAN_AUTO_SCALING.md (deleted)
+  - docs/PLAN_DASHBOARD_POLISH.md (deleted)
+  - docs/PLAN_DESIGN_SYSTEM_HARMONIZATION.md (deleted)
+  - docs/PLAN_FIX_SELECT_SYNTAX.md (deleted)
+  - docs/PLAN_FIX_TRANSFER_BUTTON.md (deleted)
+  - docs/PLAN_FONT_MIGRATION.md (deleted)
+  - docs/PLAN_MOBILE_NAV_PUSH.md (deleted)
+  - docs/PLAN_ORCHESTRAL_SYNC.md (deleted)
+  - docs/PLAN_REMOVE_DARK_GLOW.md (deleted)
+  - docs/PLAN_REMOVE_GRAIN.md (deleted)
+  - docs/PLAN_RESTRUCTURING_RIPPLE.md (deleted)
+  - docs/PLAN_STRICT_DARK_THEME.md (deleted)
+  - docs/PLAN_STRICT_THEMING_FIX.md (deleted)
+  - docs/PLAN_THEME_STRICTNESS.md (deleted)
+  - docs/PLAN_UI_OVERHAUL.md (deleted)
+  - docs/PLAN_UI_REFINEMENT_2.md (deleted)
+  - docs/MAIN_HANDOVER.md
+  - docs/MASTER_CHANGELOG.md
+  - docs/WORK_HISTORY.md
+- Verification:
+  - git rm on docs targets: pass.
+  - list_dir docs: only core docs remain plus architecture folder.
+  - npm run session:end: pending (to be run before commit).
 - Commit:
   pending
 - Push status:

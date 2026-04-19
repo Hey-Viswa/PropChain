@@ -69,6 +69,44 @@ When Claude Code Sonnet 4.6 is assigned an audit/review task, the review must be
 
 ## Session Log
 
+### 2026-04-19T17:54:10Z | Docs cleanup: remove unnecessary files
+- Request summary: User requested deletion of unnecessary docs.
+- Work completed:
+  - Removed duplicate and superseded documentation files, including legacy one-off UI execution plans and duplicate handover copy.
+  - Preserved core required docs: `docs/MAIN_HANDOVER.md`, `docs/MASTER_CHANGELOG.md`, `docs/WORK_HISTORY.md`, `docs/project_context.md`.
+  - Preserved protected plan file: `docs/PropChain_System_Plan.md` (not modified).
+- Files changed:
+  - docs/CHANGELOG_SESSIONS_1_6.md (deleted)
+  - docs/CLAUDE_UI_AUDIT.md (deleted)
+  - docs/MAIN_HANDOVER (1).md (deleted)
+  - docs/PLAN_AUTO_SCALING.md (deleted)
+  - docs/PLAN_DASHBOARD_POLISH.md (deleted)
+  - docs/PLAN_DESIGN_SYSTEM_HARMONIZATION.md (deleted)
+  - docs/PLAN_FIX_SELECT_SYNTAX.md (deleted)
+  - docs/PLAN_FIX_TRANSFER_BUTTON.md (deleted)
+  - docs/PLAN_FONT_MIGRATION.md (deleted)
+  - docs/PLAN_MOBILE_NAV_PUSH.md (deleted)
+  - docs/PLAN_ORCHESTRAL_SYNC.md (deleted)
+  - docs/PLAN_REMOVE_DARK_GLOW.md (deleted)
+  - docs/PLAN_REMOVE_GRAIN.md (deleted)
+  - docs/PLAN_RESTRUCTURING_RIPPLE.md (deleted)
+  - docs/PLAN_STRICT_DARK_THEME.md (deleted)
+  - docs/PLAN_STRICT_THEMING_FIX.md (deleted)
+  - docs/PLAN_THEME_STRICTNESS.md (deleted)
+  - docs/PLAN_UI_OVERHAUL.md (deleted)
+  - docs/PLAN_UI_REFINEMENT_2.md (deleted)
+  - docs/MAIN_HANDOVER.md
+  - docs/MASTER_CHANGELOG.md
+  - docs/WORK_HISTORY.md
+- Verification commands and results:
+  - `git rm -- <docs files...>`: pass; files removed from index.
+  - `list_dir docs`: confirms reduced docs set and protected files still present.
+- Open issues/blockers:
+  - None.
+- Next steps:
+  - Run `npm run session:end` to refresh consolidated inventory after deletions.
+  - Commit and push cleanup to `origin/development`.
+
 ### 2026-04-19T17:50:19Z | Single consolidated work-history automation
 - Request summary: User requested one single document containing complete start-to-end work details and automatic updates at session end, with explicit instruction to never touch `docs/PropChain_System_Plan.md`.
 - Work completed:
