@@ -69,6 +69,24 @@ When Claude Code Sonnet 4.6 is assigned an audit/review task, the review must be
 
 ## Session Log
 
+### 2026-04-19T17:41:35Z | Portfolio Compliance dark-mode visibility fix
+- Request summary: User requested a visibility fix for the `Portfolio Compliance` card in dark mode on `/properties`.
+- Work completed:
+  - Updated the compliance stat card to use explicit dark-safe background and foreground classes for readable contrast.
+  - Adjusted icon badge and progress-bar colors in dark mode so title/value/progress remain clearly visible.
+- Files changed:
+  - app/properties/page.tsx
+  - docs/MAIN_HANDOVER.md
+  - docs/MASTER_CHANGELOG.md
+- Verification commands and results:
+  - `get_errors` on updated files: no errors found.
+  - `npm run lint`: pass with warnings only; no lint errors.
+- Open issues/blockers:
+  - Existing unrelated lint warnings remain in `app/dev/admin/page.tsx`, `app/oracle/queue/page.tsx`, `app/oracle/users/[clerkId]/page.tsx`, and image optimization warning in `app/settings/page.tsx`.
+- Next steps:
+  - Commit and push this visibility fix to `origin/development`.
+  - Visual QA the `/properties` stats row in both light and dark themes.
+
 ### 2026-04-19T17:31:30Z | Master changelog rule enforced + pending UI fixes packaged
 - Request summary: User asked to push latest fixes to GitHub and enforce a strict always-update-changelog plus push rule.
 - Work completed:

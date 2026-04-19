@@ -30,6 +30,23 @@ Update this file for every implementation task before final completion.
   - get_errors on edited UI files: no errors found.
   - npm run lint: pass with warnings only; no lint errors.
 - Commit:
+  d43bdd5
+- Push status:
+  pushed to origin/development
+- Notes/blockers:
+  None so far.
+
+## 2026-04-19T17:41:35Z | Properties compliance visibility (dark mode)
+- Summary:
+  Fixed low contrast on the `Portfolio Compliance` stat card in dark mode by applying explicit dark-safe background, text, icon, and progress-bar styling.
+- Files changed:
+  - app/properties/page.tsx
+  - docs/MAIN_HANDOVER.md
+  - docs/MASTER_CHANGELOG.md
+- Verification:
+  - get_errors on edited files: no errors found.
+  - npm run lint: pass with warnings only; no lint errors.
+- Commit:
   pending
 - Push status:
   pending

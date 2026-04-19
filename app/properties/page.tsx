@@ -102,21 +102,21 @@ export default function PropertiesPage() {
             </CardContent>
           </Card>
 
-          <Card className="rounded-2xl bg-primary border-none shadow-floating overflow-hidden relative">
-            <CardContent className="p-6 text-on_primary flex flex-col justify-center h-full">
+          <Card className="rounded-2xl bg-primary dark:bg-[#3d2800] border-none shadow-floating overflow-hidden relative">
+            <CardContent className="p-6 text-white dark:text-secondary_fixed flex flex-col justify-center h-full">
               <div className="relative z-10">
-                <div className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center mb-4">
+                <div className="w-9 h-9 rounded-xl bg-white/10 dark:bg-black/20 flex items-center justify-center mb-4">
                    <Shield size={16} />
                 </div>
                 <p className="text-2xl font-bold font-display tracking-tight leading-tight mb-3">Portfolio<br/>Compliance</p>
                 <div className="flex items-center gap-3">
-                  <div className="h-1.5 flex-1 bg-white/20 rounded-full overflow-hidden">
-                    <div className="h-full w-[94%] bg-white rounded-full" />
+                  <div className="h-1.5 flex-1 bg-white/20 dark:bg-secondary_fixed/30 rounded-full overflow-hidden">
+                    <div className="h-full w-[94%] bg-white dark:bg-secondary_fixed rounded-full" />
                   </div>
                   <span className="text-[11px] font-black">94%</span>
                 </div>
               </div>
-              <div className="absolute right-[-10%] top-[-20%] w-32 h-32 bg-white/10 rounded-full blur-3xl" />
+              <div className="absolute right-[-10%] top-[-20%] w-32 h-32 bg-white/10 dark:bg-secondary_fixed/10 rounded-full blur-3xl" />
             </CardContent>
           </Card>
         </div>
