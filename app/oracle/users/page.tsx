@@ -1,17 +1,20 @@
 "use client";
+
 import OracleGuard from "@/components/shared/OracleGuard";
 import { useState, useEffect, useCallback } from "react";
 import {
-  Search,
-  RefreshCw,
-  User,
-  AlertTriangle,
-  Clock,
-  ChevronRight,
-  Activity,
+  Search, RefreshCw, User, AlertTriangle, Clock, ChevronRight, Activity, Shield,
 } from "lucide-react";
 import Link from "next/link";
 import { useDebounce } from "@/hooks/useDebounce";
+import {
+  Card, CardContent, CardHeader, CardTitle, CardDescription,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
+import { cn } from "@/lib/utils";
 
 interface UserEntry {
   _id: string;
@@ -19,11 +22,7 @@ interface UserEntry {
   lastActive: string;
   totalActions: number;
   flaggedCount: number;
-  userData: {
-    name?: string;
-    email?: string;
-    kycVerified?: boolean;
-  } | null;
+  userData: { name?: string; email?: string; kycVerified?: boolean } | null;
 }
 
 function timeAgo(date: string): string {
@@ -52,10 +51,7 @@ function OracleUsersContent() {
   const fetchUsers = useCallback(async () => {
     setLoading(true);
     try {
-      const params = new URLSearchParams({
-        search: debouncedSearch,
-        filter,
-      });
+      const params = new URLSearchParams({ search: debouncedSearch, filter });
       const res = await fetch(`/api/oracle/users?${params.toString()}`);
       const data = await res.json();
       setUsers(data.users ?? []);
@@ -64,168 +60,178 @@ function OracleUsersContent() {
     }
   }, [debouncedSearch, filter]);
 
-  useEffect(() => {
-    fetchUsers();
-  }, [fetchUsers]);
+  useEffect(() => { fetchUsers(); }, [fetchUsers]);
 
   const flaggedCount = users.filter((u) => u.flaggedCount > 0).length;
+  const kycCount = users.filter((u) => u.userData?.kycVerified).length;
+  const activeCount = users.filter((u) => (Date.now() - new Date(u.lastActive).getTime()) / 3600000 < 24).length;
+
+  const filters = [
+    { key: "all", label: "All" },
+    { key: "flagged", label: "Flagged" },
+    { key: "active", label: "Active" },
+  ];
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-start justify-between flex-wrap gap-4">
+    <div className="space-y-5">
+      {/* Header */}
+      <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-headline-md font-semibold text-on_surface dark:text-[#e8eaf0]">
+          <h1 className="text-2xl sm:text-3xl font-bold font-display text-on_surface dark:text-[#e8e6e2] tracking-tight">
             User Monitoring
           </h1>
-          <p className="text-body-md text-on_surface_variant dark:text-[#9ba3b8] mt-1">
-            Monitor all user activity and flag suspicious behavior
+          <p className="text-sm text-[#8a8480] dark:text-[#7a7470] mt-1">
+            Monitor all user activity and flag suspicious behaviour.
           </p>
         </div>
-
         <div className="flex items-center gap-2">
           {flaggedCount > 0 && (
-            <span className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-label-sm font-medium bg-error_container dark:bg-[#2d0a0a] text-error">
-              <AlertTriangle className="w-3.5 h-3.5" />
+            <Badge className="bg-error/10 text-error border-error/20 border text-[10px] gap-1">
+              <AlertTriangle className="w-2.5 h-2.5" />
               {flaggedCount} flagged
-            </span>
+            </Badge>
           )}
-          <button
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={fetchUsers}
             disabled={loading}
-            className="p-2 rounded-lg bg-surface_container dark:bg-[#1c2333] text-on_surface_variant dark:text-[#9ba3b8] hover:text-on_surface transition-colors"
+            className="gap-1.5 text-xs h-8 text-[#8a8480] hover:text-on_surface"
           >
-            <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
-          </button>
+            <RefreshCw className={cn("w-3.5 h-3.5", loading && "animate-spin")} />
+            Refresh
+          </Button>
         </div>
       </div>
 
-      <div className="flex gap-3 flex-wrap">
+      {/* Stats */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+        {[
+          { label: "Total Users",   value: users.length,  color: "text-on_surface dark:text-[#e8e6e2]" },
+          { label: "KYC Verified",  value: kycCount,       color: "text-success" },
+          { label: "Flagged",       value: flaggedCount,   color: "text-error" },
+          { label: "Active Today",  value: activeCount,    color: "text-primary dark:text-[#E89874]" },
+        ].map((stat) => (
+          <Card key={stat.label}>
+            <CardContent className="p-4">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-[#8a8480] dark:text-[#7a7470] mb-1.5">
+                {stat.label}
+              </p>
+              <p className={cn("text-2xl font-bold", stat.color)}>{stat.value}</p>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {/* Search + filter */}
+      <div className="flex gap-2 flex-wrap">
         <div className="relative flex-1 min-w-[200px]">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-on_surface_variant dark:text-[#9ba3b8]" />
-          <input
-            type="text"
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8a8480] dark:text-[#7a7470] pointer-events-none" />
+          <Input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search by Clerk ID or wallet..."
-            className="w-full bg-surface_container_lowest dark:bg-[#131820] rounded-xl pl-10 pr-4 py-2.5 text-body-md text-on_surface dark:text-[#e8eaf0] border-0 focus:outline-none focus:ring-1 focus:ring-primary dark:focus:ring-[#6b9eff] placeholder:text-on_surface_variant/50 dark:placeholder:text-[#9ba3b8]/40"
+            placeholder="Search by name or wallet…"
+            className="pl-9 text-sm"
           />
         </div>
-
-        <div className="flex gap-2">
-          {[
-            { key: "all", label: "All Users" },
-            { key: "flagged", label: "Flagged" },
-            { key: "active", label: "Active Today" },
-          ].map((f) => (
-            <button
+        <div className="flex gap-1.5">
+          {filters.map((f) => (
+            <Button
               key={f.key}
+              size="sm"
+              variant={filter === f.key ? "default" : "outline"}
               onClick={() => setFilter(f.key)}
-              className={`px-4 py-2 rounded-full text-label-sm font-medium transition-colors ${
-                filter === f.key
-                  ? "bg-primary text-on_primary"
-                  : "bg-surface_container_lowest dark:bg-[#131820] text-on_surface_variant dark:text-[#9ba3b8] hover:bg-surface_container dark:hover:bg-[#1c2333]"
-              }`}
+              className={cn(
+                "h-9 text-xs px-3",
+                filter !== f.key && "border-stone dark:border-[#2a2520] text-[#8a8480] dark:text-[#7a7470]"
+              )}
             >
               {f.label}
-            </button>
+            </Button>
           ))}
         </div>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {[
-          { label: "Total Users", value: users.length, color: "text-on_surface dark:text-[#e8eaf0]" },
-          {
-            label: "KYC Verified",
-            value: users.filter((u) => u.userData?.kycVerified).length,
-            color: "text-success",
-          },
-          { label: "Flagged", value: flaggedCount, color: "text-error" },
-          {
-            label: "Active Today",
-            value: users.filter((u) => {
-              const h = (Date.now() - new Date(u.lastActive).getTime()) / 3600000;
-              return h < 24;
-            }).length,
-            color: "text-primary dark:text-[#6b9eff]",
-          },
-        ].map((stat) => (
-          <div key={stat.label} className="bg-surface_container_lowest dark:bg-[#131820] rounded-xl p-4">
-            <p className="text-label-sm text-on_surface_variant dark:text-[#9ba3b8] mb-1">{stat.label}</p>
-            <p className={`text-headline-md font-bold ${stat.color}`}>{stat.value}</p>
-          </div>
-        ))}
-      </div>
+      {/* User list */}
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base">All Users</CardTitle>
+          <CardDescription>Click a user to view full activity log</CardDescription>
+        </CardHeader>
+        <CardContent className="p-0">
+          {loading ? (
+            <div className="p-5 space-y-3">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="h-16 rounded-xl bg-sand dark:bg-[#211f1c] animate-pulse" />
+              ))}
+            </div>
+          ) : users.length === 0 ? (
+            <div className="py-14 flex flex-col items-center gap-3 px-6 text-center">
+              <div className="w-10 h-10 rounded-full bg-sand dark:bg-[#211f1c] flex items-center justify-center">
+                <Activity className="w-5 h-5 text-[#8a8480]" />
+              </div>
+              <p className="text-sm text-[#8a8480] dark:text-[#7a7470]">No users found</p>
+            </div>
+          ) : (
+            <div>
+              {users.map((user, i) => (
+                <div key={user._id}>
+                  {i > 0 && <Separator />}
+                  <Link
+                    href={`/oracle/users/${user._id}`}
+                    className="flex items-center gap-4 px-5 py-4 hover:bg-sand dark:hover:bg-[#211f1c] transition-colors group"
+                  >
+                    <div className="w-9 h-9 rounded-full bg-primary_fixed dark:bg-[#3D1F10] flex items-center justify-center flex-shrink-0">
+                      <User className="w-4 h-4 text-primary dark:text-[#E89874]" />
+                    </div>
 
-      <div className="bg-surface_container_lowest dark:bg-[#131820] rounded-2xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.03)]">
-        <div className="h-1 bg-gradient-to-r from-primary to-primary_container" />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <p className="text-sm font-semibold text-on_surface dark:text-[#e8e6e2] truncate">
+                          {user.userData?.name ?? "Unknown User"}
+                        </p>
+                        {user.userData?.kycVerified && (
+                          <Badge className="bg-success/10 text-success border-success/20 border text-[9px] gap-0.5 px-1.5 py-0.5">
+                            <Shield className="w-2.5 h-2.5" /> KYC
+                          </Badge>
+                        )}
+                        {user.flaggedCount > 0 && (
+                          <Badge className="bg-error/10 text-error border-error/20 border text-[9px] gap-0.5 px-1.5 py-0.5">
+                            <AlertTriangle className="w-2.5 h-2.5" />
+                            {user.flaggedCount} flag{user.flaggedCount > 1 ? "s" : ""}
+                          </Badge>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-3 mt-0.5">
+                        <span className="text-xs text-[#8a8480] dark:text-[#7a7470] font-mono truncate">
+                          {user._id}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-3 mt-0.5">
+                        <span className="text-[11px] text-[#8a8480] dark:text-[#7a7470] flex items-center gap-1">
+                          <Activity className="w-3 h-3" />
+                          {user.totalActions} actions
+                        </span>
+                        <span className="text-[11px] text-[#8a8480] dark:text-[#7a7470] flex items-center gap-1">
+                          <Clock className="w-3 h-3" />
+                          {timeAgo(user.lastActive)}
+                        </span>
+                        {user.walletAddress && (
+                          <span className="text-[11px] text-[#8a8480] dark:text-[#7a7470] font-mono hidden sm:block">
+                            {user.walletAddress.slice(0, 6)}…{user.walletAddress.slice(-4)}
+                          </span>
+                        )}
+                      </div>
+                    </div>
 
-        {loading ? (
-          <div className="p-6 space-y-4">
-            {[...Array(5)].map((_, i) => (
-              <div key={i} className="h-20 bg-surface_container dark:bg-[#1c2333] rounded-xl animate-pulse" />
-            ))}
-          </div>
-        ) : users.length === 0 ? (
-          <div className="py-16 text-center px-6">
-            <Activity className="w-10 h-10 text-on_surface_variant/30 dark:text-[#9ba3b8]/20 mx-auto mb-3" />
-            <p className="text-body-md text-on_surface_variant dark:text-[#9ba3b8]">No users found</p>
-          </div>
-        ) : (
-          <div className="divide-y divide-outline_variant/10 dark:divide-[#1c2333]">
-            {users.map((user) => (
-              <Link
-                key={user._id}
-                href={`/oracle/users/${user._id}`}
-                className="flex items-center gap-4 p-5 hover:bg-surface_container_low dark:hover:bg-[#161b27] transition-colors group"
-              >
-                <div className="w-10 h-10 rounded-full bg-primary_fixed dark:bg-[#1a2d4d] flex items-center justify-center flex-shrink-0">
-                  <User className="w-5 h-5 text-primary dark:text-[#6b9eff]" />
+                    <ChevronRight className="w-4 h-4 text-[#8a8480] group-hover:text-primary dark:group-hover:text-[#E89874] transition-colors flex-shrink-0" />
+                  </Link>
                 </div>
-
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <p className="text-body-md font-medium text-on_surface dark:text-[#e8eaf0] truncate">
-                      {user.userData?.name ?? "Unknown User"}
-                    </p>
-                    {user.userData?.kycVerified && (
-                      <span className="rounded-full px-2 py-0.5 text-[10px] font-medium bg-success_container dark:bg-[#0a2e1a] text-success">
-                        KYC ✓
-                      </span>
-                    )}
-                    {user.flaggedCount > 0 && (
-                      <span className="rounded-full px-2 py-0.5 text-[10px] font-medium bg-error_container dark:bg-[#2d0a0a] text-error flex items-center gap-1">
-                        <AlertTriangle className="w-2.5 h-2.5" />
-                        {user.flaggedCount} flag{user.flaggedCount > 1 ? "s" : ""}
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-label-sm text-on_surface_variant dark:text-[#9ba3b8] font-mono truncate mt-0.5">
-                    {user._id}
-                  </p>
-                  <div className="flex items-center gap-3 mt-1">
-                    <span className="text-label-sm text-on_surface_variant dark:text-[#9ba3b8] flex items-center gap-1">
-                      <Activity className="w-3 h-3" />
-                      {user.totalActions} actions
-                    </span>
-                    <span className="text-label-sm text-on_surface_variant dark:text-[#9ba3b8] flex items-center gap-1">
-                      <Clock className="w-3 h-3" />
-                      {timeAgo(user.lastActive)}
-                    </span>
-                    {user.walletAddress && (
-                      <span className="text-label-sm font-mono text-on_surface_variant dark:text-[#9ba3b8] hidden sm:block">
-                        {user.walletAddress.slice(0, 6)}...{user.walletAddress.slice(-4)}
-                      </span>
-                    )}
-                  </div>
-                </div>
-
-                <ChevronRight className="w-4 h-4 text-on_surface_variant dark:text-[#9ba3b8] group-hover:text-primary dark:group-hover:text-[#6b9eff] transition-colors flex-shrink-0" />
-              </Link>
-            ))}
-          </div>
-        )}
-      </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }

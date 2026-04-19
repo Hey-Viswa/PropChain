@@ -23,7 +23,7 @@ export default function OracleAccessCard() {
   // Already in Oracle mode - show quick access
   if (isOracleMode) {
     return (
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary to-primary_container dark:from-[#1a2d4d] dark:to-[#0d1628] p-6 shadow-lg">
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary to-primary_container dark:from-[#3D1F10] dark:to-[#1f0d06] p-6 shadow-lg">
         {/* Animated background effect */}
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-shimmer" />
         
@@ -78,11 +78,11 @@ export default function OracleAccessCard() {
         className={cn(
           "relative overflow-hidden rounded-2xl cursor-pointer group",
           "bg-surface_container_low dark:bg-[#131820]",
-          "border-2 border-primary/20 dark:border-[#1a2d4d]",
-          "hover:border-primary/40 dark:hover:border-[#2a4d7d]",
+          "border-2 border-primary/20 dark:border-[#3D1F10]",
+          "hover:border-primary/40 dark:hover:border-[#6B2F14]",
           "transition-all duration-300 ease-out",
-          "hover:shadow-[0_8px_32px_rgba(0,80,178,0.12)]",
-          "dark:hover:shadow-[0_8px_32px_rgba(107,158,255,0.1)]"
+          "hover:shadow-[0_8px_32px_rgba(217,119,87,0.12)]",
+          "dark:hover:shadow-[0_8px_32px_rgba(232,152,116,0.1)]"
         )}
       >
         {/* Gradient overlay on hover */}
@@ -93,8 +93,8 @@ export default function OracleAccessCard() {
             <div className="flex-1 space-y-4">
               {/* Header */}
               <div className="flex items-start gap-3">
-                <div className="w-12 h-12 rounded-xl bg-primary_fixed dark:bg-[#1a2d4d] flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
-                  <Shield className="w-6 h-6 text-primary dark:text-[#6b9eff]" />
+                <div className="w-12 h-12 rounded-xl bg-primary_fixed dark:bg-[#3D1F10] flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                  <Shield className="w-6 h-6 text-primary dark:text-[#E89874]" />
                 </div>
                 <div className="flex-1">
                   <h3 className="text-headline-sm font-bold text-on_surface dark:text-[#e8eaf0]">
@@ -110,7 +110,7 @@ export default function OracleAccessCard() {
               <div className="grid grid-cols-3 gap-3">
                 {[
                   { icon: ShieldCheck, label: "Verified Role", color: "text-success" },
-                  { icon: Lock, label: "Secure Auth", color: "text-primary dark:text-[#6b9eff]" },
+                  { icon: Lock, label: "Secure Auth", color: "text-primary dark:text-[#E89874]" },
                   { icon: Zap, label: "Quick Access", color: "text-warning" },
                 ].map((item) => (
                   <div

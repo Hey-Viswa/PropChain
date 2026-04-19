@@ -16,7 +16,7 @@ const Switch = React.forwardRef<
       "transition-colors duration-200",
       "focus-visible:outline-none",
       "disabled:cursor-not-allowed disabled:opacity-50",
-      "data-[state=unchecked]:bg-surface_container_highest dark:bg-[#2a3347] dark:text-[#e8eaf0] dark:border-[#2a3347] dark:focus:border-[#6b9eff]",
+      "data-[state=unchecked]:bg-stone dark:data-[state=unchecked]:bg-[#2a2520]",
       "data-[state=checked]:bg-primary",
       className
     )}

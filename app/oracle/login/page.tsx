@@ -31,7 +31,7 @@ export default function OracleLoginPage() {
         </Link>
 
         {/* Card */}
-        <div className="bg-surface_container_lowest dark:bg-[#131820] rounded-2xl overflow-hidden shadow-[0_24px_64px_rgba(0,26,67,0.12)] dark:shadow-[0_24px_64px_rgba(0,0,0,0.4)]">
+        <div className="bg-surface_container_lowest dark:bg-[#1a1916] rounded-2xl overflow-hidden shadow-[0_24px_64px_rgba(0,26,67,0.12)] dark:shadow-[0_24px_64px_rgba(0,0,0,0.4)]">
 
           {/* Accent bar */}
           <div className="h-1 bg-gradient-to-r from-primary to-primary_container" />
@@ -40,8 +40,8 @@ export default function OracleLoginPage() {
 
             {/* Header */}
             <div className="text-center space-y-3">
-              <div className="w-16 h-16 rounded-2xl bg-primary_fixed dark:bg-[#1a2d4d] flex items-center justify-center mx-auto">
-                <Shield className="w-8 h-8 text-primary dark:text-[#6b9eff]" />
+              <div className="w-16 h-16 rounded-2xl bg-primary_fixed dark:bg-[#3D1F10] flex items-center justify-center mx-auto">
+                <Shield className="w-8 h-8 text-primary dark:text-[#E89874]" />
               </div>
               <div>
                 <h1 className="text-headline-md font-bold text-on_surface dark:text-[#e8eaf0]">
@@ -74,7 +74,7 @@ export default function OracleLoginPage() {
               ].map((item) => (
                 <div key={item.label}
                      className="p-3 rounded-xl bg-surface_container_low dark:bg-[#1c2333] text-center">
-                  <item.icon className="w-5 h-5 text-primary dark:text-[#6b9eff] mx-auto mb-1.5" />
+                  <item.icon className="w-5 h-5 text-primary dark:text-[#E89874] mx-auto mb-1.5" />
                   <p className="text-label-sm font-bold text-on_surface dark:text-[#e8eaf0]">
                     {item.label}
                   </p>

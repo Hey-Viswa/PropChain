@@ -1,54 +1,32 @@
 "use client";
 import { useEffect, useState } from "react";
 
-interface Axis {
-  label:       string;
-  value:       number;
-  accentColor: string;
-  dotColor:    string;
-  dx:          number;
-  dy:          number;
-}
-
-const AXES: Axis[] = [
-  {
-    label:       "Residential",
-    value:       62,
-    accentColor: "#0050b2",
-    dotColor:    "#0050b2",
-    dx: 0,
-    dy: -1,
-  },
-  {
-    label:       "Commercial",
-    value:       24,
-    accentColor: "#835500",
-    dotColor:    "#835500",
-    dx: 1,
-    dy: 0,
-  },
-  {
-    label:       "Industrial",
-    value:       14,
-    accentColor: "#006e2c",
-    dotColor:    "#006e2c",
-    dx: 0,
-    dy: 1,
-  },
-  {
-    label:       "Verified",
-    value:       83,
-    accentColor: "#0050b2",
-    dotColor:    "#d6e3ff",
-    dx: -1,
-    dy: 0,
-  },
+const SEGMENTS = [
+  { label: "Residential", value: 62, color: "#D97757" },
+  { label: "Commercial",  value: 24, color: "#C4602A" },
+  { label: "Industrial",  value: 14, color: "#F6EAE3" },
 ];
 
-const SIZE   = 220;
-const CENTER = SIZE / 2;
-const MAX_R  = 78;
-const GRID_LEVELS = [0.25, 0.5, 0.75, 1.0];
+const VERIFICATION_RATE = 83;
+
+const SIZE   = 120;
+const CX     = SIZE / 2;
+const CY     = SIZE / 2;
+const RADIUS = 44;
+const STROKE = 14;
+const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
+
+function polarToCartesian(cx: number, cy: number, r: number, angleDeg: number) {
+  const rad = ((angleDeg - 90) * Math.PI) / 180;
+  return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
+}
+
+function describeArc(cx: number, cy: number, r: number, startAngle: number, endAngle: number) {
+  const s = polarToCartesian(cx, cy, r, startAngle);
+  const e = polarToCartesian(cx, cy, r, endAngle);
+  const largeArc = endAngle - startAngle > 180 ? 1 : 0;
+  return `M ${s.x} ${s.y} A ${r} ${r} 0 ${largeArc} 1 ${e.x} ${e.y}`;
+}
 
 export default function AssetSpiderChart() {
   const [progress, setProgress] = useState(0);
@@ -57,297 +35,123 @@ export default function AssetSpiderChart() {
     let frame: number;
     let start: number | null = null;
     const duration = 900;
-    const delay    = 400;
-
     const timer = setTimeout(() => {
       const animate = (ts: number) => {
         if (!start) start = ts;
-        const elapsed = ts - start;
-        const t = Math.min(elapsed / duration, 1);
-        // Ease out cubic
-        const eased = 1 - Math.pow(1 - t, 3);
-        setProgress(eased);
+        const t = Math.min((ts - start) / duration, 1);
+        setProgress(1 - Math.pow(1 - t, 3));
         if (t < 1) frame = requestAnimationFrame(animate);
       };
       frame = requestAnimationFrame(animate);
-    }, delay);
-
-    return () => {
-      clearTimeout(timer);
-      cancelAnimationFrame(frame);
-    };
+    }, 300);
+    return () => { clearTimeout(timer); cancelAnimationFrame(frame); };
   }, []);
 
-  // Compute point positions based on animation progress
-  const points = AXES.map((axis) => {
-    const r = (axis.value / 100) * MAX_R * progress;
-    return {
-      ...axis,
-      x: CENTER + axis.dx * r,
-      y: CENTER + axis.dy * r,
-      r,
+  // Build donut arcs
+  let currentAngle = 0;
+  const arcs = SEGMENTS.map((seg) => {
+    const sweep = seg.value * 3.6 * progress;
+    const arc = {
+      ...seg,
+      path: describeArc(CX, CY, RADIUS, currentAngle, currentAngle + sweep - 0.5),
+      startAngle: currentAngle,
     };
+    currentAngle += seg.value * 3.6;
+    return arc;
   });
 
-  // Build polygon path
-  const polygonPoints = points
-    .map((p) => `${p.x},${p.y}`)
-    .join(" ");
-
-  // Full axis endpoints (always full length)
-  const axisEnds = AXES.map((axis) => ({
-    x: CENTER + axis.dx * MAX_R,
-    y: CENTER + axis.dy * MAX_R,
-  }));
+  const verifiedOffset = CIRCUMFERENCE * (1 - (VERIFICATION_RATE / 100) * progress);
 
   return (
-    <div className="flex flex-col items-center w-full">
+    <div className="flex flex-col gap-4 w-full">
 
-      {/* Spider Chart SVG */}
-      <div className="relative" style={{ width: SIZE,
-                                         height: SIZE }}>
-        <svg
-          width={SIZE}
-          height={SIZE}
-          viewBox={`0 0 ${SIZE} ${SIZE}`}
-          className="overflow-visible">
+      {/* Top row: donut + legend */}
+      <div className="flex items-center gap-5">
 
-          <defs>
-            {/* Polygon glow */}
-            <filter id="propchain-glow"
-                    x="-50%" y="-50%"
-                    width="200%" height="200%">
-              <feGaussianBlur stdDeviation="3"
-                              result="blur" />
-              <feMerge>
-                <feMergeNode in="blur" />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
-            </filter>
-
-            {/* Dot glow */}
-            <filter id="dot-glow"
-                    x="-100%" y="-100%"
-                    width="300%" height="300%">
-              <feGaussianBlur stdDeviation="2"
-                              result="blur" />
-              <feMerge>
-                <feMergeNode in="blur" />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
-            </filter>
-
-            {/* Polygon gradient fill */}
-            <radialGradient id="spider-fill"
-                            cx="50%" cy="50%"
-                            r="50%">
-              <stop offset="0%"
-                    stopColor="#0050b2"
-                    stopOpacity="0.18" />
-              <stop offset="100%"
-                    stopColor="#0050b2"
-                    stopOpacity="0.04" />
-            </radialGradient>
-          </defs>
-
-          {/* Grid circles */}
-          {GRID_LEVELS.map((level) => (
+        {/* Donut */}
+        <div className="relative flex-shrink-0" style={{ width: SIZE, height: SIZE }}>
+          <svg width={SIZE} height={SIZE} viewBox={`0 0 ${SIZE} ${SIZE}`}>
+            {/* Track */}
             <circle
-              key={level}
-              cx={CENTER}
-              cy={CENTER}
-              r={MAX_R * level}
+              cx={CX} cy={CY} r={RADIUS}
               fill="none"
-              stroke="#c3c6cf"
-              strokeWidth={0.75}
-              strokeDasharray={
-                level === 1 ? "none" : "3 3"
-              }
-              opacity={0.35}
-              className="dark:stroke-[#2a3347]"
-            />
-          ))}
-
-          {/* Grid cross lines (axis lines full length) */}
-          {axisEnds.map((end, i) => (
-            <line
-              key={`axis-${i}`}
-              x1={CENTER} y1={CENTER}
-              x2={end.x}  y2={end.y}
-              stroke="#c3c6cf"
-              strokeWidth={0.75}
+              stroke="currentColor"
+              strokeWidth={STROKE}
+              className="text-stone dark:text-[#2a2520]"
               opacity={0.4}
-              className="dark:stroke-[#2a3347]"
             />
-          ))}
-
-          {/* Filled polygon */}
-          {progress > 0 && (
-            <polygon
-              points={polygonPoints}
-              fill="url(#spider-fill)"
-              stroke="#0050b2"
-              strokeWidth={2}
-              strokeLinejoin="round"
-              filter="url(#propchain-glow)"
-              opacity={progress}
-            />
-          )}
-
-          {/* Colored segments from center to each point */}
-          {points.map((p, i) => (
-            <line
-              key={`seg-${i}`}
-              x1={CENTER} y1={CENTER}
-              x2={p.x}    y2={p.y}
-              stroke={p.accentColor}
-              strokeWidth={2.5}
-              strokeLinecap="round"
-              filter="url(#propchain-glow)"
-              opacity={progress}
-            />
-          ))}
-
-          {/* Data point dots */}
-          {points.map((p, i) => (
-            <g key={`dot-${i}`}
-               opacity={Math.min(progress * 2, 1)}>
-              {/* Outer glow ring */}
-              <circle
-                cx={p.x} cy={p.y}
-                r={9}
-                fill={p.accentColor}
-                opacity={0.15}
-                filter="url(#dot-glow)"
+            {/* Segments */}
+            {arcs.map((arc) => (
+              <path
+                key={arc.label}
+                d={arc.path}
+                fill="none"
+                stroke={arc.color}
+                strokeWidth={STROKE}
+                strokeLinecap="round"
               />
-              {/* Mid ring */}
-              <circle
-                cx={p.x} cy={p.y}
-                r={5.5}
-                fill={p.accentColor}
-                opacity={0.25}
-              />
-              {/* Core dot */}
-              <circle
-                cx={p.x} cy={p.y}
-                r={3.5}
-                fill={p.dotColor}
-                stroke="white"
-                strokeWidth={1.5}
-                filter="url(#dot-glow)"
-              />
-            </g>
-          ))}
-
-          {/* Center origin dot */}
-          <circle
-            cx={CENTER} cy={CENTER}
-            r={2.5}
-            fill="#c3c6cf"
-            className="dark:fill-[#2a3347]"
-          />
-
-        </svg>
-
-        {/* Axis labels — positioned outside SVG bounds */}
-
-        {/* TOP — Residential */}
-        <div className="absolute left-1/2 -translate-x-1/2"
-             style={{ top: -28 }}>
-          <div className="text-center">
-            <p className="text-[11px] font-bold leading-none"
-               style={{ color: "#0050b2" }}>
-              62%
-            </p>
-            <p className="text-[9px] leading-tight
-                           text-on_surface_variant
-                           dark:text-[#9ba3b8]
-                           whitespace-nowrap">
-              Residential
-            </p>
-          </div>
-        </div>
-
-        {/* RIGHT — Commercial */}
-        <div className="absolute top-1/2 -translate-y-1/2"
-             style={{ right: -60 }}>
-          <div className="text-left">
-            <p className="text-[11px] font-bold leading-none"
-               style={{ color: "#835500" }}>
-              24%
-            </p>
-            <p className="text-[9px] leading-tight
-                           text-on_surface_variant
-                           dark:text-[#9ba3b8]
-                           whitespace-nowrap">
-              Commercial
-            </p>
-          </div>
-        </div>
-
-        {/* BOTTOM — Industrial */}
-        <div className="absolute left-1/2 -translate-x-1/2"
-             style={{ bottom: -30 }}>
-          <div className="text-center">
-            <p className="text-[11px] font-bold leading-none"
-               style={{ color: "#006e2c" }}>
-              14%
-            </p>
-            <p className="text-[9px] leading-tight
-                           text-on_surface_variant
-                           dark:text-[#9ba3b8]
-                           whitespace-nowrap">
-              Industrial
-            </p>
-          </div>
-        </div>
-
-        {/* LEFT — Verified */}
-        <div className="absolute top-1/2 -translate-y-1/2"
-             style={{ left: -58 }}>
-          <div className="text-right">
-            <p className="text-[11px] font-bold leading-none"
-               style={{ color: "#0050b2" }}>
-              83%
-            </p>
-            <p className="text-[9px] leading-tight
-                           text-on_surface_variant
-                           dark:text-[#9ba3b8]
-                           whitespace-nowrap">
-              Verified
-            </p>
-          </div>
-        </div>
-
-      </div>
-
-      {/* Legend */}
-      <div className="flex flex-col gap-2
-                      mt-10 w-full max-w-[200px]">
-        {AXES.map((axis) => (
-          <div key={axis.label}
-               className="flex items-center
-                          justify-between">
-            <div className="flex items-center gap-2">
-              <div
-                className="w-2.5 h-2.5 rounded-full
-                           flex-shrink-0"
-                style={{ backgroundColor: axis.accentColor }}
-              />
-              <span className="text-[11px]
-                                text-on_surface_variant
-                                dark:text-[#9ba3b8]">
-                {axis.label}
-              </span>
-            </div>
-            <span className="text-[11px] font-semibold
-                              text-on_surface
-                              dark:text-[#e8eaf0]
-                              tabular-nums">
-              {axis.value}%
+            ))}
+          </svg>
+          {/* Center label */}
+          <div className="absolute inset-0 flex flex-col items-center justify-center">
+            <span className="text-[13px] font-bold text-on_surface dark:text-[#e8eaf0] font-display leading-none">
+              {Math.round(SEGMENTS.reduce((s, x) => s + x.value, 0) * progress)}%
+            </span>
+            <span className="text-[8px] uppercase tracking-[0.06em] text-on_surface_variant dark:text-[#9ba3b8] mt-0.5">
+              Total
             </span>
           </div>
-        ))}
+        </div>
+
+        {/* Legend */}
+        <div className="flex flex-col gap-2 flex-1 min-w-0">
+          {SEGMENTS.map((seg) => (
+            <div key={seg.label} className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2 min-w-0">
+                <div
+                  className="w-2 h-2 rounded-full flex-shrink-0"
+                  style={{ backgroundColor: seg.color }}
+                />
+                <span className="text-[11px] text-on_surface_variant dark:text-[#9ba3b8] truncate">
+                  {seg.label}
+                </span>
+              </div>
+              <span className="text-[11px] font-semibold text-on_surface dark:text-[#e8eaf0] tabular-nums flex-shrink-0">
+                {Math.round(seg.value * progress)}%
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Verification ring */}
+      <div className="flex items-center gap-3 p-3 rounded-xl bg-primary_fixed/40 dark:bg-[#3D1F10]/30">
+        <svg width={36} height={36} viewBox="0 0 36 36" className="flex-shrink-0">
+          <circle cx={18} cy={18} r={14} fill="none" stroke="currentColor"
+            strokeWidth={3} className="text-stone dark:text-[#2a2520]" opacity={0.4} />
+          <circle cx={18} cy={18} r={14} fill="none" stroke="#D97757"
+            strokeWidth={3} strokeLinecap="round"
+            strokeDasharray={CIRCUMFERENCE * (14 / RADIUS)}
+            strokeDashoffset={(CIRCUMFERENCE * (14 / RADIUS)) * (1 - (VERIFICATION_RATE / 100) * progress)}
+            transform="rotate(-90 18 18)"
+          />
+        </svg>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-semibold text-on_surface dark:text-[#e8eaf0]">
+              Verified Assets
+            </span>
+            <span className="text-[11px] font-bold text-primary dark:text-[#E89874] tabular-nums">
+              {Math.round(VERIFICATION_RATE * progress)}%
+            </span>
+          </div>
+          <div className="h-1 bg-stone dark:bg-[#2a2520] rounded-full mt-1.5 overflow-hidden">
+            <div
+              className="h-full bg-primary dark:bg-[#E89874] rounded-full transition-none"
+              style={{ width: `${VERIFICATION_RATE * progress}%` }}
+            />
+          </div>
+        </div>
       </div>
 
     </div>

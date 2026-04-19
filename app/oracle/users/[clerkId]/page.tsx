@@ -35,12 +35,12 @@ const ACTIVITY_ICONS: Record<string, any> = {
 };
 
 const ACTIVITY_COLORS: Record<string, string> = {
-  LOGIN: "bg-primary_fixed dark:bg-[#1a2d4d] text-primary dark:text-[#6b9eff]",
-  WALLET_CONNECT: "bg-primary_fixed dark:bg-[#1a2d4d] text-primary dark:text-[#6b9eff]",
+  LOGIN: "bg-primary_fixed dark:bg-[#3D1F10] text-primary dark:text-[#E89874]",
+  WALLET_CONNECT: "bg-primary_fixed dark:bg-[#3D1F10] text-primary dark:text-[#E89874]",
   KYC_SUBMIT: "bg-success_container dark:bg-[#0a2e1a] text-success",
-  PROPERTY_REGISTER: "bg-primary_fixed dark:bg-[#1a2d4d] text-primary dark:text-[#6b9eff]",
+  PROPERTY_REGISTER: "bg-primary_fixed dark:bg-[#3D1F10] text-primary dark:text-[#E89874]",
   DOCUMENT_UPLOAD: "bg-surface_container dark:bg-[#1c2333] text-on_surface_variant dark:text-[#9ba3b8]",
-  AI_SCAN: "bg-primary_fixed dark:bg-[#1a2d4d] text-primary dark:text-[#6b9eff]",
+  AI_SCAN: "bg-primary_fixed dark:bg-[#3D1F10] text-primary dark:text-[#E89874]",
   TRANSFER_INIT: "bg-secondary_fixed dark:bg-[#2a1a00] text-secondary dark:text-[#ffddb4]",
   TRANSFER_COMPLETE: "bg-success_container dark:bg-[#0a2e1a] text-success",
   ORACLE_APPROVE: "bg-success_container dark:bg-[#0a2e1a] text-success",
@@ -146,8 +146,8 @@ function OracleUserDetailContent() {
             <div className="h-1 bg-gradient-to-r from-primary to-primary_container" />
             <div className="p-5 space-y-4">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-primary_fixed dark:bg-[#1a2d4d] flex items-center justify-center">
-                  <User className="w-5 h-5 text-primary dark:text-[#6b9eff]" />
+                <div className="w-10 h-10 rounded-xl bg-primary_fixed dark:bg-[#3D1F10] flex items-center justify-center">
+                  <User className="w-5 h-5 text-primary dark:text-[#E89874]" />
                 </div>
                 <p className="text-title-md font-semibold text-on_surface dark:text-[#e8eaf0]">Profile</p>
               </div>
@@ -212,7 +212,7 @@ function OracleUserDetailContent() {
                 {
                   label: "Last Active",
                   value: stats?.lastSeen ? timeAgo(stats.lastSeen) : "-",
-                  color: "text-primary dark:text-[#6b9eff]",
+                  color: "text-primary dark:text-[#E89874]",
                 },
               ].map((s) => (
                 <div key={s.label} className="flex items-center justify-between p-3 bg-surface_container_low dark:bg-[#161b27] rounded-xl">

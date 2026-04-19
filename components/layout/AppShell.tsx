@@ -2,6 +2,7 @@
 import { useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 import Sidebar from "./Sidebar";
+import MobileNav from "./MobileNav";
 import Navbar from "./Navbar";
 import NetworkWarning from "@/components/shared/NetworkWarning";
 
@@ -10,23 +11,29 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (isLoaded && user) {
-      // Force reload user to get latest imageUrl
       user.reload();
     }
   }, [isLoaded, user]);
 
   return (
-    <div className="flex h-screen bg-surface overflow-hidden dark:bg-[#0f1117]">
-      <Sidebar />
+    <div className="flex h-screen bg-cream dark:bg-[#0f0e0d] overflow-hidden">
+      {/* Sidebar — desktop only */}
+      <div className="hidden md:flex">
+        <Sidebar />
+      </div>
+
       <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
         <Navbar />
         <NetworkWarning />
-        <main className="flex-1 overflow-y-auto px-6 py-6 md:px-8 md:py-8 xl:px-12 xl:py-10 2xl:px-16 2xl:py-12">
-          <div className="w-full max-w-screen-2xl mx-auto animate-fade-up">
+        <main className="flex-1 overflow-y-auto px-4 py-4 sm:px-6 sm:py-6 md:px-7 md:py-7 pb-20 md:pb-7">
+          <div className="w-full max-w-[1200px] mx-auto animate-fade-up">
             {children}
           </div>
         </main>
       </div>
+
+      {/* Mobile bottom nav — visible below md */}
+      <MobileNav />
     </div>
   );
 }

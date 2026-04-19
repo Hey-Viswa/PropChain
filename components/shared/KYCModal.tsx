@@ -118,10 +118,10 @@ export default function KYCModal({
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl
                               bg-primary_fixed
-                              dark:bg-[#1a2d4d]
+                              dark:bg-[#3D1F10]
                               flex items-center justify-center">
                 <Shield className="w-5 h-5 text-primary
-                                    dark:text-[#6b9eff]" />
+                                    dark:text-[#E89874]" />
               </div>
               <div>
                 <p className="text-title-md font-bold
@@ -199,7 +199,7 @@ export default function KYCModal({
                                  border-outline_variant/30
                                  dark:border-[#2a3347]
                                  focus:border-primary
-                                 dark:focus:border-[#6b9eff]
+                                 dark:focus:border-[#E89874]
                                  focus:outline-none
                                  placeholder:text-on_surface_variant/40
                                  font-mono tracking-widest
@@ -236,11 +236,11 @@ export default function KYCModal({
               {step === 2 && (
                 <div className="space-y-3">
                   <div className="p-3 bg-primary_fixed/40
-                                  dark:bg-[#1a2d4d]/40
+                                  dark:bg-[#3D1F10]/40
                                   rounded-xl flex items-center
                                   gap-2.5">
                     <Smartphone className="w-4 h-4 text-primary
-                                            dark:text-[#6b9eff]
+                                            dark:text-[#E89874]
                                             flex-shrink-0" />
                     <p className="text-label-sm
                                    text-on_surface_variant
@@ -282,7 +282,7 @@ export default function KYCModal({
                                    border-outline_variant/30
                                    dark:border-[#2a3347]
                                    focus:border-primary
-                                   dark:focus:border-[#6b9eff]
+                                   dark:focus:border-[#E89874]
                                    focus:outline-none
                                    placeholder:text-on_surface_variant/40
                                    font-mono tracking-[0.5em]

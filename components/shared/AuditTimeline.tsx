@@ -16,7 +16,7 @@ const actionConfig: Record<
   REGISTER: {
     icon: FileText,
     color: "text-primary",
-    bg: "bg-primary_fixed dark:bg-[#1a2d4d]",
+    bg: "bg-primary_fixed dark:bg-[#3D1F10]",
     label: "Registration Submitted",
   },
   APPROVE: {
@@ -28,7 +28,7 @@ const actionConfig: Record<
   TRANSFER: {
     icon: ArrowRight,
     color: "text-primary",
-    bg: "bg-primary_fixed dark:bg-[#1a2d4d]",
+    bg: "bg-primary_fixed dark:bg-[#3D1F10]",
     label: "Ownership Transfer",
   },
   AI_FLAG: {

@@ -1,10 +1,23 @@
 "use client";
 
 import { Suspense, useEffect, useState } from "react";
-import { ListTodo, CheckSquare, XSquare, AlertCircle } from "lucide-react";
+import { ListTodo, CheckSquare, XSquare, Clock, RefreshCw } from "lucide-react";
 import OracleGuard from "@/components/shared/OracleGuard";
 import { useOracleContract } from "@/hooks/useOracleContract";
 import { useToast } from "@/hooks/use-toast";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Separator } from "@/components/ui/separator";
+import { cn } from "@/lib/utils";
 
 type PropertyItem = {
   _id: string;
@@ -22,9 +35,7 @@ export default function OracleQueuePage() {
   const { approveOnChain, rejectOnChain } = useOracleContract();
   const { toast } = useToast();
 
-  useEffect(() => {
-    fetchPending();
-  }, []);
+  useEffect(() => { fetchPending(); }, []);
 
   const fetchPending = async () => {
     try {
@@ -32,7 +43,7 @@ export default function OracleQueuePage() {
       const res = await fetch("/api/oracle/pending");
       const data = await res.json();
       setProperties(data.properties || []);
-    } catch (err) {
+    } catch {
       toast({ title: "Error fetching properties" });
     } finally {
       setLoading(false);
@@ -41,18 +52,15 @@ export default function OracleQueuePage() {
 
   const handleApprove = async (recordId: string, tokenId: number) => {
     try {
-      toast({ title: "Approving in MetaMask..." });
-      const tx = await approveOnChain(tokenId);
-      // Wait for tx... (wagmi hook already returns hash after popup)
-      toast({ title: "Transaction sent. Updating database..." });
-      
+      toast({ title: "Approving in MetaMask…" });
+      await approveOnChain(tokenId);
+      toast({ title: "Transaction sent. Updating database…" });
       const res = await fetch("/api/oracle/approve", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ recordId })
+        body: JSON.stringify({ recordId }),
       });
       if (!res.ok) throw new Error("Failed to update db");
-      
       setProperties((prev) => prev.filter((p) => p._id !== recordId));
       toast({ title: "Property approved" });
     } catch (err: any) {
@@ -61,23 +69,20 @@ export default function OracleQueuePage() {
   };
 
   const handleReject = async (recordId: string, tokenId: number) => {
-    if (!rejectReason) {
+    if (!rejectReason.trim()) {
       toast({ title: "Please provide a rejection reason." });
       return;
     }
     try {
-      toast({ title: "Rejecting in MetaMask..." });
-      const tx = await rejectOnChain(tokenId, rejectReason);
-      
-      toast({ title: "Transaction sent. Updating database..." });
-      
+      toast({ title: "Rejecting in MetaMask…" });
+      await rejectOnChain(tokenId, rejectReason);
+      toast({ title: "Transaction sent. Updating database…" });
       const res = await fetch("/api/oracle/reject", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ recordId, reason: rejectReason })
+        body: JSON.stringify({ recordId, reason: rejectReason }),
       });
       if (!res.ok) throw new Error("Failed to update db");
-      
       setProperties((prev) => prev.filter((p) => p._id !== recordId));
       setRejectingId(null);
       setRejectReason("");
@@ -89,108 +94,154 @@ export default function OracleQueuePage() {
 
   return (
     <OracleGuard>
-    <div className="space-y-8">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between gap-4">
-        <div>
-          <h1 className="text-display font-bold text-on_surface dark:text-[#e8eaf0] font-display leading-tight tracking-tight text-3xl sm:text-4xl mb-1">
-            Verification Queue
-          </h1>
-          <p className="text-body-md text-on_surface_variant dark:text-[#9ba3b8]">
-            Oracle tasks requiring manual intervention or institutional signatures.
-          </p>
-        </div>
-      </div>
-
-      {/* Stats Row */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-        <div className="bg-surface_container_lowest dark:bg-[#131820] rounded-2xl p-6 border border-outline_variant/10 shadow-[0_8px_24px_rgba(0,0,0,0.02)]">
-          <p className="text-[10px] uppercase font-bold text-on_surface_variant dark:text-[#9ba3b8] mb-2">Pending Items</p>
-          <p className="text-3xl font-bold text-on_surface dark:text-[#e8eaf0]">{properties.length}</p>
-        </div>
-        <div className="bg-surface_container_lowest dark:bg-[#131820] rounded-2xl p-6 border border-outline_variant/10 shadow-[0_8px_24px_rgba(0,0,0,0.02)]">
-          <p className="text-[10px] uppercase font-bold text-warning mb-2">High Priority</p>
-          <p className="text-3xl font-bold text-warning">0</p>
-        </div>
-        <div className="bg-surface_container_lowest dark:bg-[#131820] rounded-2xl p-6 border border-outline_variant/10 shadow-[0_8px_24px_rgba(0,0,0,0.02)]">
-          <p className="text-[10px] uppercase font-bold text-success mb-2">Processed Today</p>
-          <p className="text-3xl font-bold text-success">0</p>
-        </div>
-      </div>
-
-      {/* List */}
-      <Suspense fallback={<div className="h-48 bg-surface_container dark:bg-[#1c2333] rounded-xl animate-shimmer" />}>
-        <div className="bg-surface_container_lowest dark:bg-[#131820] rounded-2xl border border-outline_variant/10 shadow-[0_8px_24px_rgba(0,0,0,0.02)] p-6">
-          <h3 className="text-lg font-bold font-display text-on_surface dark:text-[#e8eaf0] mb-6">Active Tasks</h3>
-
-          {loading ? (
-            <div className="h-48 bg-surface_container dark:bg-[#1c2333] rounded-xl animate-shimmer" />
-          ) : properties.length === 0 ? (
-            <p className="flex items-center gap-2 text-on_surface_variant dark:text-[#9ba3b8] py-4">
-               <CheckSquare size={20} />
-               No pending properties to review!
+      <div className="space-y-5">
+        {/* Header */}
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold font-display text-on_surface dark:text-[#e8e6e2] tracking-tight">
+              Verification Queue
+            </h1>
+            <p className="text-sm text-[#8a8480] dark:text-[#7a7470] mt-1">
+              Pending properties requiring oracle sign-off.
             </p>
-          ) : (
-            <div className="space-y-4">
-              {properties.map((p) => (
-                <div key={p._id} className="border border-outline_variant/20 rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between hover:bg-surface_container_low dark:hover:bg-[#161b27] dark:bg-[#161b27] transition-colors duration-150 ease-out gap-4">
-                  <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
-                      <ListTodo size={20} />
-                    </div>
-                    <div>
-                      <p className="font-bold text-on_surface dark:text-[#e8eaf0]">{p.physicalAddress}</p>
-                      <p className="text-xs text-on_surface_variant dark:text-[#9ba3b8]">Token ID: {p.tokenId}</p>
-                    </div>
-                  </div>
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={fetchPending}
+            disabled={loading}
+            className="gap-1.5 text-xs h-8 text-[#8a8480] hover:text-on_surface"
+          >
+            <RefreshCw className={cn("w-3.5 h-3.5", loading && "animate-spin")} />
+            Refresh
+          </Button>
+        </div>
 
-                  <div className="w-full sm:w-auto flex flex-col sm:flex-row gap-2">
-                     {rejectingId === p._id ? (
-                        <div className="flex gap-2 w-full">
-                          <input
-                            type="text"
-                            placeholder="Reason for rejection..."
-                            className="px-2 py-1 text-sm border rounded w-full"
+        {/* Stat cards */}
+        <div className="grid grid-cols-3 gap-3 sm:gap-4">
+          <Card>
+            <CardContent className="p-4">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-[#8a8480] dark:text-[#7a7470] mb-1.5">Pending</p>
+              <p className="text-2xl font-bold text-on_surface dark:text-[#e8e6e2]">{properties.length}</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-4">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-warning mb-1.5">High Priority</p>
+              <p className="text-2xl font-bold text-warning">0</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-4">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-success mb-1.5">Processed Today</p>
+              <p className="text-2xl font-bold text-success">0</p>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Queue list */}
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base">Active Tasks</CardTitle>
+            <CardDescription>Review and sign each submission on-chain</CardDescription>
+          </CardHeader>
+          <CardContent className="p-0">
+            {loading ? (
+              <div className="p-6 space-y-3">
+                {[...Array(3)].map((_, i) => (
+                  <div key={i} className="h-16 rounded-xl bg-sand dark:bg-[#211f1c] animate-pulse" />
+                ))}
+              </div>
+            ) : properties.length === 0 ? (
+              <div className="py-14 flex flex-col items-center gap-3 text-center px-6">
+                <div className="w-10 h-10 rounded-full bg-success/10 flex items-center justify-center">
+                  <CheckSquare className="w-5 h-5 text-success" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-on_surface dark:text-[#e8e6e2]">Queue is clear</p>
+                  <p className="text-xs text-[#8a8480] dark:text-[#7a7470] mt-0.5">No pending properties to review.</p>
+                </div>
+              </div>
+            ) : (
+              <div>
+                {properties.map((p, i) => (
+                  <div key={p._id}>
+                    {i > 0 && <Separator />}
+                    <div className="p-5 space-y-3">
+                      <div className="flex items-start gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-primary_fixed dark:bg-[#3D1F10] flex items-center justify-center shrink-0 mt-0.5">
+                          <ListTodo className="w-4 h-4 text-primary dark:text-[#E89874]" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-semibold text-on_surface dark:text-[#e8e6e2] truncate">
+                            {p.physicalAddress}
+                          </p>
+                          <div className="flex items-center gap-2 mt-1">
+                            <Badge variant="outline" className="text-[10px] border-stone dark:border-[#2a2520] text-[#8a8480]">
+                              Token #{p.tokenId}
+                            </Badge>
+                            <Badge variant="outline" className="text-[10px] border-warning/30 text-warning bg-warning/5">
+                              Pending
+                            </Badge>
+                          </div>
+                        </div>
+                      </div>
+
+                      {rejectingId === p._id ? (
+                        <div className="space-y-2 pl-11">
+                          <Textarea
+                            placeholder="Reason for rejection…"
                             value={rejectReason}
                             onChange={(e) => setRejectReason(e.target.value)}
+                            className="text-sm h-20 resize-none"
                           />
-                          <button
-                            className="text-xs font-semibold px-4 py-2 rounded-md bg-error text-on_error hover:bg-error/90 whitespace-nowrap"
-                            onClick={() => handleReject(p._id, p.tokenId)}
-                          >
-                            Confirm
-                          </button>
-                          <button
-                            className="text-xs font-semibold px-4 py-2 rounded-md bg-surface_container dark:bg-[#1c2333] text-on_surface dark:text-[#e8eaf0] whitespace-nowrap"
-                            onClick={() => setRejectingId(null)}
-                          >
-                            Cancel
-                          </button>
+                          <div className="flex gap-2">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="text-xs h-7"
+                              onClick={() => { setRejectingId(null); setRejectReason(""); }}
+                            >
+                              Cancel
+                            </Button>
+                            <Button
+                              size="sm"
+                              className="text-xs h-7 bg-error text-white hover:bg-error/90"
+                              onClick={() => handleReject(p._id, p.tokenId)}
+                            >
+                              <XSquare className="w-3 h-3 mr-1" />
+                              Confirm Reject
+                            </Button>
+                          </div>
                         </div>
-                     ) : (
-                       <>
-                          <button
-                            className="text-xs font-semibold px-4 py-2 rounded-md bg-surface_container dark:bg-[#1c2333] text-on_surface_variant dark:text-[#9ba3b8] hover:bg-surface_container_high transition-all duration-150 hover:scale-[1.02]"
+                      ) : (
+                        <div className="flex gap-2 pl-11">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="text-xs h-7 text-error border-error/30 hover:bg-error_container"
                             onClick={() => setRejectingId(p._id)}
                           >
                             Decline
-                          </button>
-                          <button
-                            className="text-xs font-semibold px-4 py-2 rounded-md bg-primary text-on_primary hover:bg-primary/90 transition-all duration-150 hover:scale-[1.02]"
+                          </Button>
+                          <Button
+                            size="sm"
+                            className="text-xs h-7 bg-primary text-white hover:bg-primary/90"
                             onClick={() => handleApprove(p._id, p.tokenId)}
                           >
+                            <CheckSquare className="w-3 h-3 mr-1" />
                             Sign & Approve
-                          </button>
-                       </>
-                     )}
+                          </Button>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </Suspense>
-    </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
     </OracleGuard>
   );
 }

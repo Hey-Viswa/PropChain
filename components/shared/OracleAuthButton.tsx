@@ -35,7 +35,7 @@ export default function OracleAuthButton({ variant = "navbar" }: Props) {
       return (
         <button
           onClick={handleLogout}
-          className="flex items-center gap-1.5 text-xs font-medium text-primary dark:text-[#6b9eff] bg-primary_fixed dark:bg-[#1a2d4d] rounded-full px-3 py-1.5 hover:opacity-80 transition-opacity hidden sm:flex"
+          className="flex items-center gap-1.5 text-xs font-medium text-primary dark:text-[#E89874] bg-primary_fixed dark:bg-[#3D1F10] rounded-full px-3 py-1.5 hover:opacity-80 transition-opacity hidden sm:flex"
         >
           <ShieldCheck className="w-3.5 h-3.5" />
           Oracle Mode
@@ -49,7 +49,7 @@ export default function OracleAuthButton({ variant = "navbar" }: Props) {
         <>
           <button
             onClick={() => setShowModal(true)}
-            className="flex items-center gap-1.5 text-xs font-medium text-on_surface_variant dark:text-[#9ba3b8] hover:text-primary dark:hover:text-[#6b9eff] px-2 py-1.5 rounded-lg hover:bg-surface_container dark:hover:bg-[#1c2333] transition-colors hidden sm:flex"
+            className="flex items-center gap-1.5 text-xs font-medium text-on_surface_variant dark:text-[#9ba3b8] hover:text-primary dark:hover:text-[#E89874] px-2 py-1.5 rounded-lg hover:bg-surface_container dark:hover:bg-[#2a2520] transition-colors hidden sm:flex"
           >
             <Shield className="w-3.5 h-3.5" />
             Oracle Access

@@ -120,7 +120,7 @@ export default function PropertyDetailsForm({
           <select
             {...register("type")}
             className={cn(
-              "flex w-full bg-surface_container_highest dark:bg-[#2a3347] dark:text-[#e8eaf0] dark:border-[#2a3347] dark:focus:border-[#6b9eff] rounded-md border-0 border-b border-outline_variant/20",
+              "flex w-full bg-sand dark:bg-[#211f1c] dark:text-[#e8eaf0] dark:border-[#2a2520] dark:focus:border-[#E89874] rounded-md border-0 border-b border-outline_variant/20",
               "focus:border-primary focus-visible:outline-none",
               "px-4 py-3 text-body-md text-on_surface dark:text-[#e8eaf0] cursor-pointer transition-colors",
               errors.type && "border-error"

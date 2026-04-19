@@ -5,8 +5,10 @@ import { usePathname } from "next/navigation";
 import { useAdminRole } from "@/hooks/useAdminRole";
 import { useWallet } from "@/hooks/useWallet";
 import { useOracleAccessStore } from "@/store/useOracleAccessStore";
-import OracleAuthButton from "@/components/shared/OracleAuthButton";
+import { PropChainMark } from "@/components/shared/PropChainMark";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Switch } from "@/components/ui/switch";
+import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,
   Building2,
@@ -17,128 +19,115 @@ import {
   Users,
   Globe,
   Shield,
-  ShieldCheck,
   Settings2,
   SlidersHorizontal,
+  LogOut,
+  FlaskConical,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
 
-type NavItem = {
-  label: string;
-  href: string;
-  icon: any;
-  accent?: boolean;
-};
+const isDev = process.env.NODE_ENV === "development";
 
-type NavGroup = {
-  label?: string;
-  items: NavItem[];
-};
+type NavItem  = { label: string; href: string; icon: any };
+type NavGroup = { label?: string; items: NavItem[] };
 
 const userNavGroups: NavGroup[] = [
   {
     items: [
-      { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-      { label: "Mint Asset", href: "/mint/details", icon: PlusCircle, accent: true },
-      { label: "My Properties", href: "/properties", icon: Building2 },
-    ]
+      { label: "Dashboard",       href: "/dashboard",    icon: LayoutDashboard },
+      { label: "Mint Asset",      href: "/mint/details", icon: PlusCircle },
+      { label: "My Properties",   href: "/properties",   icon: Building2 },
+    ],
   },
   {
     label: "Records",
     items: [
-      { label: "Audit History", href: "/audit", icon: ClipboardList },
-      { label: "Public Registry", href: "/registry", icon: Globe },
-    ]
-  }
+      { label: "Audit History",   href: "/audit",        icon: ClipboardList },
+      { label: "Public Registry", href: "/registry",     icon: Globe },
+    ],
+  },
 ];
 
 const oracleNavGroups: NavGroup[] = [
   {
     items: [
-      { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-      { label: "Verification Queue", href: "/oracle/queue", icon: ListTodo },
-      { label: "User Monitoring", href: "/oracle/users", icon: Users },
-    ]
+      { label: "Dashboard",           href: "/dashboard",        icon: LayoutDashboard },
+      { label: "Verification Queue",  href: "/oracle/queue",     icon: ListTodo },
+      { label: "User Monitoring",     href: "/oracle/users",     icon: Users },
+    ],
   },
   {
     label: "Analytics",
     items: [
-      { label: "Analytics", href: "/oracle/analytics", icon: BarChart },
-      { label: "Audit History", href: "/audit", icon: ClipboardList },
-    ]
-  }
+      { label: "Analytics",    href: "/oracle/analytics", icon: BarChart },
+      { label: "Audit History",href: "/audit",            icon: ClipboardList },
+    ],
+  },
 ];
 
 export default function Sidebar() {
-  const pathname = usePathname();
+  const pathname         = usePathname();
   const { isOracle: hasOracleRole, isLoading } = useAdminRole();
-  const { isOracleMode } = useOracleAccessStore();
+  const { isOracleMode, setOracleMode, reset } = useOracleAccessStore();
   const { isConnected, truncatedAddress } = useWallet();
 
   const showOracleNav = isOracleMode || hasOracleRole;
+  const navGroups     = showOracleNav ? oracleNavGroups : userNavGroups;
 
-  const navGroups = showOracleNav ? oracleNavGroups : userNavGroups;
-
-  function isActive(href: string): boolean {
+  function isActive(href: string) {
     if (href === "/dashboard") return pathname === "/dashboard";
-    // Exact match for /mint vs /mint/* if needed, but simple startswith is usually fine
     return pathname.startsWith(href);
   }
 
+  const settingsItem = showOracleNav
+    ? { label: "Oracle Settings", href: "/oracle/settings", icon: SlidersHorizontal }
+    : { label: "Settings",        href: "/settings",        icon: Settings2 };
+
   return (
-    <aside className="w-[240px] xl:w-[260px] 2xl:w-[280px]
-           flex-shrink-0 flex flex-col h-full
-           bg-surface_container_low
-           dark:bg-[#0d1117]">
+    <aside className="w-[220px] flex-shrink-0 flex flex-col h-full bg-sand dark:bg-[#0d0c0b] border-r border-stone dark:border-[#2a2520]">
+
       {/* Logo */}
-      <Link href="/dashboard" className="dark:hover:opacity-90 transition-opacity">
-        <div className="flex items-center gap-2 flex-shrink-0 px-4 xl:px-5 pt-6 pb-4 mb-2">
-          <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary shrink-0">
-            <span className="text-white font-bold text-sm font-display">P</span>
-          </div>
-          <span className="font-display font-bold text-xl text-on_surface dark:text-[#e8eaf0] tracking-tight whitespace-nowrap">
-            Prop<span className="text-primary dark:text-[#6b9eff]">Chain</span>
+      <Link href="/dashboard" className="transition-opacity hover:opacity-80">
+        <div className="flex items-center gap-2.5 px-[18px] pt-[22px] pb-[18px]">
+          <PropChainMark size={26} />
+          <span className="font-display text-[17px] text-on_surface dark:text-[#e8e6e2] tracking-tight whitespace-nowrap">
+            Prop<span className="text-primary">Chain</span>
           </span>
         </div>
       </Link>
 
       {/* Nav */}
-      <nav className="flex-1 px-3 xl:px-4 pb-4 overflow-y-auto flex flex-col gap-1">
+      <nav className="flex-1 px-2 overflow-y-auto flex flex-col gap-[1px]">
         {isLoading ? (
-          <div className="space-y-2">
-            <Skeleton className="h-9 w-full rounded-lg bg-surface_container" />
-            <Skeleton className="h-9 w-full rounded-lg bg-surface_container" />
-            <Skeleton className="h-9 w-full rounded-lg bg-surface_container" />
-            <Skeleton className="h-9 w-full rounded-lg bg-surface_container" />
+          <div className="space-y-1 px-2">
+            {[...Array(3)].map((_, i) => (
+              <Skeleton key={i} className="h-8 w-full rounded-[7px] bg-stone" />
+            ))}
           </div>
         ) : (
           <>
-            {navGroups.map((group, groupIdx) => (
-              <div key={groupIdx} className="flex flex-col gap-1">
+            {navGroups.map((group, gi) => (
+              <div key={gi} className={cn("flex flex-col gap-[1px]", gi > 0 && "mt-4")}>
                 {group.label && (
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-on_surface_variant/50 dark:text-[#6b7280] px-3 mb-1 mt-4">
+                  <p className="text-[9px] font-bold uppercase tracking-[0.12em] text-on_surface_variant/40 dark:text-[#6b6560] px-[10px] mb-1 mt-1.5">
                     {group.label}
                   </p>
                 )}
                 {group.items.map((item) => {
-                  const Icon = item.icon;
+                  const Icon   = item.icon;
                   const active = isActive(item.href);
-
                   return (
                     <Link
                       key={item.href}
                       href={item.href}
                       prefetch={true}
                       className={cn(
-                        "flex items-center gap-3 px-3 py-2.5 xl:py-3 rounded-lg transition-all duration-150 ease-out w-full",
-                         active
-                           ? "bg-primary_fixed dark:bg-[#1a2d4d] text-primary dark:text-[#6b9eff] font-medium border-l-2 border-primary dark:border-[#6b9eff]"
-                           : item.accent
-                             ? "text-primary dark:text-[#6b9eff] hover:bg-primary_fixed/60 dark:hover:bg-[#1a2d4d] font-medium border-l-2 border-transparent"
-                             : "text-on_surface_variant dark:text-[#c9cdd8] hover:bg-surface_container dark:hover:bg-[#1c2333] hover:text-on_surface dark:hover:text-[#e8eaf0] border-l-2 border-transparent"
+                        "flex items-center gap-[9px] px-[10px] py-2 rounded-[7px] transition-all duration-150 w-full text-[13px]",
+                        active
+                          ? "bg-white dark:bg-[#211f1c] text-primary dark:text-[#E89874] font-semibold shadow-sm"
+                          : "text-[#8a8480] dark:text-[#7a7470] hover:bg-white/70 dark:hover:bg-[#211f1c] hover:text-on_surface dark:hover:text-[#e8e6e2] font-normal"
                       )}
                     >
-                      <Icon size={18} className="shrink-0" />
+                      <Icon size={15} className="shrink-0" />
                       <span>{item.label}</span>
                     </Link>
                   );
@@ -146,79 +135,82 @@ export default function Sidebar() {
               </div>
             ))}
 
-            {/* Settings at the bottom of the nav spacer */}
-            {(() => {
-              const bottomNavItem = showOracleNav
-                ? { label: "Oracle Settings", href: "/oracle/settings", icon: SlidersHorizontal }
-                : { label: "Settings", href: "/settings", icon: Settings2 };
-              const Icon = bottomNavItem.icon;
-              const active = isActive(bottomNavItem.href);
-              return (
-                <Link
-                  href={bottomNavItem.href}
-                  prefetch={true}
-                  className={cn(
-                    "flex items-center gap-3 px-3 py-2.5 xl:py-3 rounded-lg w-full mt-auto",
-                    "transition-all duration-150 ease-out",
-                    active
-                      ? "bg-primary_fixed dark:bg-[#1a2d4d] text-primary dark:text-[#6b9eff] font-medium border-l-2 border-primary dark:border-[#6b9eff]"
-                      : "text-on_surface_variant dark:text-[#c9cdd8] hover:bg-surface_container dark:hover:bg-[#1c2333] hover:text-on_surface dark:hover:text-[#e8eaf0] border-l-2 border-transparent"
-                  )}
-                >
-                  <Icon size={18} className="shrink-0" />
-                  <span>{bottomNavItem.label}</span>
-                </Link>
-              );
-            })()}
+            {/* Settings */}
+            <div className="mt-4">
+              <Link
+                href={settingsItem.href}
+                prefetch={true}
+                className={cn(
+                  "flex items-center gap-[9px] px-[10px] py-2 rounded-[7px] w-full text-[13px] transition-all duration-150",
+                  isActive(settingsItem.href)
+                    ? "bg-white dark:bg-[#211f1c] text-primary dark:text-[#E89874] font-semibold shadow-sm"
+                    : "text-[#8a8480] dark:text-[#7a7470] hover:bg-white/70 dark:hover:bg-[#211f1c] hover:text-on_surface dark:hover:text-[#e8e6e2]"
+                )}
+              >
+                <settingsItem.icon size={15} className="shrink-0" />
+                <span>{settingsItem.label}</span>
+              </Link>
+            </div>
 
-            {/* Oracle mode switch / exit */}
+            {/* Switch to Oracle (real role, not yet in oracle mode) */}
             {hasOracleRole && !isOracleMode && (
-              <div className="px-0 pt-2">
-                <Link
-                  href="/oracle/login"
-                  className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-primary dark:text-[#6b9eff] hover:bg-primary_fixed dark:hover:bg-[#1a2d4d] transition-colors text-sm font-medium border-l-2 border-transparent hover:border-primary dark:hover:border-[#6b9eff]"
-                >
-                  <Shield className="w-4 h-4 flex-shrink-0" />
-                  Switch to Oracle
-                </Link>
-              </div>
-            )}
-            
-            {(isOracleMode || hasOracleRole) && isOracleMode && (
-              <div className="px-0 pt-2">
-                <OracleAuthButton variant="sidebar" />
-              </div>
+              <Link
+                href="/oracle/login"
+                className="flex items-center gap-[9px] px-[10px] py-2 rounded-[7px] text-[#8a8480] dark:text-[#7a7470] hover:bg-white/70 hover:text-primary dark:hover:bg-[#211f1c] dark:hover:text-[#E89874] transition-colors text-[13px] font-normal mt-1"
+              >
+                <Shield size={15} className="shrink-0" />
+                <span>Switch to Oracle</span>
+              </Link>
             )}
           </>
         )}
       </nav>
 
-      {/* Role Toggle & Wallet strip */}
-      <div className="px-3 xl:px-4 py-4 xl:py-5 border-t border-outline_variant/20 space-y-4 dark:bg-[#161b27]">
-        <div className="flex items-center gap-2.5 px-3 py-2.5
-                rounded-lg bg-surface_container dark:bg-[#1c2333]">
-          <span className={`relative flex h-2 w-2 shrink-0`}>
-            <span className={`relative inline-flex rounded-full
-                      h-2 w-2 ${isConnected
-                        ? "bg-success"
-                        : "bg-error"}`} />
-          </span>
-          <span className="font-mono text-label-sm
-                   text-on_surface_variant dark:text-[#9ba3b8] truncate">
+      {/* ── Footer area ── */}
+      <div className="px-2 pb-2 pt-1 space-y-1.5">
+
+        {/* Oracle active pill + exit */}
+        {isOracleMode && (
+          <button
+            onClick={reset}
+            className="w-full flex items-center justify-between px-[10px] py-2 rounded-[7px] bg-primary_fixed dark:bg-[#3D1F10] group hover:bg-primary/10 transition-colors"
+          >
+            <div className="flex items-center gap-2">
+              <div className="w-[6px] h-[6px] rounded-full bg-primary shrink-0" />
+              <span className="text-[11px] font-semibold text-primary dark:text-[#E89874]">Oracle Active</span>
+            </div>
+            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              <LogOut size={11} className="text-primary dark:text-[#E89874]" />
+              <span className="text-[10px] text-primary dark:text-[#E89874]">Exit</span>
+            </div>
+          </button>
+        )}
+
+        {/* Dev oracle toggle */}
+        {isDev && (
+          <div className="flex items-center justify-between px-[10px] py-1.5 rounded-[7px] border border-dashed border-stone dark:border-[#2a2520]">
+            <div className="flex items-center gap-1.5">
+              <FlaskConical size={11} className="text-[#8a8480] shrink-0" />
+              <span className="text-[9px] font-bold text-[#8a8480] dark:text-[#7a7470] uppercase tracking-wider">Dev Oracle</span>
+            </div>
+            <Switch
+              checked={isOracleMode}
+              onCheckedChange={(v) => v ? setOracleMode(true) : reset()}
+              className="scale-[0.7] origin-right"
+            />
+          </div>
+        )}
+
+        {/* Wallet strip */}
+        <div className="flex items-center gap-2 px-[10px] py-[7px] bg-white dark:bg-[#1a1916] rounded-[7px] border border-stone dark:border-[#2a2520]">
+          <span className={cn(
+            "h-[6px] w-[6px] rounded-full shrink-0",
+            isConnected ? "bg-success" : "bg-error"
+          )} />
+          <span className="font-mono text-[10px] text-on_surface_variant dark:text-[#9b9690] truncate">
             {isConnected ? truncatedAddress : "Not connected"}
           </span>
         </div>
-
-        {(isOracleMode || hasOracleRole) && (
-          <div className="px-3">
-            <div className="flex items-center gap-2 px-3 py-2 bg-secondary_fixed rounded-lg">
-              <ShieldCheck className="w-4 h-4 text-secondary flex-shrink-0" />
-              <span className="text-label-sm font-medium text-on_secondary_fixed">
-                Oracle Node Active
-              </span>
-            </div>
-          </div>
-        )}
       </div>
     </aside>
   );

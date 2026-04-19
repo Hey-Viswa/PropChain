@@ -182,13 +182,13 @@ export default function DevAdminPage() {
       <div className="min-h-screen bg-[#0f1117] flex items-center justify-center p-4">
         <div className="w-full max-w-sm">
           {/* Card */}
-          <div className="bg-[#161b27] rounded-2xl overflow-hidden shadow-[0_24px_64px_rgba(0,0,0,0.4)]">
+          <div className="bg-[#1a1916] rounded-2xl overflow-hidden shadow-[0_24px_64px_rgba(0,0,0,0.4)]">
             <div className="h-1 bg-gradient-to-r from-primary to-primary_container" />
             <div className="p-8 space-y-6">
               {/* Header */}
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-[#1a2d4d] flex items-center justify-center">
-                  <Key className="w-5 h-5 text-[#6b9eff]" />
+                <div className="w-10 h-10 rounded-xl bg-[#3D1F10] flex items-center justify-center">
+                  <Key className="w-5 h-5 text-[#E89874]" />
                 </div>
                 <div>
                   <h1 className="text-title-md font-bold text-[#e8eaf0]">Dev Admin Panel</h1>
@@ -219,7 +219,7 @@ export default function DevAdminPage() {
                       if (e.key === "Enter") handleAuth();
                     }}
                     placeholder="Enter dev admin password"
-                    className="w-full bg-[#1c2333] rounded-lg px-4 py-3 pr-12 text-[#e8eaf0] border-0 border-b-2 border-[#2a3347] focus:border-[#6b9eff] focus:outline-none font-mono text-sm placeholder:text-[#9ba3b8]/40 transition-colors"
+                    className="w-full bg-[#211f1c] rounded-lg px-4 py-3 pr-12 text-[#e8eaf0] border-0 border-b-2 border-[#2a2520] focus:border-[#E89874] focus:outline-none font-mono text-sm placeholder:text-[#9ba3b8]/40 transition-colors"
                   />
                   <button
                     onClick={() => setShowPwd((p) => !p)}
@@ -261,13 +261,13 @@ export default function DevAdminPage() {
             <p className="text-body-md text-[#9ba3b8] mt-1">Assign and manage user roles in PropChain</p>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-label-sm font-medium text-[#6b9eff] bg-[#1a2d4d] rounded-full px-3 py-1">
+            <span className="text-label-sm font-medium text-[#E89874] bg-[#3D1F10] rounded-full px-3 py-1">
               DEV MODE
             </span>
             <button
               onClick={() => fetchRoles()}
               disabled={loading}
-              className="p-2 rounded-lg bg-[#1c2333] text-[#9ba3b8] hover:text-[#e8eaf0] transition-colors"
+              className="p-2 rounded-lg bg-[#211f1c] text-[#9ba3b8] hover:text-[#e8eaf0] transition-colors"
             >
               <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
             </button>
@@ -275,22 +275,22 @@ export default function DevAdminPage() {
         </div>
 
         {/* Your User ID card */}
-        <div className="bg-[#161b27] rounded-2xl overflow-hidden">
+        <div className="bg-[#1a1916] rounded-2xl overflow-hidden">
           <div className="h-1 bg-gradient-to-r from-[#4f46e5] to-[#7c3aed]" />
           <div className="p-5 xl:p-6">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-9 h-9 rounded-xl bg-[#1c2a4a] flex items-center justify-center">
-                <Database className="w-4 h-4 text-[#6b9eff]" />
+                <Database className="w-4 h-4 text-[#E89874]" />
               </div>
               <p className="text-title-md font-semibold text-[#e8eaf0]">Your Clerk User ID</p>
             </div>
-            <div className="flex items-center gap-3 p-3 bg-[#1c2333] rounded-xl">
-              <code className="text-sm font-mono text-[#6b9eff] flex-1 truncate">
+            <div className="flex items-center gap-3 p-3 bg-[#211f1c] rounded-xl">
+              <code className="text-sm font-mono text-[#E89874] flex-1 truncate">
                 {user?.id ?? "Not signed in"}
               </code>
               <button
                 onClick={copyCurrentUserId}
-                className="p-1.5 rounded-md hover:bg-[#222b3d] text-[#9ba3b8] transition-colors flex-shrink-0"
+                className="p-1.5 rounded-md hover:bg-[#2a2520] text-[#9ba3b8] transition-colors flex-shrink-0"
               >
                 <Copy className="w-3.5 h-3.5" />
               </button>
@@ -302,12 +302,12 @@ export default function DevAdminPage() {
         </div>
 
         {/* Assign Role Card */}
-        <div className="bg-[#161b27] rounded-2xl overflow-hidden">
+        <div className="bg-[#1a1916] rounded-2xl overflow-hidden">
           <div className="h-1 bg-gradient-to-r from-primary to-primary_container" />
           <div className="p-5 xl:p-6 space-y-4">
             <div className="flex items-center gap-3 mb-2">
-              <div className="w-9 h-9 rounded-xl bg-[#1a2d4d] flex items-center justify-center">
-                <Plus className="w-4 h-4 text-[#6b9eff]" />
+              <div className="w-9 h-9 rounded-xl bg-[#3D1F10] flex items-center justify-center">
+                <Plus className="w-4 h-4 text-[#E89874]" />
               </div>
               <p className="text-title-md font-semibold text-[#e8eaf0]">Assign Role</p>
             </div>
@@ -320,7 +320,7 @@ export default function DevAdminPage() {
                 value={newClerkId}
                 onChange={(e) => setNewClerkId(e.target.value)}
                 placeholder="user_2abc123xyz..."
-                className="w-full bg-[#1c2333] rounded-lg px-4 py-3 text-[#e8eaf0] border-0 border-b-2 border-[#2a3347] focus:border-[#6b9eff] focus:outline-none font-mono text-sm placeholder:text-[#9ba3b8]/40 transition-colors"
+                className="w-full bg-[#211f1c] rounded-lg px-4 py-3 text-[#e8eaf0] border-0 border-b-2 border-[#2a2520] focus:border-[#E89874] focus:outline-none font-mono text-sm placeholder:text-[#9ba3b8]/40 transition-colors"
               />
               {newClerkId && !newClerkId.startsWith("user_") && (
                 <p className="text-label-sm text-error">Must start with user_</p>
@@ -338,11 +338,11 @@ export default function DevAdminPage() {
                     className={`flex-1 py-2 px-3 rounded-lg text-label-sm font-medium transition-all ${
                       newRole === r
                         ? r === "ORACLE"
-                          ? "bg-[#1a2d4d] text-[#6b9eff] ring-1 ring-[#6b9eff]/40"
+                          ? "bg-[#3D1F10] text-[#E89874] ring-1 ring-[#E89874]/40"
                           : r === "BANK"
                           ? "bg-[#2a1a00] text-[#ffddb4] ring-1 ring-[#835500]/40"
                           : "bg-[#2d0a0a] text-error ring-1 ring-error/40"
-                        : "bg-[#1c2333] text-[#9ba3b8] hover:bg-[#222b3d]"
+                        : "bg-[#211f1c] text-[#9ba3b8] hover:bg-[#2a2520]"
                     }`}
                   >
                     {r === "SUPER_ADMIN" ? "SUPER ADMIN" : r}
@@ -362,7 +362,7 @@ export default function DevAdminPage() {
                 value={newNote}
                 onChange={(e) => setNewNote(e.target.value)}
                 placeholder="e.g. Main oracle account"
-                className="w-full bg-[#1c2333] rounded-lg px-4 py-3 text-[#e8eaf0] border-0 border-b-2 border-[#2a3347] focus:border-[#6b9eff] focus:outline-none text-sm placeholder:text-[#9ba3b8]/40 transition-colors"
+                className="w-full bg-[#211f1c] rounded-lg px-4 py-3 text-[#e8eaf0] border-0 border-b-2 border-[#2a2520] focus:border-[#E89874] focus:outline-none text-sm placeholder:text-[#9ba3b8]/40 transition-colors"
               />
             </div>
 
@@ -377,7 +377,7 @@ export default function DevAdminPage() {
         </div>
 
         {/* Current Roles Card */}
-        <div className="bg-[#161b27] rounded-2xl overflow-hidden">
+        <div className="bg-[#1a1916] rounded-2xl overflow-hidden">
           <div className="h-1 bg-gradient-to-r from-success to-success/50" />
           <div className="p-5 xl:p-6">
             <div className="flex items-center justify-between mb-5">
@@ -395,11 +395,11 @@ export default function DevAdminPage() {
             {loading ? (
               <div className="space-y-3">
                 {[...Array(2)].map((_, i) => (
-                  <div key={i} className="h-16 bg-[#1c2333] rounded-xl animate-pulse" />
+                  <div key={i} className="h-16 bg-[#211f1c] rounded-xl animate-pulse" />
                 ))}
               </div>
             ) : roles.length === 0 ? (
-              <div className="py-10 text-center bg-[#1c2333] rounded-xl border-2 border-dashed border-[#2a3347]">
+              <div className="py-10 text-center bg-[#211f1c] rounded-xl border-2 border-dashed border-[#2a2520]">
                 <Shield className="w-8 h-8 text-[#9ba3b8]/30 mx-auto mb-2" />
                 <p className="text-body-md text-[#9ba3b8]">No roles assigned yet</p>
                 <p className="text-label-sm text-[#9ba3b8]/60 mt-1">
@@ -411,7 +411,7 @@ export default function DevAdminPage() {
                 {roles.map((r) => (
                   <div
                     key={r._id}
-                    className="flex items-center justify-between p-4 bg-[#1c2333] rounded-xl hover:bg-[#222b3d] transition-colors"
+                    className="flex items-center justify-between p-4 bg-[#211f1c] rounded-xl hover:bg-[#2a2520] transition-colors"
                   >
                     <div className="flex items-center gap-3 min-w-0">
                       <div className="w-2 h-2 rounded-full bg-success flex-shrink-0 ring-4 ring-success/20" />
@@ -430,7 +430,7 @@ export default function DevAdminPage() {
                     <div className="flex items-center gap-2 flex-shrink-0 ml-3">
                       <span
                         className={`rounded-full px-2.5 py-1 text-label-sm font-bold ${
-                          ROLE_COLORS[r.role] ?? "bg-[#1c2333] text-[#9ba3b8]"
+                          ROLE_COLORS[r.role] ?? "bg-[#211f1c] text-[#9ba3b8]"
                         }`}
                       >
                         {r.role}

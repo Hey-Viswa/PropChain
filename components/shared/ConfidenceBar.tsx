@@ -33,7 +33,7 @@ export default function ConfidenceBar({
           </span>
         </div>
       )}
-      <div className="bg-surface_container dark:bg-[#1c2333] rounded-full h-2 w-full overflow-hidden">
+      <div className="bg-stone dark:bg-[#2a2520] rounded-full h-[3px] w-full overflow-hidden">
         <div
           className={cn(
             "h-full rounded-full transition-all",

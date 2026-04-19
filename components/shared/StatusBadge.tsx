@@ -1,18 +1,14 @@
 import { cn } from "@/lib/utils";
 import type { PropertyStatus } from "@/types";
-import { Badge } from "@/components/ui/badge";
 
-const statusConfig: Record<
-  PropertyStatus,
-  { label: string; variant: string }
-> = {
-  verified: { label: "Verified", variant: "verified" },
-  awaiting_oracle: { label: "Awaiting Oracle", variant: "awaiting_oracle" },
-  pending_kyc: { label: "Pending KYC", variant: "pending" },
-  needs_review: { label: "Needs Review", variant: "needs_review" },
-  ai_parsing: { label: "AI Parsing", variant: "ai_parsing" },
-  rejected: { label: "Rejected", variant: "rejected" },
-  transferred: { label: "Transferred", variant: "transferred" },
+const statusConfig: Record<PropertyStatus, { label: string; bg: string; text: string }> = {
+  verified:        { label: "Verified",       bg: "bg-success_container dark:bg-[#0a2e1a]", text: "text-success dark:text-[#4ade80]" },
+  awaiting_oracle: { label: "Awaiting Oracle", bg: "bg-primary_fixed dark:bg-[#3D1F10]",    text: "text-primary dark:text-[#E89874]" },
+  pending_kyc:     { label: "Pending KYC",     bg: "bg-warning_container dark:bg-[#3d2800]", text: "text-warning dark:text-[#ffddb4]" },
+  needs_review:    { label: "Needs Review",    bg: "bg-warning_container dark:bg-[#3d2800]", text: "text-warning dark:text-[#ffddb4]" },
+  ai_parsing:      { label: "AI Parsing",      bg: "bg-sand dark:bg-[#1a1916]",              text: "text-on_surface_variant dark:text-[#9b9690]" },
+  rejected:        { label: "Rejected",        bg: "bg-error_container dark:bg-[#2d0a0a]",   text: "text-error dark:text-[#f87171]" },
+  transferred:     { label: "Transferred",     bg: "bg-stone dark:bg-[#1a1916]",             text: "text-on_surface_variant dark:text-[#9b9690]" },
 };
 
 interface StatusBadgeProps {
@@ -21,22 +17,19 @@ interface StatusBadgeProps {
 }
 
 export default function StatusBadge({ status, className }: StatusBadgeProps) {
-  const config = statusConfig[status];
-  
-  const customClasses: string[] = [];
-  if (status === 'verified') customClasses.push('dark:bg-[#0a2e1a] dark:text-[#4ade80]');
-  if (status === 'awaiting_oracle') customClasses.push('dark:bg-[#1a2d4d] dark:text-[#6b9eff]', 'animate-pulse');
-  if (status === 'needs_review') customClasses.push('dark:bg-[#3d2800] dark:text-[#ffddb4]');
-  if (status === 'rejected') customClasses.push('dark:bg-[#2d0a0a] dark:text-[#f87171]');
-  if (status === 'transferred') customClasses.push('dark:bg-[#1c2333] dark:text-[#9ba3b8]');
-  if (status === 'ai_parsing') customClasses.push('dark:bg-[#222b3d] dark:text-[#9ba3b8]', 'animate-[pulse_1s_ease-in-out_infinite]');
-
+  const config = statusConfig[status] ?? statusConfig.needs_review;
   return (
-    <Badge
-      variant={config.variant as Parameters<typeof Badge>[0]["variant"]}
-      className={cn("whitespace-nowrap", ...customClasses, className)}
+    <span
+      className={cn(
+        "inline-flex whitespace-nowrap rounded-full px-[9px] py-[3px]",
+        "text-[10px] font-semibold uppercase tracking-[0.04em]",
+        config.bg, config.text,
+        status === "awaiting_oracle" && "animate-pulse",
+        status === "ai_parsing" && "animate-[pulse_1s_ease-in-out_infinite]",
+        className
+      )}
     >
       {config.label}
-    </Badge>
+    </span>
   );
 }

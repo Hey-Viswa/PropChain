@@ -65,7 +65,7 @@ function OracleSettingsContent() {
       </div>
 
       {/* ── CARD 1: ORACLE IDENTITY ── */}
-      <section className="bg-surface_container_lowest dark:bg-[#131820]
+      <section className="bg-surface_container_lowest dark:bg-[#1a1916]
                           rounded-2xl overflow-hidden
                           shadow-[0_4px_20px_rgba(0,0,0,0.03)]">
         <div className="h-1 bg-gradient-to-r
@@ -111,7 +111,7 @@ function OracleSettingsContent() {
                                 font-bold">
                 Contract Role
               </span>
-              <div className="mt-1 bg-surface_container_low dark:bg-[#161b27]
+              <div className="mt-1 bg-surface_container_low dark:bg-[#211f1c]
                               rounded-lg px-4 py-2 inline-block
                               font-mono text-primary font-bold">
                 ORACLE_ROLE
@@ -129,9 +129,9 @@ function OracleSettingsContent() {
                 onClick={() => copyToClipboard(
                   address ?? "", setCopiedWallet, "Wallet"
                 )}
-                className="bg-surface_container_low dark:bg-[#161b27] p-4
+                className="bg-surface_container_low dark:bg-[#211f1c] p-4
                            rounded-xl flex justify-between
-                           items-center hover:bg-surface_container dark:hover:bg-[#1c2333] dark:bg-[#1c2333]
+                           items-center hover:bg-surface_container dark:hover:bg-[#2a2520] dark:bg-[#2a2520]
                            transition-colors text-left w-full">
                 <div>
                   <p className="text-[10px] uppercase
@@ -157,9 +157,9 @@ function OracleSettingsContent() {
                 onClick={() => copyToClipboard(
                   CONTRACT_ADDRESS, setCopiedContract, "Contract"
                 )}
-                className="bg-surface_container_low dark:bg-[#161b27] p-4
+                className="bg-surface_container_low dark:bg-[#211f1c] p-4
                            rounded-xl flex justify-between
-                           items-center hover:bg-surface_container dark:hover:bg-[#1c2333] dark:bg-[#1c2333]
+                           items-center hover:bg-surface_container dark:hover:bg-[#2a2520] dark:bg-[#2a2520]
                            transition-colors text-left w-full">
                 <div>
                   <p className="text-[10px] uppercase
@@ -198,7 +198,7 @@ function OracleSettingsContent() {
       </section>
 
       {/* ── CARD 2: VERIFICATION PREFERENCES ── */}
-      <section className="bg-surface_container_lowest dark:bg-[#131820]
+      <section className="bg-surface_container_lowest dark:bg-[#1a1916]
                           rounded-2xl overflow-hidden
                           shadow-[0_4px_20px_rgba(0,0,0,0.03)]">
         <div className="h-1 bg-gradient-to-r
@@ -228,7 +228,7 @@ function OracleSettingsContent() {
             {/* Threshold slider */}
             <div className="flex items-center justify-between
                             p-4 rounded-xl
-                            hover:bg-surface_container_low dark:hover:bg-[#161b27] dark:bg-[#161b27]
+                            hover:bg-surface_container_low dark:hover:bg-[#161b27] dark:bg-[#211f1c]
                             transition-colors">
               <div>
                 <p className="text-body-md font-semibold
@@ -263,7 +263,7 @@ function OracleSettingsContent() {
             {/* Toggle — Manual review */}
             <div className="flex items-center justify-between
                             p-4 rounded-xl
-                            hover:bg-surface_container_low dark:hover:bg-[#161b27] dark:bg-[#161b27]
+                            hover:bg-surface_container_low dark:hover:bg-[#161b27] dark:bg-[#211f1c]
                             transition-colors">
               <div>
                 <p className="text-body-md font-semibold
@@ -285,7 +285,7 @@ function OracleSettingsContent() {
             {/* Toggle — Highlight fraud */}
             <div className="flex items-center justify-between
                             p-4 rounded-xl
-                            hover:bg-surface_container_low dark:hover:bg-[#161b27] dark:bg-[#161b27]
+                            hover:bg-surface_container_low dark:hover:bg-[#161b27] dark:bg-[#211f1c]
                             transition-colors">
               <div>
                 <p className="text-body-md font-semibold
@@ -306,7 +306,7 @@ function OracleSettingsContent() {
             {/* Dropdown */}
             <div className="flex items-center justify-between
                             p-4 rounded-xl
-                            hover:bg-surface_container_low dark:hover:bg-[#161b27] dark:bg-[#161b27]
+                            hover:bg-surface_container_low dark:hover:bg-[#161b27] dark:bg-[#211f1c]
                             transition-colors">
               <div>
                 <p className="text-body-md font-semibold
@@ -318,7 +318,7 @@ function OracleSettingsContent() {
                   Preset text for failed property audits
                 </p>
               </div>
-              <select className="bg-surface_container_low dark:bg-[#161b27]
+              <select className="bg-surface_container_low dark:bg-[#211f1c]
                                   text-body-md text-on_surface dark:text-[#e8eaf0]
                                   rounded-lg px-3 py-2
                                   border-0 focus:outline-none
@@ -336,7 +336,7 @@ function OracleSettingsContent() {
       </section>
 
       {/* ── CARD 3: ORACLE STATISTICS ── */}
-      <section className="bg-surface_container_lowest dark:bg-[#131820]
+      <section className="bg-surface_container_lowest dark:bg-[#1a1916]
                           rounded-2xl overflow-hidden
                           shadow-[0_4px_20px_rgba(0,0,0,0.03)]">
         <div className="h-1 bg-gradient-to-r
@@ -373,7 +373,7 @@ function OracleSettingsContent() {
                 color: "text-primary" },
             ].map((s) => (
               <div key={s.label}
-                   className="bg-surface_container_low dark:bg-[#161b27] p-6
+                   className="bg-surface_container_low dark:bg-[#211f1c] p-6
                                rounded-2xl">
                 <p className="text-[10px] font-bold
                                text-on_surface_variant dark:text-[#9ba3b8]
@@ -398,7 +398,7 @@ function OracleSettingsContent() {
                 vs 79% last month ↑
               </p>
             </div>
-            <div className="w-full h-2 bg-surface_container_low dark:bg-[#161b27]
+            <div className="w-full h-2 bg-surface_container_low dark:bg-[#211f1c]
                             rounded-full overflow-hidden">
               <div className="w-[83%] h-full bg-primary
                               rounded-full" />
@@ -409,7 +409,7 @@ function OracleSettingsContent() {
       </section>
 
       {/* ── CARD 4: ROLE MANAGEMENT ── */}
-      <section className="bg-surface_container_lowest dark:bg-[#131820]
+      <section className="bg-surface_container_lowest dark:bg-[#1a1916]
                           rounded-2xl overflow-hidden
                           shadow-[0_4px_20px_rgba(0,0,0,0.03)]">
         <div className="h-1 bg-gradient-to-r
@@ -452,7 +452,7 @@ function OracleSettingsContent() {
                 </span>
               </div>
 
-              <div className="bg-surface_container_low dark:bg-[#161b27]
+              <div className="bg-surface_container_low dark:bg-[#211f1c]
                               rounded-xl p-4 flex items-center
                               justify-between">
                 <div className="flex items-center gap-3">
@@ -483,7 +483,7 @@ function OracleSettingsContent() {
                   onChange={(e) =>
                     setGrantAddress(e.target.value)}
                   placeholder="Enter wallet address (0x...)"
-                  className="flex-1 bg-surface_container_low dark:bg-[#161b27]
+                  className="flex-1 bg-surface_container_low dark:bg-[#211f1c]
                              rounded-lg text-body-md
                              text-on_surface dark:text-[#e8eaf0] px-4 py-2.5
                              border-0 border-b
@@ -520,7 +520,7 @@ function OracleSettingsContent() {
                 </h3>
                 <span className="rounded-full px-2.5 py-1
                                   text-label-sm font-bold
-                                  bg-surface_container dark:bg-[#1c2333]
+                                  bg-surface_container dark:bg-[#2a2520]
                                   text-on_surface_variant dark:text-[#9ba3b8]">
                   0 Active
                 </span>
@@ -547,7 +547,7 @@ function OracleSettingsContent() {
                   value={grantBank}
                   onChange={(e) => setGrantBank(e.target.value)}
                   placeholder="Enter bank wallet address (0x...)"
-                  className="flex-1 bg-surface_container_low dark:bg-[#161b27]
+                  className="flex-1 bg-surface_container_low dark:bg-[#211f1c]
                              rounded-lg text-body-md
                              text-on_surface dark:text-[#e8eaf0] px-4 py-2.5
                              border-0 border-b
@@ -578,7 +578,7 @@ function OracleSettingsContent() {
       </section>
 
       {/* ── CARD 5: DANGER ZONE ── */}
-      <section className="bg-surface_container_lowest dark:bg-[#131820]
+      <section className="bg-surface_container_lowest dark:bg-[#1a1916]
                           rounded-2xl overflow-hidden
                           shadow-[0_4px_20px_rgba(0,0,0,0.03)]
                           border border-error_container">
@@ -650,7 +650,7 @@ function OracleSettingsContent() {
               </Button>
             </div>
 
-            <div className="p-4 bg-surface_container_lowest dark:bg-[#131820]/60
+            <div className="p-4 bg-surface_container_lowest dark:bg-[#1a1916]/60
                             rounded-xl border border-error_container">
               <p className="text-label-sm text-error/80
                              leading-relaxed italic font-medium">

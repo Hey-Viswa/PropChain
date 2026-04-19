@@ -195,11 +195,11 @@ export default function OracleAccessModal({
             <div
               className="w-10 h-10 rounded-xl
                             bg-primary_fixed
-                            dark:bg-[#1a2d4d]
+                            dark:bg-[#3D1F10]
                             flex items-center justify-center">
               <Shield
                 className="w-5 h-5 text-primary
-                                  dark:text-[#6b9eff]"
+                                  dark:text-[#E89874]"
               />
             </div>
             <div>
@@ -236,11 +236,11 @@ export default function OracleAccessModal({
           <div
             className="flex items-start gap-3 p-3
                           bg-primary_fixed/40
-                          dark:bg-[#1a2d4d]/40
+                          dark:bg-[#3D1F10]/40
                           rounded-xl">
             <ShieldCheck
               className="w-4 h-4 text-primary
-                                     dark:text-[#6b9eff]
+                                     dark:text-[#E89874]
                                      flex-shrink-0 mt-0.5"
             />
             <p
@@ -331,7 +331,7 @@ export default function OracleAccessModal({
                                border-outline_variant/30
                                dark:border-[#2a3347]
                                focus:border-primary
-                               dark:focus:border-[#6b9eff]
+                               dark:focus:border-[#E89874]
                                focus:outline-none
                                placeholder:text-on_surface_variant/40
                                dark:placeholder:text-[#9ba3b8]/40
