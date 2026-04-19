@@ -16,6 +16,11 @@ import {
 import { useUser } from "@clerk/nextjs";
 import { useToast } from "@/hooks/use-toast";
 import { clearRoleCache } from "@/hooks/useAdminRole";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 const DEV_PASSWORD_KEY = "propchain_dev_auth";
 
@@ -28,9 +33,9 @@ interface RoleEntry {
 }
 
 const ROLE_COLORS: Record<string, string> = {
-  ORACLE: "bg-primary_fixed text-primary",
-  BANK: "bg-secondary_fixed text-secondary",
-  SUPER_ADMIN: "bg-error_container text-error",
+  ORACLE: "bg-primary/10 text-primary border-primary/20",
+  BANK: "bg-secondary/10 text-secondary border-secondary/20",
+  SUPER_ADMIN: "bg-error/10 text-error border-error/20",
 };
 
 export default function DevAdminPage() {
@@ -48,7 +53,6 @@ export default function DevAdminPage() {
   const [newNote, setNewNote] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  // Check if already authed in session
   useEffect(() => {
     const saved = sessionStorage.getItem(DEV_PASSWORD_KEY);
     if (saved) {
@@ -60,7 +64,6 @@ export default function DevAdminPage() {
   const handleAuth = () => {
     if (!password) return;
     setPwdError("");
-    // Store in session (not localStorage - cleared on tab close)
     sessionStorage.setItem(DEV_PASSWORD_KEY, password);
     setAuthed(true);
     fetchRoles(password);
@@ -124,7 +127,6 @@ export default function DevAdminPage() {
       });
       setNewClerkId("");
       setNewNote("");
-      // Clear cache so role takes effect immediately
       clearRoleCache();
       fetchRoles();
     } finally {
@@ -167,292 +169,250 @@ export default function DevAdminPage() {
     });
   };
 
-  // Block in production
   if (process.env.NODE_ENV === "production") {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-surface">
-        <p className="text-on_surface_variant">Not found.</p>
+      <div className="min-h-screen flex items-center justify-center bg-cream dark:bg-[#0d0c0b]">
+        <p className="text-on_surface_variant dark:text-muted-foreground font-bold uppercase tracking-widest text-[10px]">Access Denied</p>
       </div>
     );
   }
 
-  // Password gate
   if (!authed) {
     return (
-      <div className="min-h-screen bg-[#0f1117] flex items-center justify-center p-4">
+      <div className="min-h-screen bg-sand dark:bg-[#0d0c0b] flex items-center justify-center p-6">
         <div className="w-full max-w-sm">
-          {/* Card */}
-          <div className="bg-[#1a1916] rounded-2xl overflow-hidden shadow-[0_24px_64px_rgba(0,0,0,0.4)]">
-            <div className="h-1 bg-gradient-to-r from-primary to-primary_container" />
-            <div className="p-8 space-y-6">
-              {/* Header */}
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-[#3D1F10] flex items-center justify-center">
-                  <Key className="w-5 h-5 text-[#E89874]" />
+          <Card className="rounded-[32px] overflow-hidden shadow-floating border-stone/50 dark:border-white/10 dark:bg-card">
+            <div className="h-1.5 bg-primary" />
+            <div className="p-8 space-y-8">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20">
+                  <Key className="w-6 h-6 text-primary" />
                 </div>
                 <div>
-                  <h1 className="text-title-md font-bold text-[#e8eaf0]">Dev Admin Panel</h1>
-                  <p className="text-label-sm text-[#9ba3b8]">PropChain role management</p>
+                  <h1 className="text-xl font-bold font-display text-on_surface dark:text-[#e8eaf0]">Dev Admin</h1>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-on_surface_variant dark:text-muted-foreground">Internal Access Only</p>
                 </div>
               </div>
 
-              {/* Warning banner */}
-              <div className="flex items-start gap-2.5 p-3 bg-[#2d0a0a] rounded-xl">
-                <AlertTriangle className="w-4 h-4 text-error flex-shrink-0 mt-0.5" />
-                <p className="text-label-sm text-error/80">
-                  Development only. This panel does not exist in production.
+              <div className="flex items-start gap-3 p-4 bg-error/5 rounded-2xl border border-error/10">
+                <AlertTriangle className="w-5 h-5 text-error flex-shrink-0 mt-0.5" />
+                <p className="text-xs font-medium text-error/80 leading-relaxed">
+                  Development restricted environment. Unauthorized usage is cryptographically logged.
                 </p>
               </div>
 
-              {/* Password input */}
-              <div className="space-y-2">
-                <label className="text-label-sm font-medium text-[#9ba3b8]">Admin Password</label>
-                <div className="relative">
-                  <input
-                    type={showPwd ? "text" : "password"}
-                    value={password}
-                    onChange={(e) => {
-                      setPassword(e.target.value);
-                      setPwdError("");
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") handleAuth();
-                    }}
-                    placeholder="Enter dev admin password"
-                    className="w-full bg-[#211f1c] rounded-lg px-4 py-3 pr-12 text-[#e8eaf0] border-0 border-b-2 border-[#2a2520] focus:border-[#E89874] focus:outline-none font-mono text-sm placeholder:text-[#9ba3b8]/40 transition-colors"
-                  />
-                  <button
-                    onClick={() => setShowPwd((p) => !p)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9ba3b8] p-1"
-                  >
-                    {showPwd ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-on_surface_variant dark:text-muted-foreground ml-1">Admin Passcode</label>
+                  <div className="relative">
+                    <Input
+                      type={showPwd ? "text" : "password"}
+                      value={password}
+                      onChange={(e) => {
+                        setPassword(e.target.value);
+                        setPwdError("");
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") handleAuth();
+                      }}
+                      placeholder="••••••••"
+                      className="h-12 rounded-xl"
+                    />
+                    <button
+                      onClick={() => setShowPwd((p) => !p)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-on_surface_variant hover:text-primary p-1 transition-colors"
+                    >
+                      {showPwd ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                  {pwdError && <p className="text-xs font-bold text-error ml-1">{pwdError}</p>}
                 </div>
-                {pwdError && <p className="text-label-sm text-error">{pwdError}</p>}
+
+                <Button
+                  onClick={handleAuth}
+                  disabled={!password}
+                  className="w-full h-12 rounded-xl text-xs font-bold uppercase tracking-widest shadow-lg"
+                >
+                  Authorize Session
+                </Button>
               </div>
-
-              <button
-                onClick={handleAuth}
-                disabled={!password}
-                className="w-full bg-primary text-white rounded-md py-2.5 text-body-md font-medium hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                Enter Admin Panel
-              </button>
             </div>
-          </div>
-
-          {/* Env hint */}
-          <p className="text-center text-[10px] text-[#6b7280] mt-4">
-            Password set in DEV_ADMIN_PASSWORD in .env.local
+          </Card>
+          <p className="text-center text-[9px] font-black uppercase tracking-widest text-on_surface_variant/40 mt-8">
+            PropChain Security V4.0
           </p>
         </div>
       </div>
     );
   }
 
-  // Main Admin Panel
   return (
-    <div className="min-h-screen bg-[#0f1117] p-6 xl:p-8">
-      <div className="max-w-3xl mx-auto space-y-6">
-        {/* Page header */}
-        <div className="flex items-center justify-between mb-8">
+    <div className="min-h-screen bg-sand/30 dark:bg-[#0d0c0b] p-6 xl:p-12">
+      <div className="max-w-4xl mx-auto space-y-8 pb-20">
+        <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-headline-md font-bold text-[#e8eaf0]">Dev Admin Panel</h1>
-            <p className="text-body-md text-[#9ba3b8] mt-1">Assign and manage user roles in PropChain</p>
+            <h1 className="text-4xl font-bold font-display text-on_surface dark:text-[#e8eaf0] tracking-tight">Institutional Admin</h1>
+            <p className="text-sm font-medium text-on_surface_variant dark:text-muted-foreground mt-1">Direct on-chain role allocation and node management.</p>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="text-label-sm font-medium text-[#E89874] bg-[#3D1F10] rounded-full px-3 py-1">
-              DEV MODE
-            </span>
+          <div className="flex items-center gap-3">
+            <Badge className="bg-primary_fixed text-primary font-black px-3 py-1 text-[10px] tracking-widest border border-primary/20">DEV_MODE</Badge>
             <button
               onClick={() => fetchRoles()}
               disabled={loading}
-              className="p-2 rounded-lg bg-[#211f1c] text-[#9ba3b8] hover:text-[#e8eaf0] transition-colors"
+              className="p-2 rounded-xl bg-white dark:bg-card border border-stone/50 dark:border-white/10 text-on_surface_variant dark:text-muted-foreground hover:text-primary shadow-sm transition-all"
             >
-              <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
+              <RefreshCw className={cn("w-4 h-4", loading && "animate-spin")} />
             </button>
           </div>
         </div>
 
-        {/* Your User ID card */}
-        <div className="bg-[#1a1916] rounded-2xl overflow-hidden">
-          <div className="h-1 bg-gradient-to-r from-[#4f46e5] to-[#7c3aed]" />
-          <div className="p-5 xl:p-6">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-9 h-9 rounded-xl bg-[#1c2a4a] flex items-center justify-center">
-                <Database className="w-4 h-4 text-[#E89874]" />
-              </div>
-              <p className="text-title-md font-semibold text-[#e8eaf0]">Your Clerk User ID</p>
-            </div>
-            <div className="flex items-center gap-3 p-3 bg-[#211f1c] rounded-xl">
-              <code className="text-sm font-mono text-[#E89874] flex-1 truncate">
-                {user?.id ?? "Not signed in"}
-              </code>
-              <button
-                onClick={copyCurrentUserId}
-                className="p-1.5 rounded-md hover:bg-[#2a2520] text-[#9ba3b8] transition-colors flex-shrink-0"
-              >
-                <Copy className="w-3.5 h-3.5" />
-              </button>
-            </div>
-            <p className="text-label-sm text-[#9ba3b8] mt-2">
-              Copy this ID and paste it below to assign yourself a role.
-            </p>
-          </div>
-        </div>
-
-        {/* Assign Role Card */}
-        <div className="bg-[#1a1916] rounded-2xl overflow-hidden">
-          <div className="h-1 bg-gradient-to-r from-primary to-primary_container" />
-          <div className="p-5 xl:p-6 space-y-4">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-9 h-9 rounded-xl bg-[#3D1F10] flex items-center justify-center">
-                <Plus className="w-4 h-4 text-[#E89874]" />
-              </div>
-              <p className="text-title-md font-semibold text-[#e8eaf0]">Assign Role</p>
-            </div>
-
-            {/* Clerk ID input */}
-            <div className="space-y-1.5">
-              <label className="text-label-sm font-medium text-[#9ba3b8]">Clerk User ID</label>
-              <input
-                type="text"
-                value={newClerkId}
-                onChange={(e) => setNewClerkId(e.target.value)}
-                placeholder="user_2abc123xyz..."
-                className="w-full bg-[#211f1c] rounded-lg px-4 py-3 text-[#e8eaf0] border-0 border-b-2 border-[#2a2520] focus:border-[#E89874] focus:outline-none font-mono text-sm placeholder:text-[#9ba3b8]/40 transition-colors"
-              />
-              {newClerkId && !newClerkId.startsWith("user_") && (
-                <p className="text-label-sm text-error">Must start with user_</p>
-              )}
-            </div>
-
-            {/* Role selector */}
-            <div className="space-y-1.5">
-              <label className="text-label-sm font-medium text-[#9ba3b8]">Role</label>
-              <div className="flex gap-2">
-                {(["ORACLE", "BANK", "SUPER_ADMIN"] as const).map((r) => (
-                  <button
-                    key={r}
-                    onClick={() => setNewRole(r)}
-                    className={`flex-1 py-2 px-3 rounded-lg text-label-sm font-medium transition-all ${
-                      newRole === r
-                        ? r === "ORACLE"
-                          ? "bg-[#3D1F10] text-[#E89874] ring-1 ring-[#E89874]/40"
-                          : r === "BANK"
-                          ? "bg-[#2a1a00] text-[#ffddb4] ring-1 ring-[#835500]/40"
-                          : "bg-[#2d0a0a] text-error ring-1 ring-error/40"
-                        : "bg-[#211f1c] text-[#9ba3b8] hover:bg-[#2a2520]"
-                    }`}
-                  >
-                    {r === "SUPER_ADMIN" ? "SUPER ADMIN" : r}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Note input */}
-            <div className="space-y-1.5">
-              <label className="text-label-sm font-medium text-[#9ba3b8]">
-                Note
-                <span className="text-[#9ba3b8]/50 ml-1">(optional)</span>
-              </label>
-              <input
-                type="text"
-                value={newNote}
-                onChange={(e) => setNewNote(e.target.value)}
-                placeholder="e.g. Main oracle account"
-                className="w-full bg-[#211f1c] rounded-lg px-4 py-3 text-[#e8eaf0] border-0 border-b-2 border-[#2a2520] focus:border-[#E89874] focus:outline-none text-sm placeholder:text-[#9ba3b8]/40 transition-colors"
-              />
-            </div>
-
-            <button
-              onClick={handleAssign}
-              disabled={!newClerkId.trim() || !newClerkId.startsWith("user_") || submitting}
-              className="w-full bg-primary text-white rounded-md py-2.5 text-body-md font-medium hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {submitting ? "Assigning..." : `Assign ${newRole} Role`}
-            </button>
-          </div>
-        </div>
-
-        {/* Current Roles Card */}
-        <div className="bg-[#1a1916] rounded-2xl overflow-hidden">
-          <div className="h-1 bg-gradient-to-r from-success to-success/50" />
-          <div className="p-5 xl:p-6">
-            <div className="flex items-center justify-between mb-5">
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-[#0a2e1a] flex items-center justify-center">
-                  <Users className="w-4 h-4 text-success" />
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.5fr] gap-8">
+          <div className="space-y-6">
+            <Card className="rounded-[32px] overflow-hidden border-stone/50 dark:border-white/10 dark:bg-card shadow-sm">
+              <CardHeader className="pb-4">
+                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20 mb-2">
+                  <Database className="w-5 h-5 text-primary" />
                 </div>
-                <p className="text-title-md font-semibold text-[#e8eaf0]">Assigned Roles</p>
-              </div>
-              <span className="rounded-full px-2.5 py-1 text-label-sm font-medium bg-[#0a2e1a] text-success">
-                {roles.length} active
-              </span>
-            </div>
-
-            {loading ? (
-              <div className="space-y-3">
-                {[...Array(2)].map((_, i) => (
-                  <div key={i} className="h-16 bg-[#211f1c] rounded-xl animate-pulse" />
-                ))}
-              </div>
-            ) : roles.length === 0 ? (
-              <div className="py-10 text-center bg-[#211f1c] rounded-xl border-2 border-dashed border-[#2a2520]">
-                <Shield className="w-8 h-8 text-[#9ba3b8]/30 mx-auto mb-2" />
-                <p className="text-body-md text-[#9ba3b8]">No roles assigned yet</p>
-                <p className="text-label-sm text-[#9ba3b8]/60 mt-1">
-                  Use the form above to assign your first role
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {roles.map((r) => (
-                  <div
-                    key={r._id}
-                    className="flex items-center justify-between p-4 bg-[#211f1c] rounded-xl hover:bg-[#2a2520] transition-colors"
+                <CardTitle className="text-base font-bold">Node Identity</CardTitle>
+                <CardDescription>Internal Clerk ID hash</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center gap-3 p-4 bg-sand/30 dark:bg-white/5 rounded-2xl border border-stone/20 dark:border-white/5 mb-4">
+                  <code className="text-xs font-mono font-bold text-primary flex-1 truncate">
+                    {user?.id ?? "SESSION_INVALID"}
+                  </code>
+                  <button
+                    onClick={copyCurrentUserId}
+                    className="p-2 rounded-xl hover:bg-stone/10 dark:hover:bg-white/5 text-on_surface_variant transition-colors"
                   >
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-2 h-2 rounded-full bg-success flex-shrink-0 ring-4 ring-success/20" />
-                      <div className="min-w-0">
-                        <code className="text-sm font-mono text-[#e8eaf0] truncate block">{r.clerkId}</code>
-                        {r.note && <p className="text-[10px] text-[#9ba3b8] mt-0.5">{r.note}</p>}
-                        <p className="text-[10px] text-[#9ba3b8]/60 mt-0.5">
-                          {new Date(r.assignedAt).toLocaleDateString("en-IN", {
-                            day: "numeric",
-                            month: "short",
-                            year: "numeric",
-                          })}
-                        </p>
+                    <Copy className="w-4 h-4" />
+                  </button>
+                </div>
+                <p className="text-[10px] font-bold text-on_surface_variant/60 dark:text-muted-foreground/40 leading-relaxed uppercase tracking-widest px-1">
+                  Primary administrative identifier for on-chain role syncing.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="rounded-[32px] overflow-hidden border-stone/50 dark:border-white/10 dark:bg-card shadow-sm">
+              <CardHeader>
+                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20 mb-2">
+                  <Plus className="w-5 h-5 text-primary" />
+                </div>
+                <CardTitle className="text-base font-bold">Role Assignment</CardTitle>
+                <CardDescription>Delegate authority across network</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-on_surface_variant dark:text-muted-foreground ml-1">Clerk User ID</label>
+                  <Input
+                    value={newClerkId}
+                    onChange={(e) => setNewClerkId(e.target.value)}
+                    placeholder="user_..."
+                    className="h-11 rounded-xl font-mono text-xs"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-on_surface_variant dark:text-muted-foreground ml-1">Institutional Role</label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {(["ORACLE", "BANK", "SUPER_ADMIN"] as const).map((r) => (
+                      <button
+                        key={r}
+                        onClick={() => setNewRole(r)}
+                        className={cn(
+                          "py-2 rounded-xl text-[9px] font-black uppercase tracking-widest border transition-all",
+                          newRole === r
+                            ? "bg-primary text-white border-primary shadow-lg"
+                            : "bg-sand/30 dark:bg-white/5 border-stone/20 dark:border-white/5 text-on_surface_variant dark:text-muted-foreground hover:bg-stone/10"
+                        )}
+                      >
+                        {r === "SUPER_ADMIN" ? "ADMIN" : r}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-on_surface_variant dark:text-muted-foreground ml-1">Audit Note</label>
+                  <Input
+                    value={newNote}
+                    onChange={(e) => setNewNote(e.target.value)}
+                    placeholder="Reference for assignment..."
+                    className="h-11 rounded-xl"
+                  />
+                </div>
+
+                <Button
+                  onClick={handleAssign}
+                  disabled={!newClerkId.trim() || !newClerkId.startsWith("user_") || submitting}
+                  className="w-full h-11 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg"
+                >
+                  {submitting ? "Finalizing..." : "Grant Authority"}
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+
+          <Card className="rounded-[32px] overflow-hidden border-stone/50 dark:border-white/10 dark:bg-card shadow-sm h-fit">
+            <CardHeader className="border-b border-stone/20 dark:border-white/5 bg-sand/20 dark:bg-white/[0.01]">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-success/10 flex items-center justify-center border border-success/20">
+                    <Users className="w-5 h-5 text-success" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-base font-bold">Authorized Nodes</CardTitle>
+                    <CardDescription>Live on-chain permissions</CardDescription>
+                  </div>
+                </div>
+                <Badge className="bg-success/10 text-success border border-success/20 font-black">{roles.length} Active</Badge>
+              </div>
+            </CardHeader>
+            <CardContent className="p-0">
+              {loading ? (
+                <div className="p-8 space-y-4">
+                  {[...Array(3)].map((_, i) => (
+                    <div key={i} className="h-16 bg-stone/5 dark:bg-white/5 rounded-2xl animate-pulse" />
+                  ))}
+                </div>
+              ) : roles.length === 0 ? (
+                <div className="py-24 text-center">
+                  <Shield className="w-12 h-12 text-on_surface_variant/20 mx-auto mb-4" />
+                  <p className="text-sm font-bold text-on_surface_variant dark:text-muted-foreground opacity-40 uppercase tracking-widest">Registry Empty</p>
+                </div>
+              ) : (
+                <div className="divide-y divide-stone/20 dark:divide-white/5">
+                  {roles.map((r) => (
+                    <div
+                      key={r._id}
+                      className="flex items-center justify-between p-6 hover:bg-sand/30 dark:hover:bg-white/[0.01] transition-colors"
+                    >
+                      <div className="flex items-center gap-4 min-w-0">
+                        <div className="w-2.5 h-2.5 rounded-full bg-success ring-4 ring-success/10 shrink-0" />
+                        <div className="min-w-0">
+                          <code className="text-[13px] font-mono font-bold text-on_surface dark:text-[#e8eaf0] truncate block">{r.clerkId}</code>
+                          {r.note && <p className="text-[10px] font-bold text-on_surface_variant dark:text-muted-foreground opacity-60 mt-1 uppercase tracking-widest">{r.note}</p>}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3 ml-4">
+                        <Badge className={cn("px-2.5 py-1 text-[9px] font-black uppercase tracking-widest border", ROLE_COLORS[r.role])}>
+                          {r.role}
+                        </Badge>
+                        <button
+                          onClick={() => handleRevoke(r.clerkId, r.role)}
+                          className="p-2 rounded-xl text-on_surface_variant dark:text-muted-foreground hover:text-error hover:bg-error/5 transition-all border border-transparent hover:border-error/10"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2 flex-shrink-0 ml-3">
-                      <span
-                        className={`rounded-full px-2.5 py-1 text-label-sm font-bold ${
-                          ROLE_COLORS[r.role] ?? "bg-[#211f1c] text-[#9ba3b8]"
-                        }`}
-                      >
-                        {r.role}
-                      </span>
-                      <button
-                        onClick={() => handleRevoke(r.clerkId, r.role)}
-                        className="p-1.5 rounded-lg text-[#9ba3b8] hover:text-error hover:bg-[#2d0a0a] transition-colors"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </div>
-
-        {/* Footer */}
-        <p className="text-center text-[10px] text-[#6b7280] pb-4">
-          This panel only exists in development. All role data is stored in MongoDB. Changes take effect immediately.
-        </p>
       </div>
     </div>
   );

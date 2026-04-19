@@ -20,18 +20,18 @@ export default function OracleLoginPage() {
   }, [isOracleMode, isOracle, router]);
 
   return (
-    <div className="min-h-screen bg-surface dark:bg-[#0f1117] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-surface dark:bg-background flex items-center justify-center p-4">
       <div className="w-full max-w-md space-y-6">
 
         {/* Back to dashboard */}
         <Link href="/dashboard"
-              className="inline-flex items-center gap-2 text-body-md text-on_surface_variant dark:text-[#9ba3b8] hover:text-on_surface dark:hover:text-[#e8eaf0] transition-colors">
+              className="inline-flex items-center gap-2 text-body-md text-on_surface_variant text-on_surface_variant dark:text-muted-foreground hover:text-on_surface dark:hover:text-[#e8eaf0] transition-colors">
           <ArrowLeft className="w-4 h-4" />
           Back to Dashboard
         </Link>
 
         {/* Card */}
-        <div className="bg-surface_container_lowest dark:bg-[#1a1916] rounded-2xl overflow-hidden shadow-[0_24px_64px_rgba(0,26,67,0.12)] dark:shadow-[0_24px_64px_rgba(0,0,0,0.4)]">
+        <div className="bg-card dark:bg-card rounded-2xl overflow-hidden shadow-[0_24px_64px_rgba(0,26,67,0.12)] dark:shadow-[0_24px_64px_rgba(0,0,0,0.4)]">
 
           {/* Accent bar */}
           <div className="h-1 bg-gradient-to-r from-primary to-primary_container" />
@@ -44,10 +44,10 @@ export default function OracleLoginPage() {
                 <Shield className="w-8 h-8 text-primary dark:text-[#E89874]" />
               </div>
               <div>
-                <h1 className="text-headline-md font-bold text-on_surface dark:text-[#e8eaf0]">
+                <h1 className="text-headline-md font-bold text-on_surface text-on_surface dark:text-[#e8eaf0]">
                   Oracle Portal
                 </h1>
-                <p className="text-body-md text-on_surface_variant dark:text-[#9ba3b8] mt-1">
+                <p className="text-body-md text-on_surface_variant text-on_surface_variant dark:text-muted-foreground mt-1">
                   Government Authority Access
                 </p>
               </div>
@@ -73,12 +73,12 @@ export default function OracleLoginPage() {
                 },
               ].map((item) => (
                 <div key={item.label}
-                     className="p-3 rounded-xl bg-surface_container_low dark:bg-[#1c2333] text-center">
+                     className="p-3 rounded-xl bg-stone/10_low dark:bg-white/5 text-center">
                   <item.icon className="w-5 h-5 text-primary dark:text-[#E89874] mx-auto mb-1.5" />
-                  <p className="text-label-sm font-bold text-on_surface dark:text-[#e8eaf0]">
+                  <p className="text-label-sm font-bold text-on_surface text-on_surface dark:text-[#e8eaf0]">
                     {item.label}
                   </p>
-                  <p className="text-[10px] text-on_surface_variant dark:text-[#9ba3b8]">
+                  <p className="text-[10px] text-on_surface_variant text-on_surface_variant dark:text-muted-foreground">
                     {item.desc}
                   </p>
                 </div>
@@ -89,17 +89,17 @@ export default function OracleLoginPage() {
             <div className="flex flex-col items-center gap-3">
               <OracleAuthButton variant="page" />
 
-              <p className="text-label-sm text-on_surface_variant/50 dark:text-[#9ba3b8]/40 text-center">
+              <p className="text-label-sm text-on_surface_variant/50 text-on_surface_variant dark:text-muted-foreground/40 text-center">
                 Or press{" "}
-                <kbd className="font-mono text-[10px] bg-surface_container dark:bg-[#1c2333] px-1.5 py-0.5 rounded text-on_surface_variant dark:text-[#9ba3b8]">
+                <kbd className="font-mono text-[10px] bg-stone/10 dark:bg-white/5 px-1.5 py-0.5 rounded text-on_surface_variant text-on_surface_variant dark:text-muted-foreground">
                   Ctrl
                 </kbd>
                 {" + "}
-                <kbd className="font-mono text-[10px] bg-surface_container dark:bg-[#1c2333] px-1.5 py-0.5 rounded text-on_surface_variant dark:text-[#9ba3b8]">
+                <kbd className="font-mono text-[10px] bg-stone/10 dark:bg-white/5 px-1.5 py-0.5 rounded text-on_surface_variant text-on_surface_variant dark:text-muted-foreground">
                   Shift
                 </kbd>
                 {" + "}
-                <kbd className="font-mono text-[10px] bg-surface_container dark:bg-[#1c2333] px-1.5 py-0.5 rounded text-on_surface_variant dark:text-[#9ba3b8]">
+                <kbd className="font-mono text-[10px] bg-stone/10 dark:bg-white/5 px-1.5 py-0.5 rounded text-on_surface_variant text-on_surface_variant dark:text-muted-foreground">
                   O
                 </kbd>
                 {" "}anywhere
@@ -107,7 +107,7 @@ export default function OracleLoginPage() {
             </div>
 
             {/* Disclaimer */}
-            <p className="text-[10px] text-on_surface_variant/40 dark:text-[#9ba3b8]/30 text-center leading-relaxed">
+            <p className="text-[10px] text-on_surface_variant/40 text-on_surface_variant dark:text-muted-foreground/30 text-center leading-relaxed">
               Unauthorized access attempts are logged.
               This portal is for authorized government
               officials only.

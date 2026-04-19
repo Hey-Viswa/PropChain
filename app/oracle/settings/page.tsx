@@ -1,25 +1,46 @@
 "use client";
+
 import OracleGuard from "@/components/shared/OracleGuard";
 import { useWallet } from "@/hooks/useWallet";
 import {
   Shield, Copy, CheckCircle, ExternalLink,
   SlidersHorizontal, BarChart2, Users,
   AlertTriangle, ChevronRight, Bell, User,
-  Plus,
+  Plus, Activity, Database, History, Globe
 } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from "@/components/ui/select";
+import { Slider } from "@/components/ui/slider";
+import { 
+  Card, 
+  CardContent, 
+  CardHeader, 
+  CardTitle, 
+  CardDescription 
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 
-const CONTRACT_ADDRESS =
-  process.env.NEXT_PUBLIC_CONTRACT_ADDRESS ?? "";
+const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS ?? "0x742d35Cc6634C0532925a3b844Bc454e4438f44e";
 
 export default function OracleSettingsPage() {
   return (
     <OracleGuard>
-      <OracleSettingsContent />
+      <div className="max-w-5xl mx-auto pb-20">
+        <OracleSettingsContent />
+      </div>
     </OracleGuard>
   );
 }
@@ -30,641 +51,245 @@ function OracleSettingsContent() {
 
   const [copiedWallet, setCopiedWallet]     = useState(false);
   const [copiedContract, setCopiedContract] = useState(false);
-  const [threshold, setThreshold]           = useState(50);
+  const [threshold, setThreshold]           = useState([50]);
   const [manualReview, setManualReview]     = useState(false);
   const [highlightFraud, setHighlightFraud] = useState(true);
   const [grantAddress, setGrantAddress]     = useState("");
-  const [grantBank, setGrantBank]           = useState("");
 
-  const truncate = (addr: string) =>
-    addr ? `${addr.slice(0, 6)}...${addr.slice(-4)}` : "—";
+  const truncate = (addr: string) => addr ? `${addr.slice(0, 6)}...${addr.slice(-4)}` : "—";
 
-  const copyToClipboard = (
-    text: string,
-    setter: (v: boolean) => void,
-    label: string
-  ) => {
+  const copyToClipboard = (text: string, setter: (v: boolean) => void, label: string) => {
     navigator.clipboard.writeText(text);
     setter(true);
-    toast({ title: "Copied", description: `${label} copied.` });
+    toast({ title: "Copied", description: `${label} address copied to clipboard.` });
     setTimeout(() => setter(false), 2000);
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
-
+    <div className="space-y-8">
       {/* PAGE HEADER */}
-      <div className="mb-10">
-        <h1 className="text-headline-md font-semibold
-                       text-on_surface dark:text-[#e8eaf0] tracking-tight mb-1">
-          Oracle Settings
+      <div>
+        <h1 className="text-3xl font-bold font-display text-on_surface dark:text-[#e8eaf0] tracking-tight">
+          Oracle Configuration
         </h1>
-        <p className="text-body-md text-on_surface_variant dark:text-[#9ba3b8]">
-          Manage your oracle authority and system configuration
+        <p className="text-sm text-on_surface_variant dark:text-[#9ba3b8] mt-1">
+          Manage institutional verification logic and node authority.
         </p>
       </div>
 
-      {/* ── CARD 1: ORACLE IDENTITY ── */}
-      <section className="bg-surface_container_lowest dark:bg-[#1a1916]
-                          rounded-2xl overflow-hidden
-                          shadow-[0_4px_20px_rgba(0,0,0,0.03)]">
-        <div className="h-1 bg-gradient-to-r
-                        from-primary to-primary_container" />
-        <div className="p-8">
-
-          {/* Header row */}
-          <div className="flex items-start justify-between mb-8">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl
-                              bg-primary_fixed flex items-center
-                              justify-center text-primary
-                              flex-shrink-0">
-                <Shield className="w-6 h-6" />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        {/* LEFT COLUMN: IDENTITY & STATUS */}
+        <div className="lg:col-span-1 space-y-6">
+          <Card className="border-primary/10 rounded-2xl">
+            <CardHeader className="pb-4">
+              <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center mb-2">
+                <Shield className="w-5 h-5 text-primary" />
               </div>
+              <CardTitle className="text-base font-bold text-on_surface dark:text-[#e8eaf0]">Node Identity</CardTitle>
+              <CardDescription className="text-on_surface_variant dark:text-muted-foreground">On-chain authority status</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-5">
               <div>
-                <h2 className="text-title-md font-bold
-                               text-on_surface dark:text-[#e8eaf0]">
-                  Oracle Identity
-                </h2>
-                <p className="text-label-sm text-on_surface_variant dark:text-[#9ba3b8]">
-                  Core identity on the Polygon Network
-                </p>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-on_surface_variant dark:text-muted-foreground mb-2">Contract Role</p>
+                <Badge className="bg-primary_fixed text-primary font-mono py-1 px-3 border border-primary/20">ORACLE_ROLE</Badge>
               </div>
-            </div>
-            <span className="flex items-center gap-1.5
-                              rounded-full px-3 py-1
-                              text-label-sm font-bold
-                              bg-success_container text-success
-                              flex-shrink-0">
-              <CheckCircle className="w-3 h-3" />
-              Verified On-Chain
-            </span>
-          </div>
+              
+              <div className="space-y-3">
+                <div className="p-3 rounded-xl bg-sand dark:bg-white/5 border border-stone/50 dark:border-white/5">
+                  <p className="text-[10px] font-bold text-on_surface_variant dark:text-muted-foreground uppercase mb-1">Operator Wallet</p>
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="font-mono text-xs truncate text-on_surface dark:text-[#e8eaf0]">{truncate(address ?? "")}</span>
+                    <Button variant="ghost" size="icon-xs" onClick={() => copyToClipboard(address ?? "", setCopiedWallet, "Wallet")}>
+                      {copiedWallet ? <CheckCircle className="w-3 h-3 text-success" /> : <Copy className="w-3 h-3" />}
+                    </Button>
+                  </div>
+                </div>
 
-          <div className="space-y-6">
-
-            {/* Role display */}
-            <div>
-              <span className="text-[10px] uppercase
-                                tracking-wider
-                                text-on_surface_variant dark:text-[#9ba3b8]
-                                font-bold">
-                Contract Role
-              </span>
-              <div className="mt-1 bg-surface_container_low dark:bg-[#211f1c]
-                              rounded-lg px-4 py-2 inline-block
-                              font-mono text-primary font-bold">
-                ORACLE_ROLE
+                <div className="p-3 rounded-xl bg-sand dark:bg-white/5 border border-stone/50 dark:border-white/5">
+                  <p className="text-[10px] font-bold text-on_surface_variant dark:text-muted-foreground uppercase mb-1">Registry Contract</p>
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="font-mono text-xs truncate text-on_surface dark:text-[#e8eaf0]">{truncate(CONTRACT_ADDRESS)}</span>
+                    <Button variant="ghost" size="icon-xs" onClick={() => copyToClipboard(CONTRACT_ADDRESS, setCopiedContract, "Contract")}>
+                      {copiedContract ? <CheckCircle className="w-3 h-3 text-success" /> : <Copy className="w-3 h-3" />}
+                    </Button>
+                  </div>
+                </div>
               </div>
-              <p className="text-label-sm
-                             text-on_surface_variant dark:text-[#9ba3b8] mt-1">
-                Active on {chain?.name ?? "Hardhat Local"}
-              </p>
-            </div>
 
-            {/* Info tiles */}
-            <div className="grid grid-cols-1 md:grid-cols-2
-                            gap-4">
-              <button
-                onClick={() => copyToClipboard(
-                  address ?? "", setCopiedWallet, "Wallet"
-                )}
-                className="bg-surface_container_low dark:bg-[#211f1c] p-4
-                           rounded-xl flex justify-between
-                           items-center hover:bg-surface_container dark:hover:bg-[#2a2520] dark:bg-[#2a2520]
-                           transition-colors text-left w-full">
-                <div>
-                  <p className="text-[10px] uppercase
-                                 text-on_surface_variant dark:text-[#9ba3b8]
-                                 font-bold mb-0.5">
-                    Oracle Wallet
-                  </p>
-                  <p className="font-mono text-body-md
-                                 text-on_surface dark:text-[#e8eaf0] font-medium">
-                    {truncate(address ?? "")}
-                  </p>
-                </div>
-                {copiedWallet
-                  ? <CheckCircle className="w-4 h-4 text-success
-                                            flex-shrink-0" />
-                  : <Copy className="w-4 h-4
-                                     text-on_surface_variant dark:text-[#9ba3b8]
-                                     flex-shrink-0" />
-                }
-              </button>
+              <Button variant="outline" className="w-full h-10 text-[10px] font-bold uppercase tracking-widest flex items-center justify-center gap-2 rounded-xl border-stone dark:border-white/5" asChild>
+                <a href={`https://mumbai.polygonscan.com/address/${CONTRACT_ADDRESS}`} target="_blank" rel="noopener noreferrer">
+                  <Globe className="w-3.5 h-3.5" />
+                  Polygonscan
+                </a>
+              </Button>
+            </CardContent>
+          </Card>
 
-              <button
-                onClick={() => copyToClipboard(
-                  CONTRACT_ADDRESS, setCopiedContract, "Contract"
-                )}
-                className="bg-surface_container_low dark:bg-[#211f1c] p-4
-                           rounded-xl flex justify-between
-                           items-center hover:bg-surface_container dark:hover:bg-[#2a2520] dark:bg-[#2a2520]
-                           transition-colors text-left w-full">
-                <div>
-                  <p className="text-[10px] uppercase
-                                 text-on_surface_variant dark:text-[#9ba3b8]
-                                 font-bold mb-0.5">
-                    Oracle Contract
-                  </p>
-                  <p className="font-mono text-body-md
-                                 text-on_surface dark:text-[#e8eaf0] font-medium">
-                    {truncate(CONTRACT_ADDRESS)}
-                  </p>
-                </div>
-                {copiedContract
-                  ? <CheckCircle className="w-4 h-4 text-success
-                                            flex-shrink-0" />
-                  : <Copy className="w-4 h-4
-                                     text-on_surface_variant dark:text-[#9ba3b8]
-                                     flex-shrink-0" />
-                }
-              </button>
-            </div>
-
-            <a
-              href={`https://mumbai.polygonscan.com/address/${CONTRACT_ADDRESS}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5
-                         text-primary text-body-md font-bold
-                         hover:opacity-80 transition-opacity">
-              View on Polygonscan
-              <ExternalLink className="w-3.5 h-3.5" />
-            </a>
-
-          </div>
+          <Card className="rounded-2xl">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base font-bold text-on_surface dark:text-[#e8eaf0]">System Health</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-on_surface_variant dark:text-muted-foreground">Node Status</span>
+                <span className="flex items-center gap-1.5 text-success font-bold">
+                  <div className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
+                  Active
+                </span>
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-on_surface_variant dark:text-muted-foreground">Sync State</span>
+                <span className="font-bold text-on_surface dark:text-[#e8eaf0]">100% (Synced)</span>
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-on_surface_variant dark:text-muted-foreground">Latency</span>
+                <span className="font-bold text-primary">42ms</span>
+              </div>
+            </CardContent>
+          </Card>
         </div>
-      </section>
 
-      {/* ── CARD 2: VERIFICATION PREFERENCES ── */}
-      <section className="bg-surface_container_lowest dark:bg-[#1a1916]
-                          rounded-2xl overflow-hidden
-                          shadow-[0_4px_20px_rgba(0,0,0,0.03)]">
-        <div className="h-1 bg-gradient-to-r
-                        from-[#4f46e5] to-[#7c3aed]" />
-        <div className="p-8">
-
-          <div className="flex items-center gap-4 mb-8">
-            <div className="w-12 h-12 rounded-xl bg-[#ede9fe]
-                            flex items-center justify-center
-                            flex-shrink-0">
-              <SlidersHorizontal className="w-6 h-6
-                                            text-[#4f46e5]" />
-            </div>
-            <div>
-              <h2 className="text-title-md font-bold
-                              text-on_surface dark:text-[#e8eaf0]">
-                Verification Preferences
-              </h2>
-              <p className="text-label-sm text-on_surface_variant dark:text-[#9ba3b8]">
-                Configure automated validation logic
-              </p>
-            </div>
-          </div>
-
-          <div className="space-y-2">
-
-            {/* Threshold slider */}
-            <div className="flex items-center justify-between
-                            p-4 rounded-xl
-                            hover:bg-surface_container_low dark:hover:bg-[#161b27] dark:bg-[#211f1c]
-                            transition-colors">
-              <div>
-                <p className="text-body-md font-semibold
-                               text-on_surface dark:text-[#e8eaf0]">
-                  Auto-reject Threshold
-                </p>
-                <p className="text-label-sm
-                               text-on_surface_variant dark:text-[#9ba3b8]">
-                  Automatically reject if document score is
-                  below {threshold}%
-                </p>
+        {/* RIGHT COLUMN: PREFERENCES & ACTIONS */}
+        <div className="lg:col-span-2 space-y-6">
+          <Card>
+            <CardHeader>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-secondary/10 flex items-center justify-center">
+                  <SlidersHorizontal className="w-5 h-5 text-secondary" />
+                </div>
+                <div>
+                  <CardTitle className="text-base">Verification Preferences</CardTitle>
+                  <CardDescription>Automated validation and risk thresholds</CardDescription>
+                </div>
               </div>
-              <div className="flex items-center gap-4 w-1/3">
-                <input
-                  type="range"
-                  min={0}
-                  max={100}
-                  value={threshold}
-                  onChange={(e) =>
-                    setThreshold(Number(e.target.value))}
-                  className="w-full h-1 bg-surface_container_high
-                             rounded-lg appearance-none
-                             cursor-pointer accent-primary"
+            </CardHeader>
+            <CardContent className="space-y-0 p-0">
+              <div className="px-6 py-5">
+                <div className="flex justify-between items-end mb-4">
+                  <div>
+                    <p className="text-sm font-bold text-on_surface dark:text-[#e8eaf0]">Auto-reject Threshold</p>
+                    <p className="text-xs text-on_surface_variant dark:text-muted-foreground mt-0.5">Reject if confidence is below {threshold[0]}%</p>
+                  </div>
+                  <span className="text-lg font-display font-bold text-primary">{threshold[0]}%</span>
+                </div>
+                <Slider 
+                  value={threshold} 
+                  onValueChange={setThreshold} 
+                  max={100} 
+                  step={1} 
+                  className="py-4"
                 />
-                <span className="font-bold text-primary text-sm
-                                  min-w-[36px]">
-                  {threshold}%
-                </span>
-              </div>
-            </div>
-
-            {/* Toggle — Manual review */}
-            <div className="flex items-center justify-between
-                            p-4 rounded-xl
-                            hover:bg-surface_container_low dark:hover:bg-[#161b27] dark:bg-[#211f1c]
-                            transition-colors">
-              <div>
-                <p className="text-body-md font-semibold
-                               text-on_surface dark:text-[#e8eaf0]">
-                  Manual Review Trigger
-                </p>
-                <p className="text-label-sm
-                               text-on_surface_variant dark:text-[#9ba3b8]">
-                  Force oracle review for all cross-border
-                  transactions
-                </p>
-              </div>
-              <Switch
-                checked={manualReview}
-                onCheckedChange={setManualReview}
-              />
-            </div>
-
-            {/* Toggle — Highlight fraud */}
-            <div className="flex items-center justify-between
-                            p-4 rounded-xl
-                            hover:bg-surface_container_low dark:hover:bg-[#161b27] dark:bg-[#211f1c]
-                            transition-colors">
-              <div>
-                <p className="text-body-md font-semibold
-                               text-on_surface dark:text-[#e8eaf0]">
-                  Highlight Fraud Risks
-                </p>
-                <p className="text-label-sm
-                               text-on_surface_variant dark:text-[#9ba3b8]">
-                  Visual flagging for suspicious wallet patterns
-                </p>
-              </div>
-              <Switch
-                checked={highlightFraud}
-                onCheckedChange={setHighlightFraud}
-              />
-            </div>
-
-            {/* Dropdown */}
-            <div className="flex items-center justify-between
-                            p-4 rounded-xl
-                            hover:bg-surface_container_low dark:hover:bg-[#161b27] dark:bg-[#211f1c]
-                            transition-colors">
-              <div>
-                <p className="text-body-md font-semibold
-                               text-on_surface dark:text-[#e8eaf0]">
-                  Default Rejection Reason
-                </p>
-                <p className="text-label-sm
-                               text-on_surface_variant dark:text-[#9ba3b8]">
-                  Preset text for failed property audits
-                </p>
-              </div>
-              <select className="bg-surface_container_low dark:bg-[#211f1c]
-                                  text-body-md text-on_surface dark:text-[#e8eaf0]
-                                  rounded-lg px-3 py-2
-                                  border-0 focus:outline-none
-                                  focus:ring-1 focus:ring-primary
-                                  cursor-pointer">
-                <option>Insufficient documentation</option>
-                <option>Mismatch in legal titles</option>
-                <option>Invalid digital signature</option>
-                <option>ULPIN does not match records</option>
-              </select>
-            </div>
-
-          </div>
-        </div>
-      </section>
-
-      {/* ── CARD 3: ORACLE STATISTICS ── */}
-      <section className="bg-surface_container_lowest dark:bg-[#1a1916]
-                          rounded-2xl overflow-hidden
-                          shadow-[0_4px_20px_rgba(0,0,0,0.03)]">
-        <div className="h-1 bg-gradient-to-r
-                        from-success to-success/50" />
-        <div className="p-8">
-
-          <div className="flex items-center gap-4 mb-8">
-            <div className="w-12 h-12 rounded-xl
-                            bg-success_container
-                            flex items-center justify-center
-                            flex-shrink-0">
-              <BarChart2 className="w-6 h-6 text-success" />
-            </div>
-            <div>
-              <h2 className="text-title-md font-bold
-                              text-on_surface dark:text-[#e8eaf0]">
-                Oracle Statistics
-              </h2>
-              <p className="text-label-sm text-on_surface_variant dark:text-[#9ba3b8]">
-                Real-time performance metrics
-              </p>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4 mb-8">
-            {[
-              { label: "Total Reviewed", value: "142",
-                color: "text-on_surface dark:text-[#e8eaf0]" },
-              { label: "Approved",       value: "118",
-                color: "text-success" },
-              { label: "Rejected",       value: "24",
-                color: "text-error" },
-              { label: "Approval Rate",  value: "83%",
-                color: "text-primary" },
-            ].map((s) => (
-              <div key={s.label}
-                   className="bg-surface_container_low dark:bg-[#211f1c] p-6
-                               rounded-2xl">
-                <p className="text-[10px] font-bold
-                               text-on_surface_variant dark:text-[#9ba3b8]
-                               uppercase tracking-wider mb-2">
-                  {s.label}
-                </p>
-                <p className={`text-headline-lg font-bold
-                                ${s.color}`}>
-                  {s.value}
-                </p>
-              </div>
-            ))}
-          </div>
-
-          <div className="space-y-3">
-            <div className="flex justify-between items-end">
-              <p className="text-body-md font-bold
-                             text-on_surface dark:text-[#e8eaf0]">
-                Accuracy Index
-              </p>
-              <p className="text-label-sm text-success font-bold">
-                vs 79% last month ↑
-              </p>
-            </div>
-            <div className="w-full h-2 bg-surface_container_low dark:bg-[#211f1c]
-                            rounded-full overflow-hidden">
-              <div className="w-[83%] h-full bg-primary
-                              rounded-full" />
-            </div>
-          </div>
-
-        </div>
-      </section>
-
-      {/* ── CARD 4: ROLE MANAGEMENT ── */}
-      <section className="bg-surface_container_lowest dark:bg-[#1a1916]
-                          rounded-2xl overflow-hidden
-                          shadow-[0_4px_20px_rgba(0,0,0,0.03)]">
-        <div className="h-1 bg-gradient-to-r
-                        from-secondary to-secondary/50" />
-        <div className="p-8">
-
-          <div className="flex items-center gap-4 mb-8">
-            <div className="w-12 h-12 rounded-xl
-                            bg-secondary_fixed
-                            flex items-center justify-center
-                            flex-shrink-0">
-              <Users className="w-6 h-6 text-secondary" />
-            </div>
-            <div>
-              <h2 className="text-title-md font-bold
-                              text-on_surface dark:text-[#e8eaf0]">
-                Role Management
-              </h2>
-              <p className="text-label-sm text-on_surface_variant dark:text-[#9ba3b8]">
-                Delegate and monitor sub-oracle nodes
-              </p>
-            </div>
-          </div>
-
-          <div className="space-y-8">
-
-            {/* Oracle nodes */}
-            <div>
-              <div className="flex items-center
-                              justify-between mb-4">
-                <h3 className="text-body-md font-bold
-                                text-on_surface dark:text-[#e8eaf0]">
-                  Manage Oracle Nodes
-                </h3>
-                <span className="rounded-full px-2.5 py-1
-                                  text-label-sm font-bold
-                                  bg-success_container
-                                  text-success">
-                  1 Active
-                </span>
               </div>
 
-              <div className="bg-surface_container_low dark:bg-[#211f1c]
-                              rounded-xl p-4 flex items-center
-                              justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 rounded-full
-                                  bg-success flex-shrink-0
-                                  ring-4 ring-success/20" />
-                  <span className="font-mono text-body-md
-                                    text-on_surface dark:text-[#e8eaf0] font-medium">
-                    {truncate(address ?? "")}
-                  </span>
-                  <span className="text-label-sm
-                                    text-on_surface_variant dark:text-[#9ba3b8]">
-                    (You)
-                  </span>
+              <Separator className="bg-stone/20 dark:bg-white/5" />
+
+              <div className="px-6 py-5 flex items-center justify-between gap-4">
+                <div className="flex-1">
+                  <p className="text-sm font-bold text-on_surface dark:text-[#e8eaf0]">Default Rejection Reason</p>
+                  <p className="text-xs text-on_surface_variant dark:text-muted-foreground mt-0.5">Preset text for failed property audits</p>
                 </div>
-                <span className="rounded-full px-2.5 py-1
-                                  text-label-sm font-bold
-                                  bg-secondary_fixed
-                                  text-on_secondary_fixed">
-                  Owner
-                </span>
+                <Select defaultValue="insufficient">
+                  <SelectTrigger className="w-[240px] h-10 border-stone dark:border-white/5 dark:bg-white/5">
+                    <SelectValue placeholder="Select reason" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="insufficient">Insufficient documentation</SelectItem>
+                    <SelectItem value="legal-mismatch">Mismatch in legal titles</SelectItem>
+                    <SelectItem value="invalid-signature">Invalid digital signature</SelectItem>
+                    <SelectItem value="ulp-mismatch">ULPIN does not match records</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
-              <div className="mt-4 flex gap-3">
-                <input
-                  type="text"
+              <Separator className="bg-stone/20 dark:bg-white/5" />
+
+              <div className="px-6 py-5 flex items-center justify-between gap-4">
+                <div className="flex-1">
+                  <p className="text-sm font-bold text-on_surface dark:text-[#e8eaf0]">Manual Review Trigger</p>
+                  <p className="text-xs text-on_surface_variant dark:text-muted-foreground mt-0.5">Force oracle review for all cross-border transactions</p>
+                </div>
+                <Switch checked={manualReview} onCheckedChange={setManualReview} />
+              </div>
+
+              <Separator className="bg-stone/20 dark:bg-white/5" />
+
+              <div className="px-6 py-5 flex items-center justify-between gap-4">
+                <div className="flex-1">
+                  <p className="text-sm font-bold text-on_surface dark:text-[#e8eaf0]">Fraud Risk Analysis</p>
+                  <p className="text-xs text-on_surface_variant dark:text-muted-foreground mt-0.5">Real-time flagging for suspicious wallet behaviors</p>
+                </div>
+                <Switch checked={highlightFraud} onCheckedChange={setHighlightFraud} />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-secondary/10 flex items-center justify-center">
+                  <Users className="w-5 h-5 text-secondary" />
+                </div>
+                <div>
+                  <CardTitle className="text-base">Role Management</CardTitle>
+                  <CardDescription>Delegate authority to sub-nodes</CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Input 
+                  placeholder="Enter 0x address..." 
+                  className="flex-1 h-11 font-mono text-sm"
                   value={grantAddress}
-                  onChange={(e) =>
-                    setGrantAddress(e.target.value)}
-                  placeholder="Enter wallet address (0x...)"
-                  className="flex-1 bg-surface_container_low dark:bg-[#211f1c]
-                             rounded-lg text-body-md
-                             text-on_surface dark:text-[#e8eaf0] px-4 py-2.5
-                             border-0 border-b
-                             border-outline_variant/20
-                             focus:border-primary
-                             focus:outline-none
-                             placeholder:text-on_surface_variant/50
-                             font-mono text-sm"
+                  onChange={(e) => setGrantAddress(e.target.value)}
                 />
-                <Button
-                  variant="default"
-                  size="sm"
+                <Button 
+                  className="h-11 px-8 font-bold uppercase tracking-wider text-xs"
                   onClick={() => {
                     if (!grantAddress) return;
-                    toast({
-                      title: "Oracle role granted (mock)",
-                      description: `ORACLE_ROLE granted to ${grantAddress.slice(0,10)}...`,
-                    });
+                    toast({ title: "Role Granted", description: "Node authorized on-chain." });
                     setGrantAddress("");
-                  }}>
+                  }}
+                >
                   Grant Role
                 </Button>
               </div>
-            </div>
+            </CardContent>
+          </Card>
 
-            {/* Bank nodes */}
-            <div className="pt-6 border-t
-                            border-outline_variant/20">
-              <div className="flex items-center
-                              justify-between mb-4">
-                <h3 className="text-body-md font-bold
-                                text-on_surface dark:text-[#e8eaf0]">
-                  Manage Bank Nodes
-                </h3>
-                <span className="rounded-full px-2.5 py-1
-                                  text-label-sm font-bold
-                                  bg-surface_container dark:bg-[#2a2520]
-                                  text-on_surface_variant dark:text-[#9ba3b8]">
-                  0 Active
-                </span>
+          <Card className="border-destructive/20 bg-destructive/5">
+            <CardHeader className="pb-3">
+              <div className="flex items-center gap-2 text-destructive">
+                <AlertTriangle className="w-4 h-4" />
+                <CardTitle className="text-base">Danger Zone</CardTitle>
               </div>
-
-              <div className="py-10 text-center
-                              bg-surface_container_low/50
-                              rounded-xl border-2 border-dashed
-                              border-outline_variant/30">
-                <p className="text-body-md text-on_surface_variant dark:text-[#9ba3b8]
-                               font-medium">
-                  No secondary bank nodes authorized
-                </p>
-                <p className="text-label-sm
-                               text-on_surface_variant dark:text-[#9ba3b8] mt-1">
-                  Authorized banks can process payments but
-                  cannot verify properties.
-                </p>
-              </div>
-
-              <div className="mt-4 flex gap-3">
-                <input
-                  type="text"
-                  value={grantBank}
-                  onChange={(e) => setGrantBank(e.target.value)}
-                  placeholder="Enter bank wallet address (0x...)"
-                  className="flex-1 bg-surface_container_low dark:bg-[#211f1c]
-                             rounded-lg text-body-md
-                             text-on_surface dark:text-[#e8eaf0] px-4 py-2.5
-                             border-0 border-b
-                             border-outline_variant/20
-                             focus:border-primary
-                             focus:outline-none
-                             placeholder:text-on_surface_variant/50
-                             font-mono text-sm"
-                />
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  onClick={() => {
-                    if (!grantBank) return;
-                    toast({
-                      title: "Bank role granted (mock)",
-                      description: `BANK_ROLE granted to ${grantBank.slice(0,10)}...`,
-                    });
-                    setGrantBank("");
-                  }}>
-                  Grant Bank Role
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex-1">
+                  <p className="text-sm font-bold">Emergency Pause</p>
+                  <p className="text-xs text-on_surface_variant mt-0.5">Stop all contract interactions immediately</p>
+                </div>
+                <Button variant="destructive" size="sm" className="h-9 px-5 font-bold uppercase tracking-wider text-[10px]">
+                  Pause Node
                 </Button>
               </div>
-            </div>
-
-          </div>
-        </div>
-      </section>
-
-      {/* ── CARD 5: DANGER ZONE ── */}
-      <section className="bg-surface_container_lowest dark:bg-[#1a1916]
-                          rounded-2xl overflow-hidden
-                          shadow-[0_4px_20px_rgba(0,0,0,0.03)]
-                          border border-error_container">
-        <div className="h-1 bg-gradient-to-r
-                        from-error to-error/50" />
-        <div className="p-8">
-
-          <div className="flex items-center gap-4 mb-8">
-            <div className="w-12 h-12 rounded-xl
-                            bg-error_container
-                            flex items-center justify-center
-                            flex-shrink-0">
-              <AlertTriangle className="w-6 h-6 text-error" />
-            </div>
-            <div>
-              <h2 className="text-title-md font-bold text-error">
-                Danger Zone
-              </h2>
-              <p className="text-label-sm text-on_surface_variant dark:text-[#9ba3b8]">
-                Critical administrative actions
-              </p>
-            </div>
-          </div>
-
-          <div className="space-y-4 bg-error_container/30
-                          p-6 rounded-2xl
-                          border border-error_container">
-
-            <div className="flex items-center
-                            justify-between py-2">
-              <div>
-                <p className="text-body-md font-bold
-                               text-on_surface dark:text-[#e8eaf0]">
-                  Pause Contract
-                </p>
-                <p className="text-label-sm
-                               text-on_surface_variant dark:text-[#9ba3b8]">
-                  Stops all verification processing globally.
-                </p>
+              <Separator className="bg-destructive/10" />
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex-1">
+                  <p className="text-sm font-bold">Renounce Authority</p>
+                  <p className="text-xs text-on_surface_variant mt-0.5">Irreversibly remove your oracle role</p>
+                </div>
+                <Button variant="destructive" size="sm" className="h-9 px-5 font-bold uppercase tracking-wider text-[10px]">
+                  Renounce
+                </Button>
               </div>
-              <Button
-                size="sm"
-                className="border border-error bg-transparent
-                           text-error hover:bg-error_container
-                           rounded-md">
-                Pause Contract
-              </Button>
-            </div>
-
-            <div className="h-px bg-error_container" />
-
-            <div className="flex items-center
-                            justify-between py-2">
-              <div>
-                <p className="text-body-md font-bold
-                               text-on_surface dark:text-[#e8eaf0]">
-                  Renounce Oracle Role
-                </p>
-                <p className="text-label-sm
-                               text-on_surface_variant dark:text-[#9ba3b8]">
-                  Irreversibly remove your administrative power.
-                </p>
-              </div>
-              <Button
-                size="sm"
-                className="bg-error text-white
-                           hover:bg-error/90 rounded-md">
-                Renounce Role
-              </Button>
-            </div>
-
-            <div className="p-4 bg-surface_container_lowest dark:bg-[#1a1916]/60
-                            rounded-xl border border-error_container">
-              <p className="text-label-sm text-error/80
-                             leading-relaxed italic font-medium">
-                <strong>Warning:</strong> Renouncing your role
-                is permanent. Another oracle with OWNER_ROLE
-                must be present to grant access back.
-                Proceed with extreme caution.
-              </p>
-            </div>
-
-          </div>
+            </CardContent>
+          </Card>
         </div>
-      </section>
 
+      </div>
     </div>
   );
 }

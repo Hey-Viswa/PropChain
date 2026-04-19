@@ -13,6 +13,8 @@ import {
 import { useOracleAccessStore } from "@/store/useOracleAccessStore";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import { cn } from "@/lib/utils";
+
 const MAX_ATTEMPTS = 3;
 const LOCKOUT_MS = 30_000; // 30 seconds
 
@@ -81,8 +83,6 @@ export default function OracleAccessModal({
     setError("");
 
     try {
-      // Send plaintext passphrase over HTTPS — hashing happens server-side.
-      // ORACLE_ACCESS_HASH is a server-only env var and is never sent to the client.
       const res = await fetch("/api/oracle/verify-access", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -133,7 +133,6 @@ export default function OracleAccessModal({
           );
         }
 
-        // Shake animation
         setShaking(true);
         setTimeout(() => setShaking(false), 500);
         setCode("");
@@ -162,153 +161,137 @@ export default function OracleAccessModal({
         if (e.target === e.currentTarget) onClose();
       }}>
 
-      {/* Backdrop */}
       <div
         className="absolute inset-0
-                      bg-on_surface/40
-                      dark:bg-black/60
+                      bg-on_surface/60
+                      dark:bg-black/80
                       backdrop-blur-sm"
       />
 
-      {/* Modal */}
       <div
-        className={`relative bg-surface_container_lowest
-                       dark:bg-[#131820]
-                       rounded-2xl w-full max-w-md
-                       shadow-[0_24px_64px_rgba(0,26,67,0.16)]
-                       dark:shadow-[0_24px_64px_rgba(0,0,0,0.5)]
-                       overflow-hidden
-                       transition-transform duration-200
-                       ${shaking ? "animate-[shake_0.4s_ease-in-out]" : ""}`}>
+        className={cn(
+          "relative bg-white dark:bg-card",
+          "rounded-[32px] w-full max-w-md",
+          "shadow-floating overflow-hidden",
+          "border border-stone/50 dark:border-white/10",
+          "transition-transform duration-200",
+          shaking ? "animate-[shake_0.4s_ease-in-out]" : ""
+        )}>
 
-        {/* Top accent bar */}
-        <div
-          className="h-1 bg-gradient-to-r
-                        from-primary to-primary_container"
-        />
+        <div className="h-1.5 bg-primary" />
 
-        {/* Header */}
         <div
           className="flex items-start justify-between
-                        p-6 pb-4">
-          <div className="flex items-center gap-3">
+                        p-8 pb-4">
+          <div className="flex items-center gap-4">
             <div
-              className="w-10 h-10 rounded-xl
-                            bg-primary_fixed
-                            dark:bg-[#3D1F10]
-                            flex items-center justify-center">
+              className="w-12 h-12 rounded-2xl
+                            bg-primary/10
+                            flex items-center justify-center border border-primary/20">
               <Shield
-                className="w-5 h-5 text-primary
-                                  dark:text-[#E89874]"
+                className="w-6 h-6 text-primary"
               />
             </div>
             <div>
               <h2
-                className="text-title-md font-bold
+                className="text-xl font-bold font-display
                               text-on_surface
                               dark:text-[#e8eaf0]">
-                Oracle Access
+                Institutional Access
               </h2>
               <p
-                className="text-label-sm
+                className="text-[10px] font-bold uppercase tracking-widest
                              text-on_surface_variant
-                             dark:text-[#9ba3b8]">
-                Government authority verification
+                             dark:text-muted-foreground mt-0.5">
+                Government Identity Authorization
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg
+            className="p-2 rounded-xl
                        text-on_surface_variant
-                       dark:text-[#9ba3b8]
-                       hover:bg-surface_container
-                       dark:hover:bg-[#1c2333]
+                       hover:bg-stone/10
+                       dark:hover:bg-white/5
                        transition-colors">
-            <X className="w-4 h-4" />
+            <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Body */}
-        <div className="px-6 pb-6 space-y-4">
+        <div className="p-8 pt-4 space-y-6">
 
-          {/* Info banner */}
           <div
-            className="flex items-start gap-3 p-3
-                          bg-primary_fixed/40
-                          dark:bg-[#3D1F10]/40
-                          rounded-xl">
+            className="flex items-start gap-4 p-4
+                          bg-primary/5
+                          rounded-2xl border border-primary/10">
             <ShieldCheck
-              className="w-4 h-4 text-primary
-                                     dark:text-[#E89874]
+              className="w-5 h-5 text-primary
                                      flex-shrink-0 mt-0.5"
             />
             <p
-              className="text-label-sm text-on_surface_variant
-                           dark:text-[#9ba3b8]">
-              Enter the secure access code provided
-              by the PropChain authority administrator.
-              This session will be logged.
+              className="text-xs font-medium leading-relaxed
+                           text-on_surface_variant
+                           dark:text-muted-foreground">
+              Enter the institutional access code to activate Oracle functions. All administrative sessions are cryptographically logged.
             </p>
           </div>
 
-          {/* Success state */}
           {success && (
             <div
-              className="flex items-center gap-3 p-4
-                            bg-success_container
-                            dark:bg-[#0a2e1a]
-                            rounded-xl">
-              <CheckCircle
-                className="w-5 h-5 text-success
-                                       flex-shrink-0"
-              />
+              className="flex items-center gap-4 p-5
+                            bg-success/5
+                            border border-success/10
+                            rounded-2xl animate-fade-in">
+              <div className="w-10 h-10 rounded-full bg-success flex items-center justify-center shrink-0">
+                <CheckCircle
+                  className="w-6 h-6 text-white"
+                />
+              </div>
               <div>
                 <p
-                  className="text-body-md font-semibold
-                               text-success">
-                  Access granted
+                  className="text-sm font-bold
+                               text-success uppercase tracking-wider">
+                  Access Authorized
                 </p>
-                <p className="text-label-sm text-success/70">
-                  Redirecting to Oracle dashboard...
+                <p className="text-xs text-on_surface_variant dark:text-muted-foreground font-medium">
+                  Redirecting to Control Center...
                 </p>
               </div>
             </div>
           )}
 
-          {/* Locked state */}
           {isLocked && (
             <div
-              className="flex items-center gap-3 p-4
-                            bg-error_container
-                            dark:bg-[#2d0a0a]
-                            rounded-xl">
-              <Lock
-                className="w-5 h-5 text-error
-                                flex-shrink-0"
-              />
+              className="flex items-center gap-4 p-5
+                            bg-error/5
+                            border border-error/10
+                            rounded-2xl animate-fade-in">
+              <div className="w-10 h-10 rounded-full bg-error flex items-center justify-center shrink-0">
+                <Lock
+                  className="w-5 h-5 text-white"
+                />
+              </div>
               <div>
                 <p
-                  className="text-body-md font-semibold
-                               text-error">
-                  Access temporarily locked
+                  className="text-sm font-bold
+                               text-error uppercase tracking-wider">
+                  Security Lockout
                 </p>
-                <p className="text-label-sm text-error/70">
-                  Try again in {countdown} seconds
+                <p className="text-xs text-on_surface_variant dark:text-muted-foreground font-medium">
+                  Retry available in {countdown}s
                 </p>
               </div>
             </div>
           )}
 
-          {/* Input */}
           {!success && (
             <>
-              <div className="space-y-1.5">
+              <div className="space-y-2">
                 <label
-                  className="text-label-sm font-medium
+                  className="text-[10px] font-bold uppercase tracking-widest
                                    text-on_surface_variant
-                                   dark:text-[#9ba3b8]">
-                  Access Code
+                                   dark:text-muted-foreground ml-1">
+                  Access Protocol Code
                 </label>
                 <div className="relative">
                   <input
@@ -320,85 +303,76 @@ export default function OracleAccessModal({
                       setError("");
                     }}
                     onKeyDown={handleKeyDown}
-                    placeholder="Enter secure access code"
+                    placeholder="••••••••"
                     disabled={isLocked || checking}
-                    className="w-full bg-surface_container_highest
-                               dark:bg-[#2a3347]
-                               rounded-lg px-4 py-3 pr-12
-                               text-body-md text-on_surface
+                    className="w-full bg-sand/30
+                               dark:bg-white/5
+                               rounded-xl px-5 py-4 pr-14
+                               text-2xl text-on_surface
                                dark:text-[#e8eaf0]
-                               border-0 border-b-2
-                               border-outline_variant/30
-                               dark:border-[#2a3347]
+                               border border-stone/50
+                               dark:border-white/10
                                focus:border-primary
-                               dark:focus:border-[#E89874]
+                               focus:ring-1 focus:ring-primary
                                focus:outline-none
-                               placeholder:text-on_surface_variant/40
-                               dark:placeholder:text-[#9ba3b8]/40
-                               disabled:opacity-50
-                               disabled:cursor-not-allowed
-                               font-mono tracking-widest
-                               transition-colors"
+                               placeholder:text-on_surface_variant/20
+                               font-mono tracking-[0.6em]
+                               text-center
+                               transition-all"
                   />
                   <button
                     type="button"
                     onClick={() =>
                       setShowCode((p) => !p)}
-                    className="absolute right-3 top-1/2
+                    className="absolute right-4 top-1/2
                                -translate-y-1/2
                                text-on_surface_variant
-                               dark:text-[#9ba3b8]
-                               hover:text-on_surface
-                               transition-colors p-1">
+                               hover:text-primary
+                               transition-colors p-2">
                     {showCode
-                      ? <EyeOff className="w-4 h-4" />
-                      : <Eye className="w-4 h-4" />
+                      ? <EyeOff className="w-5 h-5" />
+                      : <Eye className="w-5 h-5" />
                     }
                   </button>
                 </div>
               </div>
 
-              {/* Error message */}
               {error && !isLocked && (
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 ml-1">
                   <AlertTriangle
-                    className="w-3.5 h-3.5
-                                            text-error
-                                            flex-shrink-0"
+                    className="w-4 h-4 text-error flex-shrink-0"
                   />
-                  <p className="text-label-sm text-error">
+                  <p className="text-xs font-bold text-error">
                     {error}
                   </p>
                 </div>
               )}
 
-              {/* Attempt dots */}
               {attempts > 0 && !isLocked && (
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-2 ml-1">
                   <p
-                    className="text-label-sm
+                    className="text-[10px] font-bold uppercase tracking-widest
                                  text-on_surface_variant/60
-                                 dark:text-[#9ba3b8]/60
-                                 mr-1">
-                    Attempts:
+                                 dark:text-muted-foreground/60">
+                    Security Attempts:
                   </p>
-                  {[...Array(MAX_ATTEMPTS)].map((_, i) => (
-                    <div
-                      key={i}
-                      className={`w-2 h-2 rounded-full ${
-                        i < attempts
-                          ? "bg-error"
-                          : "bg-surface_container_high dark:bg-[#2a3347]"
-                      }`}
-                    />
-                  ))}
+                  <div className="flex items-center gap-1.5">
+                    {[...Array(MAX_ATTEMPTS)].map((_, i) => (
+                      <div
+                        key={i}
+                        className={cn(
+                          "w-1.5 h-1.5 rounded-full transition-colors",
+                          i < attempts ? "bg-error" : "bg-stone/30 dark:bg-white/10"
+                        )}
+                      />
+                    ))}
+                  </div>
                 </div>
               )}
 
-              {/* Submit button */}
               <Button
                 variant="default"
-                className="w-full"
+                className="w-full h-12 rounded-xl text-xs font-bold uppercase tracking-widest shadow-lg mt-2"
                 onClick={handleSubmit}
                 disabled={
                   !code.trim() ||
@@ -406,20 +380,17 @@ export default function OracleAccessModal({
                   checking
                 }>
                 {checking
-                  ? "Verifying..."
-                  : "Verify & Enter Oracle Mode"}
+                  ? "Authorizing..."
+                  : "Verify Institutional Access"}
               </Button>
             </>
           )}
 
-          {/* Footer disclaimer */}
           <p
-            className="text-[10px] text-on_surface_variant/50
-                         dark:text-[#9ba3b8]/40
-                         text-center leading-relaxed">
-            Unauthorized access attempts are logged
-            and may result in account suspension.
-            This system is monitored.
+            className="text-[10px] text-on_surface_variant/40
+                         dark:text-muted-foreground/30
+                         text-center leading-relaxed font-medium">
+            PropChain Security: Multiple unauthorized attempts will result in node suspension and IP flagging.
           </p>
 
         </div>

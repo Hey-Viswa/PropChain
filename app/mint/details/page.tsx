@@ -2,21 +2,29 @@
 
 import { useMintStore } from "@/store/useMintStore";
 import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from "@/components/ui/select";
 import { Info, MapPin, Target, CheckCircle2, Shield, Clock, ArrowRight } from "lucide-react";
 import Image from "next/image";
+import { cn } from "@/lib/utils";
 
 const detailsSchema = z.object({
-  ulpin: z.string().regex(/^[A-Z]{2}\d{10}$/),
-  area: z.coerce.number().positive(),
+  ulpin: z.string().regex(/^[A-Z]{2}\d{10}$/, "Invalid ULPIN format (e.g. MH0123456789)"),
+  area: z.coerce.number().positive("Area must be positive"),
   type: z.enum(["Residential", "Commercial", "Agricultural"]),
-  address: z.string().min(10),
-  district: z.string().min(1),
-  state: z.string().min(1),
+  address: z.string().min(10, "Address too short"),
+  district: z.string().min(1, "District required"),
+  state: z.string().min(1, "State required"),
   description: z.string().max(500).optional(),
 });
 
@@ -30,7 +38,8 @@ export default function MintStep1() {
     register,
     handleSubmit,
     setValue,
-    formState: { isValid },
+    control,
+    formState: { isValid, errors },
   } = useForm<DetailsFormValues>({
     resolver: zodResolver(detailsSchema),
     mode: "onChange",
@@ -51,149 +60,167 @@ export default function MintStep1() {
     router.push("/mint/upload");
   };
 
+  const labelClass = "block text-xs font-bold text-on_surface dark:text-[#e8eaf0] mb-2 uppercase tracking-wider";
+  const inputClass = "w-full bg-sand/50 dark:bg-[#161b27] border-stone dark:border-[#2a2520] focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-12 px-4 text-on_surface dark:text-[#e8eaf0] transition-all";
+
   return (
-    <div className="max-w-[1000px] mx-auto space-y-8">
+    <div className="max-w-[1000px] mx-auto space-y-8 pb-20">
       
       {/* Page Title & Intro */}
-      <div className="text-center max-w-2xl mx-auto mt-4 mb-10">
-        <h1 className="text-display font-bold text-on_surface dark:text-[#e8eaf0] font-display text-4xl mb-3">Mint Asset</h1>
-        <p className="text-on_surface_variant dark:text-[#9ba3b8]">
-          Initiate the tokenization process for your real estate asset. Provide verified legal and physical details to begin verification.
+      <div className="text-center max-w-2xl mx-auto mt-4 mb-12">
+        <h1 className="font-display text-4xl sm:text-5xl font-bold text-on_surface dark:text-[#e8eaf0] mb-4">
+          Mint Property NFT
+        </h1>
+        <p className="text-on_surface_variant dark:text-[#9ba3b8] text-base">
+          Initiate the tokenization process by providing legal identification and physical characteristics of your asset.
         </p>
       </div>
 
       {/* Main Form Card */}
-      <div className="bg-surface_container_lowest dark:bg-[#131820] rounded-2xl p-8 xl:p-10 shadow-[0_8px_24px_rgba(0,0,0,0.02)] border border-outline_variant/10">
-        <div className="flex items-center gap-2 mb-8 border-b border-outline_variant/10 pb-4">
-          <Info size={18} className="text-primary" />
-          <h2 className="text-lg font-bold font-display text-on_surface dark:text-[#e8eaf0]">Step 1: Property Identification</h2>
+      <div className="bg-white dark:bg-card rounded-3xl p-8 xl:p-12 shadow-card border border-stone dark:border-[#2a2520]">
+        <div className="flex items-center gap-3 mb-10 border-b border-stone dark:border-[#2a2520] pb-6">
+          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+            <Info size={20} className="text-primary" />
+          </div>
+          <div>
+            <h2 className="text-lg font-bold font-display text-on_surface dark:text-[#e8eaf0]">Step 1: Identification</h2>
+            <p className="text-xs text-on_surface_variant">Verified Registry Data</p>
+          </div>
         </div>
 
         <form className="space-y-8" onSubmit={handleSubmit(onSubmit)}>
           {/* Row 1 */}
           <div>
-            <label className="block text-xs font-bold text-on_surface dark:text-[#e8eaf0] mb-2">Unique Land Parcel Identification Number (ULPIN)</label>
+            <label className={labelClass}>Unique Land Parcel Identification Number (ULPIN)</label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-                <Target size={16} className="text-on_surface_variant/50" />
+              <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-on_surface_variant/40">
+                <Target size={18} />
               </div>
               <input 
                 type="text" 
                 {...register("ulpin")}
-                placeholder="14-digit alphanumeric ID"
-                className="w-full bg-surface_container_low dark:bg-[#161b27] border-transparent focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-12 pl-12 pr-4 text-on_surface dark:text-[#e8eaf0] transition-all font-mono"
+                placeholder="MH0123456789"
+                className={cn(inputClass, "pl-12 font-mono uppercase tracking-widest", errors.ulpin && "border-error focus:ring-error")}
               />
             </div>
-            <p className="text-[10px] italic text-on_surface_variant dark:text-[#9ba3b8] mt-2">Enter the government-issued ULPIN as it appears on the official land record.</p>
+            {errors.ulpin ? (
+              <p className="text-[10px] font-bold text-error mt-2 flex items-center gap-1">
+                <AlertTriangle size={10} /> {errors.ulpin.message}
+              </p>
+            ) : (
+              <p className="text-[10px] font-medium text-on_surface_variant/60 mt-2 italic">Format: 2 letters followed by 10 digits.</p>
+            )}
           </div>
 
           {/* Row 2 */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
             <div>
-              <label className="block text-xs font-bold text-on_surface dark:text-[#e8eaf0] mb-2">Total Area (sq. ft.)</label>
+              <label className={labelClass}>Total Area (sq. ft.)</label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-                  <span className="text-on_surface_variant/50 font-medium">📐</span>
-                </div>
                 <input 
                   type="number" 
                   {...register("area")}
                   placeholder="e.g. 2450"
-                  className="w-full bg-surface_container_low dark:bg-[#161b27] border-transparent focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-12 pl-12 pr-4 text-on_surface dark:text-[#e8eaf0] transition-all"
+                  className={cn(inputClass, errors.area && "border-error focus:ring-error")}
                 />
+                <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-on_surface_variant/40 font-bold text-[10px] uppercase">
+                  SQFT
+                </div>
               </div>
             </div>
             <div>
-              <label className="block text-xs font-bold text-on_surface dark:text-[#e8eaf0] mb-2">Property Type</label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-                  <span className="text-on_surface_variant/50 font-medium">🏢</span>
-                </div>
-                <select {...register("type")} className="w-full bg-surface_container_low dark:bg-[#161b27] border-transparent focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-12 pl-12 pr-10 text-on_surface dark:text-[#e8eaf0] transition-all appearance-none cursor-pointer">
-                  <option value="">Select Property Type</option>
-                  <option value="Residential">Residential</option>
-                  <option value="Commercial">Commercial</option>
-                  <option value="Agricultural">Agricultural / Industrial</option>
-                </select>
-                <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-on_surface_variant dark:text-[#9ba3b8]"><path d="m6 9 6 6 6-6"/></svg>
-                </div>
-              </div>
+              <label className={labelClass}>Property Classification</label>
+              <Controller
+                name="type"
+                control={control}
+                render={({ field }) => (
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <SelectTrigger className={cn("h-12 rounded-xl border-stone dark:border-[#2a2520]", errors.type && "border-error")}>
+                      <SelectValue placeholder="Select type..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Residential">Residential</SelectItem>
+                      <SelectItem value="Commercial">Commercial</SelectItem>
+                      <SelectItem value="Agricultural">Agricultural / Industrial</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
             </div>
           </div>
 
           {/* Row 3 Address */}
-          <div>
-            <label className="block text-xs font-bold text-on_surface dark:text-[#e8eaf0] mb-2">Site Address</label>
-            <div className="space-y-4">
+          <div className="space-y-4">
+            <label className={labelClass}>Physical Site Address</label>
+            <input 
+              type="text" 
+              {...register("address")}
+              placeholder="Street Address / Plot No."
+              className={cn(inputClass, errors.address && "border-error")}
+            />
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <input 
                 type="text" 
-                {...register("address")}
-                placeholder="Street Address / Plot No."
-                className="w-full bg-surface_container_low dark:bg-[#161b27] border-transparent focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-12 px-4 text-on_surface dark:text-[#e8eaf0] transition-all"
+                {...register("district")}
+                placeholder="City / District"
+                className={cn(inputClass, errors.district && "border-error")}
               />
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <input 
-                  type="text" 
-                  {...register("district")}
-                  placeholder="City"
-                  className="w-full bg-surface_container_low dark:bg-[#161b27] border-transparent focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-12 px-4 text-on_surface dark:text-[#e8eaf0] transition-all"
-                />
-                <input 
-                  type="text" 
-                  {...register("state")}
-                  placeholder="State/Province"
-                  className="w-full bg-surface_container_low dark:bg-[#161b27] border-transparent focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-12 px-4 text-on_surface dark:text-[#e8eaf0] transition-all"
-                />
-                <input 
-                  type="text" 
-                  placeholder="Postal Code"
-                  className="w-full bg-surface_container_low dark:bg-[#161b27] border-transparent focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-12 px-4 text-on_surface dark:text-[#e8eaf0] transition-all"
-                />
-              </div>
+              <input 
+                type="text" 
+                {...register("state")}
+                placeholder="State"
+                className={cn(inputClass, errors.state && "border-error")}
+              />
+              <input 
+                type="text" 
+                placeholder="Postal Code"
+                className={inputClass}
+              />
             </div>
           </div>
 
           {/* Map Geofence */}
-          <div className="w-full h-48 sm:h-64 rounded-xl border border-outline_variant/20 overflow-hidden relative group">
+          <div className="w-full h-48 sm:h-72 rounded-2xl border border-stone dark:border-[#2a2520] overflow-hidden relative group">
              {/* Map Placeholder Image */}
              <div className="absolute inset-0 bg-[#e5e7eb]">
                <Image 
                  src="https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=1200&auto=format&fit=crop" 
                  alt="Map view" 
                  fill 
-                 className="object-cover opacity-60" 
+                 className="object-cover opacity-60 mix-blend-multiply dark:mix-blend-normal" 
                />
                
                {/* Pin */}
-               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-floating border-2 border-white">
-                 <div className="w-2.5 h-2.5 rounded-full bg-white" />
+               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-floating border-4 border-white dark:border-[#1a1916]">
+                 <div className="w-3 h-3 rounded-full bg-white" />
                </div>
-               {/* Geofence area simulation */}
-               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 bg-primary/10 border border-primary/30 rounded-full" />
+               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-primary/10 border-2 border-primary/20 rounded-full animate-pulse" />
              </div>
              
              {/* Map Status Bar */}
-             <div className="absolute bottom-4 inset-x-4 bg-surface_container_lowest dark:bg-[#131820]/90 backdrop-blur-md rounded-lg p-3 flex justify-between items-center shadow-sm border border-outline_variant/10">
-               <div className="flex items-center gap-2">
-                 <Target size={14} className="text-[#835500]" />
-                 <span className="text-[10px] font-bold text-on_surface dark:text-[#e8eaf0] uppercase tracking-widest">Geofence Coordinates Sync Enabled</span>
+             <div className="absolute bottom-6 inset-x-6 bg-white/90 dark:bg-card/90 backdrop-blur-xl rounded-xl p-4 flex justify-between items-center shadow-floating border border-stone/50 dark:border-white/5">
+               <div className="flex items-center gap-3">
+                 <div className="w-8 h-8 rounded-xl bg-secondary/10 flex items-center justify-center">
+                   <Target size={16} className="text-secondary" />
+                 </div>
+                 <span className="text-[10px] font-bold text-on_surface dark:text-[#e8eaf0] uppercase tracking-widest">Geofence Sync Enabled</span>
                </div>
-               <button className="text-[10px] font-bold text-primary uppercase tracking-widest hover:opacity-80">
-                 Edit Pin
+               <button type="button" className="text-[10px] font-bold text-primary uppercase tracking-widest hover:opacity-80">
+                 Reposition Pin
                </button>
              </div>
           </div>
 
           {/* Actions */}
-          <div className="pt-8 border-t border-outline_variant/10 flex justify-between items-center">
-            <button type="button" className="text-xs font-bold text-on_surface_variant dark:text-[#9ba3b8] uppercase tracking-widest hover:text-on_surface dark:hover:text-[#e8eaf0] dark:text-[#e8eaf0] transition-colors leading-[48px]">
-              Save As Draft
+          <div className="pt-10 border-t border-stone dark:border-[#2a2520] flex flex-col sm:flex-row justify-between items-center gap-6">
+            <button type="button" className="text-xs font-bold text-on_surface_variant hover:text-primary transition-colors uppercase tracking-[0.15em] order-2 sm:order-1">
+              Save To Vault
             </button>
             <Button 
               type="submit" 
               disabled={!isValid}
-              className="h-12 px-8 bg-primary text-on_primary shadow-floating font-semibold rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
+              size="lg"
+              className="h-14 px-10 bg-primary text-on_primary shadow-floating font-bold rounded-xl uppercase tracking-widest text-xs order-1 sm:order-2 w-full sm:w-auto"
             >
               Continue To Documents <ArrowRight className="ml-2 w-4 h-4" />
             </Button>
@@ -202,38 +229,49 @@ export default function MintStep1() {
       </div>
 
       {/* Info Cards Bottom */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
-        <div className="bg-primary/5 border border-primary/10 rounded-2xl p-6">
-          <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center text-white mb-4">
-            <CheckCircle2 size={12} />
-          </div>
-          <h4 className="font-bold text-on_surface dark:text-[#e8eaf0] mb-3 text-sm">Regulatory Compliance</h4>
-          <p className="text-xs text-on_surface_variant dark:text-[#9ba3b8] leading-relaxed">
-            All submissions are cross-referenced with regional land registries automatically via <a href="#" className="text-primary hover:underline">API v2.4</a>.
-          </p>
-        </div>
-
-        <div className="bg-[#835500]/5 border border-[#835500]/10 rounded-2xl p-6">
-          <div className="w-6 h-6 rounded-full bg-[#835500] flex items-center justify-center text-white mb-4">
-            <Shield size={12} />
-          </div>
-          <h4 className="font-bold text-on_surface dark:text-[#e8eaf0] mb-3 text-sm">Immutable Records</h4>
-          <p className="text-xs text-on_surface_variant dark:text-[#9ba3b8] leading-relaxed">
-            Data submitted here is hashed and prepared for the Ethereum Mainnet ledger.
-          </p>
-        </div>
-
-        <div className="bg-surface_container_low dark:bg-[#161b27] border border-outline_variant/10 rounded-2xl p-6">
-          <div className="w-6 h-6 rounded-full bg-on_surface_variant flex items-center justify-center text-white mb-4">
-            <Clock size={12} />
-          </div>
-          <h4 className="font-bold text-on_surface dark:text-[#e8eaf0] mb-3 text-sm">Need Help?</h4>
-          <p className="text-xs text-on_surface_variant dark:text-[#9ba3b8] leading-relaxed">
-            Our legal auditors are available 24/7 to help you with property classification.
-          </p>
-        </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <InfoBadge 
+          icon={<CheckCircle2 size={14} />} 
+          title="Legal Compliance" 
+          desc="Cross-referenced with ULPIN database."
+          accent="primary"
+        />
+        <InfoBadge 
+          icon={<Shield size={14} />} 
+          title="Encryption" 
+          desc="Hashed on-chain for record immutability."
+          accent="secondary"
+        />
+        <InfoBadge 
+          icon={<Clock size={14} />} 
+          title="Support" 
+          desc="24/7 legal auditing assistance available."
+          accent="neutral"
+        />
       </div>
 
+    </div>
+  );
+}
+
+function InfoBadge({ icon, title, desc, accent }: { icon: any, title: string, desc: string, accent: "primary" | "secondary" | "neutral" }) {
+  const styles = {
+    primary:   "bg-primary/5 border-primary/10 text-primary",
+    secondary: "bg-secondary/5 border-secondary/10 text-secondary",
+    neutral:   "bg-stone/10 border-stone/20 text-on_surface_variant",
+  }[accent];
+
+  return (
+    <div className={cn("flex items-start gap-4 p-5 rounded-2xl border", styles)}>
+      <div className={cn("w-8 h-8 rounded-xl flex items-center justify-center shrink-0", 
+        accent === "primary" ? "bg-primary text-white" : accent === "secondary" ? "bg-secondary text-white" : "bg-on_surface_variant text-white"
+      )}>
+        {icon}
+      </div>
+      <div>
+        <h4 className="font-bold text-on_surface dark:text-[#e8eaf0] text-[11px] uppercase tracking-wider mb-1">{title}</h4>
+        <p className="text-[11px] text-on_surface_variant dark:text-[#9ba3b8] leading-tight font-medium opacity-80">{desc}</p>
+      </div>
     </div>
   );
 }

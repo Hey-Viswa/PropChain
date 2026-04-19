@@ -1,158 +1,54 @@
 "use client";
 
 import { useState } from "react";
-import { Shield, ShieldCheck, Lock, ChevronRight, Zap } from "lucide-react";
-import { useOracleAccessStore } from "@/store/useOracleAccessStore";
+import { Shield, ChevronRight, CheckCircle2 } from "lucide-react";
 import { useAdminRole } from "@/hooks/useAdminRole";
-import OracleAccessModal from "@/components/shared/OracleAccessModal";
-import Link from "next/link";
+import { useOracleAccessStore } from "@/store/useOracleAccessStore";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import OracleAccessModal from "./OracleAccessModal";
 
-/**
- * OracleAccessCard - Prominent card shown on dashboard for users with Oracle privileges
- * Makes it easy to enter Oracle mode with visual feedback
- */
 export default function OracleAccessCard() {
+  const { isOracle } = useAdminRole();
   const { isOracleMode } = useOracleAccessStore();
-  const { isOracle: hasOracleRole, isLoading } = useAdminRole();
   const [showModal, setShowModal] = useState(false);
 
-  // Don't show if user doesn't have Oracle role
-  if (!hasOracleRole || isLoading) return null;
+  if (!isOracle || isOracleMode) return null;
 
-  // Already in Oracle mode - show quick access
-  if (isOracleMode) {
-    return (
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary to-primary_container dark:from-[#3D1F10] dark:to-[#1f0d06] p-6 shadow-lg">
-        {/* Animated background effect */}
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-shimmer" />
-        
-        <div className="relative z-10 flex items-start justify-between gap-4">
-          <div className="flex-1 space-y-3">
-            <div className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
-                <ShieldCheck className="w-5 h-5 text-white" />
+  return (
+    <>
+      <Card
+        className={cn(
+          "bg-white dark:bg-card border-stone/50 dark:border-white/5",
+          "rounded-2xl overflow-hidden shadow-sm hover:shadow-card transition-all"
+        )}
+      >
+        <CardContent className="p-6">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="flex items-center gap-5">
+              <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20 shrink-0">
+                <Shield className="w-6 h-6 text-primary" />
               </div>
               <div>
-                <h3 className="text-lg font-bold text-white">
-                  Oracle Mode Active
+                <h3 className="text-lg font-bold font-display text-on_surface dark:text-[#e8eaf0] tracking-tight">
+                  Authorized Oracle Node Detected
                 </h3>
-                <p className="text-sm text-white/80">
-                  Government Authority Panel
+                <p className="text-sm text-on_surface_variant dark:text-muted-foreground mt-0.5 font-medium">
+                  Active government credentials found. Switch to Oracle mode to access the verification queue.
                 </p>
               </div>
             </div>
-
-            <div className="flex flex-wrap gap-2">
-              <Link
-                href="/oracle/queue"
-                className="inline-flex items-center gap-1.5 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white px-4 py-2 rounded-lg text-sm font-medium transition-all"
-              >
-                Verification Queue
-                <ChevronRight className="w-4 h-4" />
-              </Link>
-              <Link
-                href="/oracle/users"
-                className="inline-flex items-center gap-1.5 bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-lg text-sm font-medium transition-all"
-              >
-                User Monitoring
-                <ChevronRight className="w-4 h-4" />
-              </Link>
-            </div>
+            
+            <Button 
+              onClick={() => setShowModal(true)}
+              className="w-full md:w-auto h-11 px-8 rounded-xl bg-primary text-on_primary font-bold uppercase tracking-widest text-[10px] shadow-lg flex items-center justify-center gap-2 group"
+            >
+              Enter Oracle Mode
+              <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+            </Button>
           </div>
-
-          <div className="relative">
-            <div className="absolute inset-0 bg-success/20 rounded-full blur-xl animate-pulse" />
-            <div className="relative w-3 h-3 bg-success rounded-full" />
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Not in Oracle mode - show access button
-  return (
-    <>
-      <div 
-        onClick={() => setShowModal(true)}
-        className={cn(
-          "relative overflow-hidden rounded-2xl cursor-pointer group",
-          "bg-surface_container_low dark:bg-[#131820]",
-          "border-2 border-primary/20 dark:border-[#3D1F10]",
-          "hover:border-primary/40 dark:hover:border-[#6B2F14]",
-          "transition-all duration-300 ease-out",
-          "hover:shadow-[0_8px_32px_rgba(217,119,87,0.12)]",
-          "dark:hover:shadow-[0_8px_32px_rgba(232,152,116,0.1)]"
-        )}
-      >
-        {/* Gradient overlay on hover */}
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-
-        <div className="relative z-10 p-6">
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex-1 space-y-4">
-              {/* Header */}
-              <div className="flex items-start gap-3">
-                <div className="w-12 h-12 rounded-xl bg-primary_fixed dark:bg-[#3D1F10] flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
-                  <Shield className="w-6 h-6 text-primary dark:text-[#E89874]" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-headline-sm font-bold text-on_surface dark:text-[#e8eaf0]">
-                    Oracle Portal
-                  </h3>
-                  <p className="text-body-sm text-on_surface_variant dark:text-[#9ba3b8] mt-0.5">
-                    Government Authority Access
-                  </p>
-                </div>
-              </div>
-
-              {/* Features */}
-              <div className="grid grid-cols-3 gap-3">
-                {[
-                  { icon: ShieldCheck, label: "Verified Role", color: "text-success" },
-                  { icon: Lock, label: "Secure Auth", color: "text-primary dark:text-[#E89874]" },
-                  { icon: Zap, label: "Quick Access", color: "text-warning" },
-                ].map((item) => (
-                  <div
-                    key={item.label}
-                    className="flex flex-col items-center gap-1.5 p-3 rounded-xl bg-surface_container dark:bg-[#1c2333] group-hover:bg-surface_container_high dark:group-hover:bg-[#242c3d] transition-colors"
-                  >
-                    <item.icon className={cn("w-5 h-5", item.color)} />
-                    <span className="text-[11px] font-medium text-center text-on_surface_variant dark:text-[#9ba3b8]">
-                      {item.label}
-                    </span>
-                  </div>
-                ))}
-              </div>
-
-              {/* Action button */}
-              <button
-                className="w-full flex items-center justify-center gap-2 bg-primary text-on_primary rounded-xl px-6 py-3 text-sm font-medium hover:opacity-90 transition-all active:scale-[0.98] group-hover:shadow-lg"
-              >
-                <ShieldCheck className="w-4 h-4" />
-                Enter Oracle Mode
-                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </button>
-
-              {/* Keyboard shortcut hint */}
-              <p className="text-label-sm text-on_surface_variant/60 dark:text-[#9ba3b8]/50 text-center">
-                Quick access:{" "}
-                <kbd className="font-mono text-[10px] bg-surface_container dark:bg-[#1c2333] px-1.5 py-0.5 rounded">
-                  Ctrl
-                </kbd>
-                {" + "}
-                <kbd className="font-mono text-[10px] bg-surface_container dark:bg-[#1c2333] px-1.5 py-0.5 rounded">
-                  Shift
-                </kbd>
-                {" + "}
-                <kbd className="font-mono text-[10px] bg-surface_container dark:bg-[#1c2333] px-1.5 py-0.5 rounded">
-                  O
-                </kbd>
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
 
       <OracleAccessModal
         isOpen={showModal}
@@ -160,4 +56,12 @@ export default function OracleAccessCard() {
       />
     </>
   );
+}
+
+function Card({ children, className }: { children: React.ReactNode; className?: string }) {
+  return <div className={cn("border bg-card text-card-foreground shadow-sm", className)}>{children}</div>;
+}
+
+function CardContent({ children, className }: { children: React.ReactNode; className?: string }) {
+  return <div className={cn("p-6 pt-0", className)}>{children}</div>;
 }

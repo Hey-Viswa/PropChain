@@ -77,7 +77,7 @@ export default function AuditTimeline({ entries, className }: AuditTimelineProps
                 <Icon className={cn("w-4 h-4", config.color)} />
               </div>
               {!isLast && (
-                <div className="w-px flex-1 bg-surface_container dark:bg-[#1c2333] mt-1 min-h-[24px]" />
+                <div className="w-px flex-1 bg-stone/10 dark:bg-card mt-1 min-h-[24px]" />
               )}
             </div>
 

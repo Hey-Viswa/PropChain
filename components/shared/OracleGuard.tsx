@@ -1,121 +1,42 @@
 "use client";
-import { useOracleAccessStore }
-  from "@/store/useOracleAccessStore";
-import { useAdminRole }
-  from "@/hooks/useAdminRole";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { Shield, ShieldCheck } from "lucide-react";
-import OracleAuthButton from "@/components/shared/OracleAuthButton";
 
-export default function OracleGuard({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const router = useRouter();
+import { useOracleAccessStore } from "@/store/useOracleAccessStore";
+import { ShieldAlert, Lock, ArrowLeft } from "lucide-react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import OracleAuthButton from "./OracleAuthButton";
+
+export default function OracleGuard({ children }: { children: React.ReactNode }) {
   const { isOracleMode } = useOracleAccessStore();
-  const { isOracle, isLoading } = useAdminRole();
-  const [mounted, setMounted]     = useState(false);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  // Wait for mount and DB check
-  if (!mounted || isLoading) {
+  if (!isOracleMode) {
     return (
-      <div className="space-y-6 animate-pulse p-2">
-        <div className="h-8 w-64
-                        bg-surface_container
-                        dark:bg-[#1c2333]
-                        rounded-lg" />
-        <div className="grid grid-cols-2
-                        md:grid-cols-4 gap-4">
-          {[...Array(4)].map((_, i) => (
-            <div key={i}
-                 className="bg-surface_container_lowest
-                             dark:bg-[#131820]
-                             rounded-xl p-5 space-y-3">
-              <div className="h-4 w-20
-                              bg-surface_container
-                              dark:bg-[#1c2333]
-                              rounded" />
-              <div className="h-8 w-16
-                              bg-surface_container
-                              dark:bg-[#1c2333]
-                              rounded" />
-            </div>
-          ))}
+      <div className="min-h-[70vh] flex flex-col items-center justify-center p-6 text-center">
+        <div className="w-20 h-20 rounded-[32px] bg-primary/10 flex items-center justify-center mb-8 border border-primary/20 shadow-sm animate-fade-in">
+          <Lock className="w-10 h-10 text-primary" />
         </div>
-        <div className="bg-surface_container_lowest
-                        dark:bg-[#131820]
-                        rounded-2xl p-6 space-y-4">
-          <div className="h-6 w-40
-                          bg-surface_container
-                          dark:bg-[#1c2333]
-                          rounded" />
-          <div className="h-48
-                          bg-surface_container
-                          dark:bg-[#1c2333]
-                          rounded-xl" />
+        
+        <h1 className="text-3xl font-bold font-display text-on_surface dark:text-[#e8eaf0] mb-4 tracking-tight">
+          Restricted Institutional Access
+        </h1>
+        
+        <p className="text-on_surface_variant dark:text-muted-foreground max-w-md mb-10 leading-relaxed font-medium">
+          This sector requires an active Oracle session. Please authorize your government-linked credentials to continue.
+        </p>
+
+        <div className="flex flex-col sm:flex-row items-center gap-4 w-full max-w-sm justify-center">
+          <OracleAuthButton variant="page" />
         </div>
+
+        <Link href="/dashboard" className="mt-12 group">
+          <Button variant="ghost" className="text-on_surface_variant hover:text-primary font-bold uppercase tracking-widest text-[10px] h-10">
+            <ArrowLeft className="w-3.5 h-3.5 mr-2 transition-transform group-hover:-translate-x-1" />
+            Back to Dashboard
+          </Button>
+        </Link>
       </div>
     );
   }
 
-  // User has Oracle role from Clerk OR has entered passphrase (isOracleMode)
-  // Either condition grants access
-  if (isOracle || isOracleMode) {
-    return <>{children}</>;
-  }
-
-  // Access denied - user doesn't have Oracle role
-  return (
-    <>
-      <div className="flex flex-col items-center
-                    justify-center min-h-[60vh]
-                    gap-6">
-
-        {/* Icon */}
-        <div className="w-16 h-16 rounded-2xl
-                      bg-error_container
-                      dark:bg-[#2d0a0a]
-                      flex items-center
-                      justify-center">
-          <Shield className="w-8 h-8 text-error
-                            dark:text-[#f87171]" />
-        </div>
-
-        {/* Text */}
-        <div className="text-center max-w-sm">
-          <h2 className="text-title-md font-bold
-                        text-on_surface
-                        dark:text-[#e8eaf0] mb-2">
-            Access Denied
-          </h2>
-          <p className="text-body-md
-                       text-on_surface_variant
-                       dark:text-[#9ba3b8]">
-            You do not have Oracle privileges.
-            This area is restricted to authorized
-            government officials only.
-          </p>
-        </div>
-
-        {/* Secondary - go back */}
-        <button
-          onClick={() => router.push("/dashboard")}
-          className="text-body-md
-                   text-on_surface_variant
-                   dark:text-[#9ba3b8]
-                   hover:text-on_surface
-                   dark:hover:text-[#e8eaf0]
-                   transition-colors">
-          ← Back to Dashboard
-        </button>
-
-      </div>
-    </>
-  );
+  return <>{children}</>;
 }

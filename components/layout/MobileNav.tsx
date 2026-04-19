@@ -36,8 +36,8 @@ export default function MobileNav() {
       ];
 
   return (
-    <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-cream/95 dark:bg-[#0f0e0d]/95 border-t border-stone dark:border-[#2a2520] backdrop-blur-md">
-      <div className="flex items-center justify-around px-1 py-1 safe-area-pb">
+    <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-cream/95 dark:bg-[#0f0e0d]/95 border-t border-stone/50 dark:border-[#2a2520] backdrop-blur-xl">
+      <div className="flex items-center justify-around px-1 py-2 pb-[calc(8px+env(safe-area-inset-bottom,0))]">
         {items.map((item) => {
           const Icon = item.icon;
           const active = item.href === "/dashboard"
@@ -49,25 +49,22 @@ export default function MobileNav() {
               key={item.href}
               href={item.href}
               className={cn(
-                "flex flex-col items-center gap-0.5 px-3 py-2 rounded-xl transition-colors min-w-0",
+                "flex flex-col items-center gap-1 px-3 py-1 rounded-xl transition-all min-w-0 active:scale-90",
                 active
                   ? "text-primary dark:text-[#E89874]"
                   : "text-on_surface_variant/60 dark:text-[#6b6560] hover:text-on_surface dark:hover:text-[#9b9690]"
               )}
             >
-              <Icon size={item.label === "Mint" ? 20 : 18} className={cn(
-                item.label === "Mint" && "p-0.5 bg-primary text-on_primary rounded-lg",
+              <Icon size={item.label === "Mint" ? 24 : 22} className={cn(
+                item.label === "Mint" && "p-1 bg-primary text-on_primary rounded-xl shadow-sm",
                 active && item.label !== "Mint" && "opacity-100"
               )} />
               <span className={cn(
-                "text-[9px] font-medium tracking-wide",
-                active ? "font-semibold" : ""
+                "text-[10px] font-bold tracking-tight uppercase",
+                active ? "opacity-100" : "opacity-60"
               )}>
                 {item.label}
               </span>
-              {active && (
-                <div className="w-1 h-1 rounded-full bg-primary dark:bg-[#E89874]" />
-              )}
             </Link>
           );
         })}

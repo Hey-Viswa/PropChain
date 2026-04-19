@@ -77,7 +77,7 @@ function OracleUsersContent() {
       {/* Header */}
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold font-display text-on_surface dark:text-[#e8e6e2] tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-bold font-display text-on_surface text-on_surface dark:text-[#e8eaf0] tracking-tight">
             User Monitoring
           </h1>
           <p className="text-sm text-[#8a8480] dark:text-[#7a7470] mt-1">
@@ -107,7 +107,7 @@ function OracleUsersContent() {
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
         {[
-          { label: "Total Users",   value: users.length,  color: "text-on_surface dark:text-[#e8e6e2]" },
+          { label: "Total Users",   value: users.length,  color: "text-on_surface text-on_surface dark:text-[#e8eaf0]" },
           { label: "KYC Verified",  value: kycCount,       color: "text-success" },
           { label: "Flagged",       value: flaggedCount,   color: "text-error" },
           { label: "Active Today",  value: activeCount,    color: "text-primary dark:text-[#E89874]" },
@@ -143,7 +143,7 @@ function OracleUsersContent() {
               onClick={() => setFilter(f.key)}
               className={cn(
                 "h-9 text-xs px-3",
-                filter !== f.key && "border-stone dark:border-[#2a2520] text-[#8a8480] dark:text-[#7a7470]"
+                filter !== f.key && "border-stone dark:border-white/5 text-[#8a8480] dark:text-[#7a7470]"
               )}
             >
               {f.label}
@@ -162,12 +162,12 @@ function OracleUsersContent() {
           {loading ? (
             <div className="p-5 space-y-3">
               {[...Array(4)].map((_, i) => (
-                <div key={i} className="h-16 rounded-xl bg-sand dark:bg-[#211f1c] animate-pulse" />
+                <div key={i} className="h-16 rounded-xl bg-sand dark:bg-white/5 animate-pulse" />
               ))}
             </div>
           ) : users.length === 0 ? (
             <div className="py-14 flex flex-col items-center gap-3 px-6 text-center">
-              <div className="w-10 h-10 rounded-full bg-sand dark:bg-[#211f1c] flex items-center justify-center">
+              <div className="w-10 h-10 rounded-full bg-sand dark:bg-white/5 flex items-center justify-center">
                 <Activity className="w-5 h-5 text-[#8a8480]" />
               </div>
               <p className="text-sm text-[#8a8480] dark:text-[#7a7470]">No users found</p>
@@ -187,7 +187,7 @@ function OracleUsersContent() {
 
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <p className="text-sm font-semibold text-on_surface dark:text-[#e8e6e2] truncate">
+                        <p className="text-sm font-semibold text-on_surface text-on_surface dark:text-[#e8eaf0] truncate">
                           {user.userData?.name ?? "Unknown User"}
                         </p>
                         {user.userData?.kycVerified && (

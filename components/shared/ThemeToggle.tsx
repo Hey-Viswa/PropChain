@@ -1,5 +1,5 @@
 "use client";
-import { Sun, Moon, Monitor } from "lucide-react";
+import { Sun, Moon } from "lucide-react";
 import { useTheme } from "@/hooks/useTheme";
 
 export default function ThemeToggle() {
@@ -7,19 +7,19 @@ export default function ThemeToggle() {
 
   if (!mounted) {
     return (
-      <div className="w-9 h-9 rounded-lg bg-surface_container dark:bg-[#1c2333] animate-pulse" />
+      <div className="w-8 h-8 rounded-xl bg-stone/10 animate-pulse" />
     );
   }
 
   return (
     <button
-      onClick={toggleTheme}
-      className="w-9 h-9 rounded-lg flex items-center justify-center transition-colors bg-surface_container dark:bg-[#1c2333] hover:bg-surface_container_high text-on_surface_variant dark:text-[#9ba3b8] hover:text-on_surface dark:hover:text-[#e8eaf0] dark:text-[#e8eaf0] dark:bg-surface-container-dark dark:hover:bg-surface-container-high-dark dark:text-on-surface-variant-dark"
+      onClick={(e) => toggleTheme(e)}
+      className="w-8 h-8 rounded-xl flex items-center justify-center transition-colors text-on_surface_variant hover:text-primary dark:text-muted-foreground dark:hover:text-[#E89874]"
       aria-label="Toggle theme">
-      <div className="transition-transform duration-300 ease-out rotate-0 dark:-rotate-12">
+      <div className="transition-transform duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] rotate-0 dark:-rotate-90">
         {isDark
-          ? <Sun className="w-4 h-4 transition-all duration-300" />
-          : <Moon className="w-4 h-4 transition-all duration-300" />
+          ? <Sun className="w-[18px] h-[18px]" />
+          : <Moon className="w-[18px] h-[18px]" />
         }
       </div>
     </button>
