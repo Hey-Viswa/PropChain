@@ -75,10 +75,11 @@ When Claude Code Sonnet 4.6 is assigned an audit/review task, the review must be
   - docs/MAIN_HANDOVER.md
 - Verification commands and results:
   - `git commit -m "docs: enforce per-phase iteration documentation protocol" docs/PHASE_DOCUMENTATION_PROTOCOL.md docs/templates/PHASE_ITERATION_ENTRY_TEMPLATE.md docs/phase_1_iteration_log.md docs/phase_1_status.md`: succeeded (`d478fc8`).
+  - `git commit -m "docs: log per-phase documentation protocol rollout" docs/MAIN_HANDOVER.md`: succeeded (`2d51fc4`).
   - `git push origin main`: failed with non-fast-forward rejection because remote `main` is ahead.
   - Manual consistency review across protocol, template, phase status, and iteration log: completed.
 - Open issues/blockers:
-  - Commit `d478fc8` is local only until branch divergence with `origin/main` is resolved.
+  - Commits `d478fc8` and `2d51fc4` are local only until branch divergence with `origin/main` is resolved.
 - Next steps:
   - Run `git pull --rebase origin main`.
   - Resolve conflicts if prompted.
