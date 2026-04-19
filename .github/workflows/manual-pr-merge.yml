@@ -1,0 +1,71 @@
+name: Manual PR Merge
+
+on:
+  workflow_dispatch:
+    inputs:
+      pull_request_number:
+        description: "Pull request number to merge"
+        required: true
+        type: number
+      merge_method:
+        description: "Merge method"
+        required: true
+        default: "squash"
+        type: choice
+        options:
+          - merge
+          - squash
+          - rebase
+      delete_branch:
+        description: "Delete source branch after merge"
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  merge-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Merge pull request
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const pull_number = Number(core.getInput('pull_request_number'));
+            const merge_method = core.getInput('merge_method');
+            const delete_branch = core.getInput('delete_branch') === 'true';
+
+            const { data: pr } = await github.rest.pulls.get({
+              owner,
+              repo,
+              pull_number
+            });
+
+            if (pr.state !== 'open') {
+              core.setFailed(`PR #${pull_number} is not open (state: ${pr.state}).`);
+              return;
+            }
+
+            await github.rest.pulls.merge({
+              owner,
+              repo,
+              pull_number,
+              merge_method
+            });
+
+            core.info(`Merged PR #${pull_number} with method '${merge_method}'.`);
+
+            if (delete_branch && pr.head?.repo?.full_name === `${owner}/${repo}`) {
+              const ref = `heads/${pr.head.ref}`;
+              await github.rest.git.deleteRef({
+                owner,
+                repo,
+                ref
+              });
+              core.info(`Deleted source branch '${pr.head.ref}'.`);
+            }
