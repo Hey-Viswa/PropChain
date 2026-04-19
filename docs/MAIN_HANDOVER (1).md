@@ -32,6 +32,58 @@ Every agent must follow these steps automatically at task start:
 
 ## Session Log
 
+### 2026-04-19T17:20:00Z | Session Culmination: UI Layer Consolidation
+- Request summary: Summarize all session issues (alignment, indentation, arrangement) and assign a precision audit task to Claude.
+- Work completed:
+  - **Narrative Synthesis**: Compiled all UI/UX corrections into a single master directive.
+  - **Claude Mission**: Created `docs/CLAUDE_UI_AUDIT.md` to guide the next agent through a surgical precision audit.
+  - **System Boundary**: Explicitly defined that the project is currently in the **UI Layer** phase with no active backend integration.
+- Files changed:
+  - docs/CLAUDE_UI_AUDIT.md
+- Verification commands and results:
+  - Consolidated plan verified; all discussed issues (rounding, palette, alignment) are captured.
+- Open issues/blockers:
+  - None for UI Layer; transition to logic layer pending audit completion.
+- Next steps:
+  - **Claude** to execute the precision audit and fix remaining micro-mistakes in alignment and indentation.
+
+### 2026-04-19T17:05:00Z | Component Polish & Transfer Action Fix
+- Request summary: Fix squared and discolored buttons on the /properties page.
+- Work completed:
+  - **Button Component**: Standardized all button rounding to strictly use `rounded-xl`. Removed experimental `min()` radius logic that was causing squaring.
+  - **Color Refinement**: Redefined the `secondary` button variant to use a professional "institutional stone" style (`bg-stone/10`) instead of the previous amber/discolored tint.
+  - **Property Card**: Optimized the action area in `PropertyCard.tsx`. Switched "Initiate Transfer" to the primary `default` variant with a shadow for better CTA prominence. Standardized button sizing and internal padding.
+- Files changed:
+  - components/ui/button.tsx
+  - components/shared/PropertyCard.tsx
+  - docs/PLAN_FIX_TRANSFER_BUTTON.md
+- Verification commands and results:
+  - Verified button rounding on desktop/mobile view simulations.
+- Open issues/blockers:
+  - None.
+- Next steps:
+  - Continue monitoring for non-standard button variants in secondary modules.
+
+### 2026-04-19T16:45:00Z | Sidebar Restructuring & Runtime Fixes
+- Request summary: Move avatar/theme toggle to sidebar, fix ShieldCheck error, and resolve missing Project ID error.
+- Work completed:
+  - **Sidebar Overhaul**: Relocated `UserButton` and `ThemeToggle` to a new identity footer in `Sidebar.tsx`.
+  - **Runtime Fix**: Added missing `ShieldCheck` import to `Sidebar.tsx` to resolve the white-screen error.
+  - **Web3 Resilience**: Updated `lib/wagmi.ts` to handle missing Project IDs gracefully, ensuring the app loads even without WalletConnect configured.
+  - **Institutional Polish**: Improved sidebar vertical spacing and standardized footer padding.
+- Files changed:
+  - components/layout/Sidebar.tsx
+  - components/layout/Navbar.tsx
+  - components/shared/ThemeToggle.tsx
+  - lib/wagmi.ts
+- Verification commands and results:
+  - Verified `ShieldCheck` is now defined.
+  - Verified Sidebar layout on desktop/tablet widths.
+- Open issues/blockers:
+  - WalletConnect requires a valid `NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID` in `.env.local` to function, but no longer crashes the app.
+- Next steps:
+  - Implement full mobile responsiveness for the new Sidebar structure.
+
 ### 2026-04-19T16:15:00Z | Orchestral Sync & Design System Harmonization
 - Request summary: Fix remaining rounding inconsistencies, eliminate all non-system hex codes (blues/grays), and ensure absolute text visibility in dark mode.
 - Work completed:

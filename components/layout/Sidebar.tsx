@@ -21,6 +21,7 @@ import {
   Users,
   Globe,
   Shield,
+  ShieldCheck,
   Settings2,
   SlidersHorizontal,
   LogOut,

@@ -41,11 +41,13 @@ export default function PropertyCard({ property }: PropertyCardProps) {
       </div>
 
       {/* Row 4: Actions */}
-      <div className="flex items-center justify-between mt-auto pt-0">
-        <Link href={`/properties/${property.id}`}>
-          <Button variant="ghost" size="sm">View Details</Button>
+      <div className="flex items-center justify-between mt-auto pt-0 gap-3">
+        <Link href={`/properties/${property.id}`} className="flex-1">
+          <Button variant="ghost" size="sm" className="w-full font-bold uppercase tracking-widest text-[10px]">
+            View Details
+          </Button>
         </Link>
-        <Button variant="secondary" size="sm">
+        <Button variant="default" size="sm" className="flex-1 font-bold uppercase tracking-widest text-[10px] shadow-lg">
           Initiate Transfer
         </Button>
       </div>
