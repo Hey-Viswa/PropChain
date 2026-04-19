@@ -77,10 +77,10 @@ export default function SettingsPage() {
       
       {/* HEADER */}
       <div>
-        <h1 className="text-3xl font-bold font-display text-on_surface dark:text-[#e8eaf0] tracking-tight">
+        <h1 className="text-3xl font-bold font-display text-foreground tracking-tight">
           Account Settings
         </h1>
-        <p className="text-sm text-on_surface_variant dark:text-[#9ba3b8] mt-1">
+        <p className="text-sm text-muted-foreground mt-1">
           Manage your institutional identity, security, and preferences.
         </p>
       </div>
@@ -95,7 +95,7 @@ export default function SettingsPage() {
               <CardDescription>Verified Clerk profile</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="flex flex-col items-center text-center p-6 bg-sand dark:bg-[#211f1c] rounded-2xl border border-stone/50 dark:border-white/5">
+              <div className="flex flex-col items-center text-center p-6 bg-muted/30 rounded-2xl border border-border">
                 <div className="relative">
                   {user?.imageUrl ? (
                     <img src={user.imageUrl} alt="Profile" className="w-20 h-20 rounded-full object-cover border-4 border-white dark:border-[#1a1916] shadow-sm" />
@@ -115,10 +115,10 @@ export default function SettingsPage() {
               </div>
 
               <div className="space-y-3">
-                <div className="flex items-center justify-between p-3 rounded-xl bg-surface border border-stone/50 dark:border-white/5">
+                <div className="flex items-center justify-between p-3 rounded-xl bg-muted/30 border border-border">
                   <div className="flex items-center gap-2.5">
                     <Fingerprint className="w-4 h-4 text-on_surface_variant dark:text-muted-foreground" />
-                    <span className="text-sm font-medium text-on_surface dark:text-[#e8eaf0]">KYC Status</span>
+                    <span className="text-sm font-medium text-foreground">KYC Status</span>
                   </div>
                   {kycVerified ? (
                     <Badge className="bg-success/10 text-success border-success/10 px-3 py-1 font-bold tracking-wider">Verified</Badge>
@@ -154,7 +154,7 @@ export default function SettingsPage() {
                       )}
                     >
                       <Icon size={16} className={cn(resolvedTheme === v ? "text-primary" : "text-on_surface_variant dark:text-muted-foreground")} />
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-on_surface dark:text-[#e8eaf0]">{v}</span>
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-foreground">{v}</span>
                     </button>
                   ))}
                 </div>
@@ -180,7 +180,7 @@ export default function SettingsPage() {
             <CardContent className="space-y-6">
               {isConnected ? (
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between p-4 bg-sand dark:bg-[#211f1c] rounded-2xl border border-stone/50 dark:border-white/5">
+                  <div className="flex items-center justify-between p-4 bg-muted/30 rounded-2xl border border-border">
                     <div className="flex items-center gap-3 overflow-hidden">
                       <div className="w-2 h-2 rounded-full bg-success animate-pulse shrink-0" />
                       <span className="font-mono text-sm truncate">{address}</span>
@@ -255,7 +255,7 @@ export default function SettingsPage() {
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between gap-4">
                 <div className="flex-1">
-                  <p className="text-sm font-bold text-on_surface dark:text-[#e8eaf0]">Revoke Sessions</p>
+                  <p className="text-sm font-bold text-foreground">Revoke Sessions</p>
                   <p className="text-xs text-on_surface_variant dark:text-muted-foreground mt-0.5">Sign out of all authorized devices</p>
                 </div>
                 <Button variant="outline" size="sm" className="h-9 px-5 border-destructive/30 text-destructive hover:bg-destructive/10 font-bold uppercase tracking-widest text-[10px] rounded-xl">

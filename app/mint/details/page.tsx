@@ -60,18 +60,18 @@ export default function MintStep1() {
     router.push("/mint/upload");
   };
 
-  const labelClass = "block text-xs font-bold text-on_surface dark:text-[#e8eaf0] mb-2 uppercase tracking-wider";
-  const inputClass = "w-full bg-sand/50 dark:bg-[#161b27] border-stone dark:border-[#2a2520] focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-12 px-4 text-on_surface dark:text-[#e8eaf0] transition-all";
+  const labelClass = "block text-xs font-bold text-foreground mb-2 uppercase tracking-wider";
+  const inputClass = "w-full bg-muted/30 dark:bg-input border border-border focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-12 px-4 text-foreground placeholder:text-muted-foreground/60 transition-all";
 
   return (
     <div className="max-w-[1000px] mx-auto space-y-8 pb-20">
       
       {/* Page Title & Intro */}
       <div className="text-center max-w-2xl mx-auto mt-4 mb-12">
-        <h1 className="font-display text-4xl sm:text-5xl font-bold text-on_surface dark:text-[#e8eaf0] mb-4">
+        <h1 className="font-display text-4xl sm:text-5xl font-bold text-foreground mb-4">
           Mint Property NFT
         </h1>
-        <p className="text-on_surface_variant dark:text-[#9ba3b8] text-base">
+        <p className="text-muted-foreground text-base">
           Initiate the tokenization process by providing legal identification and physical characteristics of your asset.
         </p>
       </div>
@@ -83,7 +83,7 @@ export default function MintStep1() {
             <Info size={20} className="text-primary" />
           </div>
           <div>
-            <h2 className="text-lg font-bold font-display text-on_surface dark:text-[#e8eaf0]">Step 1: Identification</h2>
+            <h2 className="text-lg font-bold font-display text-foreground">Step 1: Identification</h2>
             <p className="text-xs text-on_surface_variant">Verified Registry Data</p>
           </div>
         </div>
@@ -203,7 +203,7 @@ export default function MintStep1() {
                  <div className="w-8 h-8 rounded-xl bg-secondary/10 flex items-center justify-center">
                    <Target size={16} className="text-secondary" />
                  </div>
-                 <span className="text-[10px] font-bold text-on_surface dark:text-[#e8eaf0] uppercase tracking-widest">Geofence Sync Enabled</span>
+                 <span className="text-[10px] font-bold text-foreground uppercase tracking-widest">Geofence Sync Enabled</span>
                </div>
                <button type="button" className="text-[10px] font-bold text-primary uppercase tracking-widest hover:opacity-80">
                  Reposition Pin
@@ -269,8 +269,8 @@ function InfoBadge({ icon, title, desc, accent }: { icon: any, title: string, de
         {icon}
       </div>
       <div>
-        <h4 className="font-bold text-on_surface dark:text-[#e8eaf0] text-[11px] uppercase tracking-wider mb-1">{title}</h4>
-        <p className="text-[11px] text-on_surface_variant dark:text-[#9ba3b8] leading-tight font-medium opacity-80">{desc}</p>
+        <h4 className="font-bold text-foreground text-[11px] uppercase tracking-wider mb-1">{title}</h4>
+        <p className="text-[11px] text-muted-foreground leading-tight font-medium opacity-80">{desc}</p>
       </div>
     </div>
   );
