@@ -17,7 +17,7 @@ __pycache__
 *.pyc
 .env.local
 .next
-.github/*
+.github/**
 
 # clerk configuration (can include secrets)
 /.clerk/
@@ -29,3 +29,4 @@ typechain-types/
 
 # Allow committing workflow files while keeping other .github files ignored
 !.github/workflows/
+!.github/workflows/**
