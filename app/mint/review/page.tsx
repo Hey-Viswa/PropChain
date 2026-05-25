@@ -90,7 +90,7 @@ export default function MintStep4() {
       await mintProperty({
         recordId: regData.id,
         ulpin: details.ulpin,
-        docHash: `QmMockHash_${details.ulpin}`,
+        docHash: "",
         physicalAddress: details.address,
         areaSqFt: details.area!,  // Guaranteed by canSubmit check
       });

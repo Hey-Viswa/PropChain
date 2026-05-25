@@ -82,6 +82,10 @@ const Legend = dynamic(
 );
 
 export default function OracleAnalyticsPage() {
+  const hasSubmissions = MOCK_SUBMISSIONS_OVER_TIME.length > 0;
+  const hasOutcomes = MOCK_VERIFICATION_OUTCOMES.length > 0;
+  const hasRecentActivity = MOCK_RECENT_ORACLE_ACTIVITY.length > 0;
+
   return (
     <OracleGuard>
     <div className="space-y-8">
@@ -99,10 +103,10 @@ export default function OracleAnalyticsPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {[
-          { icon: <Activity size={20} />, label: "Total TVL Validated", value: "$4.2B", color: "text-[#0ea5e9]", bg: "bg-[#0ea5e9]/10" },
-          { icon: <TrendingUp size={20} />, label: "Current Yield Avg", value: "7.2%", color: "text-success", bg: "bg-success/10" },
-          { icon: <BarChart3 size={20} />, label: "Total Transactions", value: "842k", color: "text-primary", bg: "bg-primary/10" },
-          { icon: <PieChartIcon size={20} />, label: "Active Nodes", value: "128", color: "text-[#d97706]", bg: "bg-[#d97706]/10" },
+          { icon: <Activity size={20} />, label: "Total TVL Validated", value: "$0", color: "text-[#0ea5e9]", bg: "bg-[#0ea5e9]/10" },
+          { icon: <TrendingUp size={20} />, label: "Current Yield Avg", value: "0%", color: "text-success", bg: "bg-success/10" },
+          { icon: <BarChart3 size={20} />, label: "Total Transactions", value: "0", color: "text-primary", bg: "bg-primary/10" },
+          { icon: <PieChartIcon size={20} />, label: "Active Nodes", value: "0", color: "text-[#d97706]", bg: "bg-[#d97706]/10" },
         ].map((stat, i) => (
           <div key={i} className="bg-card dark:bg-card rounded-2xl p-6 border border-outline_variant/10 shadow-[0_8px_24px_rgba(0,0,0,0.02)]">
             <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 ${stat.bg} ${stat.color}`}>
@@ -126,35 +130,41 @@ export default function OracleAnalyticsPage() {
             <p className="text-body-md text-on_surface_variant text-on_surface_variant dark:text-muted-foreground mb-5">
               Last 7 days
             </p>
-            <ResponsiveContainer width="100%" height={240}>
-              <AreaChart data={MOCK_SUBMISSIONS_OVER_TIME}
-                margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="approvedGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%"  stopColor="#0050b2" stopOpacity={0.15}/>
-                    <stop offset="95%" stopColor="#0050b2" stopOpacity={0}/>
-                  </linearGradient>
-                  <linearGradient id="rejectedGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%"  stopColor="#ba1a1a" stopOpacity={0.1}/>
-                    <stop offset="95%" stopColor="#ba1a1a" stopOpacity={0}/>
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#c3c6cf" strokeOpacity={0.3} vertical={false} />
-                <XAxis dataKey="date" tick={{ fontSize: 11, fill: '#43474e' }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 11, fill: '#43474e' }} axisLine={false} tickLine={false} />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: '#ffffff',
-                    border: 'none',
-                    borderRadius: '8px',
-                    boxShadow: '0 12px 32px rgba(0,26,67,0.08)',
-                    fontSize: '12px',
-                  }}
-                />
-                <Area type="monotone" dataKey="approved" stroke="#0050b2" strokeWidth={2} fill="url(#approvedGrad)" name="Approved" />
-                <Area type="monotone" dataKey="rejected" stroke="#ba1a1a" strokeWidth={2} fill="url(#rejectedGrad)" name="Rejected" />
-              </AreaChart>
-            </ResponsiveContainer>
+            {hasSubmissions ? (
+              <ResponsiveContainer width="100%" height={240}>
+                <AreaChart data={MOCK_SUBMISSIONS_OVER_TIME}
+                  margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="approvedGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%"  stopColor="#0050b2" stopOpacity={0.15}/>
+                      <stop offset="95%" stopColor="#0050b2" stopOpacity={0}/>
+                    </linearGradient>
+                    <linearGradient id="rejectedGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%"  stopColor="#ba1a1a" stopOpacity={0.1}/>
+                      <stop offset="95%" stopColor="#ba1a1a" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#c3c6cf" strokeOpacity={0.3} vertical={false} />
+                  <XAxis dataKey="date" tick={{ fontSize: 11, fill: '#43474e' }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fontSize: 11, fill: '#43474e' }} axisLine={false} tickLine={false} />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: '#ffffff',
+                      border: 'none',
+                      borderRadius: '8px',
+                      boxShadow: '0 12px 32px rgba(0,26,67,0.08)',
+                      fontSize: '12px',
+                    }}
+                  />
+                  <Area type="monotone" dataKey="approved" stroke="#0050b2" strokeWidth={2} fill="url(#approvedGrad)" name="Approved" />
+                  <Area type="monotone" dataKey="rejected" stroke="#ba1a1a" strokeWidth={2} fill="url(#rejectedGrad)" name="Rejected" />
+                </AreaChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="h-[240px] flex items-center justify-center text-[11px] text-on_surface_variant dark:text-muted-foreground">
+                No submission data yet
+              </div>
+            )}
           </div>
         
           {/* Right: Donut chart */}
@@ -166,43 +176,49 @@ export default function OracleAnalyticsPage() {
               All time
             </p>
             <div className="flex-1 flex items-center justify-center relative">
-              <ResponsiveContainer width="100%" height={200}>
-                <PieChart>
-                  <Pie
-                    data={MOCK_VERIFICATION_OUTCOMES}
-                    cx="50%" cy="50%"
-                    innerRadius={55} outerRadius={80}
-                    paddingAngle={3}
-                    dataKey="value"
-                  >
-                    {MOCK_VERIFICATION_OUTCOMES.map((entry, i) => (
-                      <Cell key={i} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: '#ffffff',
-                      border: 'none',
-                      borderRadius: '8px',
-                      boxShadow: '0 12px 32px rgba(0,26,67,0.08)',
-                      fontSize: '12px',
-                    }}
-                  />
-                  <Legend
-                    iconType="circle"
-                    iconSize={8}
-                    formatter={(value) => (
-                      <span style={{ color: '#43474e', fontSize: '12px' }}>
-                        {value}
-                      </span>
-                    )}
-                  />
-                </PieChart>
-              </ResponsiveContainer>
+              {hasOutcomes ? (
+                <ResponsiveContainer width="100%" height={200}>
+                  <PieChart>
+                    <Pie
+                      data={MOCK_VERIFICATION_OUTCOMES}
+                      cx="50%" cy="50%"
+                      innerRadius={55} outerRadius={80}
+                      paddingAngle={3}
+                      dataKey="value"
+                    >
+                      {MOCK_VERIFICATION_OUTCOMES.map((entry, i) => (
+                        <Cell key={i} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: '#ffffff',
+                        border: 'none',
+                        borderRadius: '8px',
+                        boxShadow: '0 12px 32px rgba(0,26,67,0.08)',
+                        fontSize: '12px',
+                      }}
+                    />
+                    <Legend
+                      iconType="circle"
+                      iconSize={8}
+                      formatter={(value) => (
+                        <span style={{ color: '#43474e', fontSize: '12px' }}>
+                          {value}
+                        </span>
+                      )}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="h-[200px] flex items-center justify-center text-[11px] text-on_surface_variant dark:text-muted-foreground">
+                  No outcomes data yet
+                </div>
+              )}
               {/* Center label — absolute positioned */}
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none pb-6">
                 <p className="text-center text-label-sm text-on_surface_variant text-on_surface_variant dark:text-muted-foreground w-24">
-                  83% Approval Rate
+                  0% Approval Rate
                 </p>
               </div>
             </div>
@@ -216,31 +232,37 @@ export default function OracleAnalyticsPage() {
           Recent Oracle Activity
         </p>
         <div className="space-y-3">
-          {MOCK_RECENT_ORACLE_ACTIVITY.map((entry, i) => (
-            <div key={i} className="flex items-center justify-between py-2">
-              <div className="flex items-center gap-3">
-                <span className={cn(
-                  "w-2 h-2 rounded-full flex-shrink-0",
-                  entry.action === 'APPROVE' ? 'bg-success' : 'bg-error'
-                )} />
-                <span className="text-body-md font-mono text-on_surface_variant text-on_surface_variant dark:text-muted-foreground">
-                  {entry.ulpin}
-                </span>
+          {hasRecentActivity ? (
+            MOCK_RECENT_ORACLE_ACTIVITY.map((entry, i) => (
+              <div key={i} className="flex items-center justify-between py-2">
+                <div className="flex items-center gap-3">
+                  <span className={cn(
+                    "w-2 h-2 rounded-full flex-shrink-0",
+                    entry.action === 'APPROVE' ? 'bg-success' : 'bg-error'
+                  )} />
+                  <span className="text-body-md font-mono text-on_surface_variant text-on_surface_variant dark:text-muted-foreground">
+                    {entry.ulpin}
+                  </span>
+                </div>
+                <div className="flex items-center gap-4">
+                  <span className={cn(
+                    "text-body-md font-medium",
+                    entry.action === 'APPROVE' 
+                      ? 'text-success' : 'text-error'
+                  )}>
+                    {entry.decision}
+                  </span>
+                  <span className="text-label-sm text-on_surface_variant text-on_surface_variant dark:text-muted-foreground">
+                    {entry.time}
+                  </span>
+                </div>
               </div>
-              <div className="flex items-center gap-4">
-                <span className={cn(
-                  "text-body-md font-medium",
-                  entry.action === 'APPROVE' 
-                    ? 'text-success' : 'text-error'
-                )}>
-                  {entry.decision}
-                </span>
-                <span className="text-label-sm text-on_surface_variant text-on_surface_variant dark:text-muted-foreground">
-                  {entry.time}
-                </span>
-              </div>
+            ))
+          ) : (
+            <div className="py-6 text-center text-[11px] text-on_surface_variant dark:text-muted-foreground">
+              No recent oracle activity yet
             </div>
-          ))}
+          )}
         </div>
       </div>
     </div>

@@ -2,12 +2,12 @@
 import { useEffect, useState } from "react";
 
 const SEGMENTS = [
-  { label: "Residential", value: 62, color: "#D97757" },
-  { label: "Commercial",  value: 24, color: "#C4602A" },
-  { label: "Industrial",  value: 14, color: "#F6EAE3" },
+  { label: "Residential", value: 0, color: "#D97757" },
+  { label: "Commercial",  value: 0, color: "#C4602A" },
+  { label: "Industrial",  value: 0, color: "#F6EAE3" },
 ];
 
-const VERIFICATION_RATE = 83;
+const VERIFICATION_RATE = 0;
 
 const SIZE   = 120;
 const CX     = SIZE / 2;
@@ -53,7 +53,7 @@ export default function AssetSpiderChart() {
     const sweep = seg.value * 3.6 * progress;
     const arc = {
       ...seg,
-      path: describeArc(CX, CY, RADIUS, currentAngle, currentAngle + sweep - 0.5),
+      path: sweep > 0 ? describeArc(CX, CY, RADIUS, currentAngle, currentAngle + sweep - 0.5) : "",
       startAngle: currentAngle,
     };
     currentAngle += seg.value * 3.6;
@@ -82,14 +82,16 @@ export default function AssetSpiderChart() {
             />
             {/* Segments */}
             {arcs.map((arc) => (
-              <path
-                key={arc.label}
-                d={arc.path}
-                fill="none"
-                stroke={arc.color}
-                strokeWidth={STROKE}
-                strokeLinecap="round"
-              />
+              arc.path ? (
+                <path
+                  key={arc.label}
+                  d={arc.path}
+                  fill="none"
+                  stroke={arc.color}
+                  strokeWidth={STROKE}
+                  strokeLinecap="round"
+                />
+              ) : null
             ))}
           </svg>
           {/* Center label */}

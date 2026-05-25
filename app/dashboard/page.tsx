@@ -156,8 +156,8 @@ function OracleDashboardView() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
           label="Pending Queue"
-          value="24"
-          delta="-4"
+          value="0"
+          delta="0"
           deltaPositive
           accent="primary"
           icon={<Activity className="w-4 h-4" />}
@@ -165,8 +165,8 @@ function OracleDashboardView() {
         />
         <StatCard
           label="Verification Time"
-          value="1.2s"
-          delta="-0.3s"
+          value="0s"
+          delta="0s"
           deltaPositive
           accent="success"
           icon={<Clock className="w-4 h-4" />}
@@ -174,8 +174,8 @@ function OracleDashboardView() {
         />
         <StatCard
           label="Oracle Consensus"
-          value="99.9%"
-          delta="100%"
+          value="0%"
+          delta="0%"
           deltaPositive
           accent="secondary"
           icon={<ShieldCheck className="w-4 h-4" />}
@@ -183,8 +183,8 @@ function OracleDashboardView() {
         />
         <StatCard
           label="Data Stored"
-          value="4.2TB"
-          delta="+12GB"
+          value="0"
+          delta="0"
           deltaPositive
           accent="neutral"
           icon={<Database className="w-4 h-4" />}
@@ -218,8 +218,8 @@ function UserDashboardView() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
           label="Portfolio Value"
-          value="$1.24M"
-          delta="+8.2%"
+          value="$0"
+          delta="0%"
           deltaPositive
           accent="primary"
           icon={<BarChart3 className="w-4 h-4" />}
@@ -227,8 +227,8 @@ function UserDashboardView() {
         />
         <StatCard
           label="Monthly Yield"
-          value="$8,420"
-          delta="+12%"
+          value="$0"
+          delta="0%"
           deltaPositive
           accent="success"
           icon={<TrendingUp className="w-4 h-4" />}
@@ -236,7 +236,7 @@ function UserDashboardView() {
         />
         <StatCard
           label="Active Stakes"
-          value="12"
+          value="0"
           delta="0"
           deltaPositive
           accent="secondary"
@@ -245,8 +245,8 @@ function UserDashboardView() {
         />
         <StatCard
           label="Liquidity Score"
-          value="A+"
-          delta="+1.2%"
+          value="0"
+          delta="0"
           deltaPositive
           accent="neutral"
           icon={<Globe className="w-4 h-4" />}
@@ -285,9 +285,11 @@ function UserDashboardView() {
           <div className="w-[400px] h-[400px] rounded-full bg-sand dark:bg-white/5 shadow-inner flex items-center justify-center relative overflow-hidden">
             <div className="absolute inset-0 bg-white/5 dark:bg-black/10 z-10" />
             <div className="w-[150%] h-[150%] rounded-full border border-primary/10 -rotate-45" />
-            <div className="absolute top-[30%] left-[25%] bg-primary text-white text-[10px] font-bold px-3 py-1 rounded-full z-20 shadow-lg">Singapore: High</div>
-            <div className="absolute top-[60%] left-[50%] bg-secondary text-white text-[10px] font-bold px-3 py-1 rounded-full z-20 shadow-lg opacity-90">London: Active</div>
-            <div className="absolute bottom-[20%] right-[25%] bg-primary text-white text-[10px] font-bold px-3 py-1 rounded-full z-20 shadow-lg">New York: Peak</div>
+            <div className="absolute inset-0 flex items-center justify-center z-20">
+              <span className="text-[11px] font-bold text-on_surface_variant/70 dark:text-[#9ba3b8] uppercase tracking-widest">
+                No registry data yet
+              </span>
+            </div>
           </div>
         </div>
         <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-white dark:from-card to-transparent z-10" />
@@ -318,6 +320,8 @@ function StatCard({ label, value, delta, deltaPositive, accent, icon, subtext }:
     success:   "bg-success/5 text-success border-success/10",
   }[accent];
 
+  const isNeutralDelta = delta === "0" || delta === "0%" || delta === "0s";
+
   return (
     <Card className="rounded-2xl border-stone/50 dark:border-white/5 transition-all hover:border-primary/20 dark:hover:bg-white/[0.02] group overflow-hidden">
       <CardContent className="p-5">
@@ -325,10 +329,15 @@ function StatCard({ label, value, delta, deltaPositive, accent, icon, subtext }:
           <div className={cn("w-10 h-10 rounded-2xl flex items-center justify-center border transition-colors group-hover:scale-110 duration-300", accentStyles)}>
             {icon}
           </div>
-          <div className={cn("flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full border", 
-            deltaPositive ? "text-success bg-success/5 border-success/10" : "text-error bg-error/5 border-error/10"
+          <div className={cn(
+            "flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full border",
+            isNeutralDelta
+              ? "text-on_surface_variant bg-stone/10 border-stone/20 dark:bg-white/5"
+              : deltaPositive
+                ? "text-success bg-success/5 border-success/10"
+                : "text-error bg-error/5 border-error/10"
           )}>
-            {deltaPositive ? <TrendingUp className="w-2.5 h-2.5" /> : <TrendingDown className="w-2.5 h-2.5" />}
+            {isNeutralDelta ? null : (deltaPositive ? <TrendingUp className="w-2.5 h-2.5" /> : <TrendingDown className="w-2.5 h-2.5" />)}
             {delta}
           </div>
         </div>

@@ -101,10 +101,10 @@ const FEATURES = [
 ];
 
 const STATS = [
-  { value: "$2.4B+", label: "Total Value Locked" },
-  { value: "14.2k",  label: "Properties Minted" },
-  { value: "1.4s",   label: "Avg. Verification" },
-  { value: "32+",    label: "Jurisdictions" },
+  { value: "$0", label: "Total Value Locked" },
+  { value: "0",  label: "Properties Minted" },
+  { value: "0s", label: "Avg. Verification" },
+  { value: "0",  label: "Jurisdictions" },
 ];
 
 const PROCESS = [
@@ -371,7 +371,7 @@ export default function LandingPage() {
                   Ready to tokenize?
                 </h2>
                 <p className="text-white/80 text-xl max-w-xl leading-relaxed font-medium">
-                  Join 12,000+ institutional partners building the future of property finance on PropChain.
+                  Join institutional partners building the future of property finance on PropChain.
                 </p>
               </div>
               <div className="flex flex-col sm:flex-row gap-6 flex-shrink-0">

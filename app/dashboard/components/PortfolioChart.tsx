@@ -2,13 +2,13 @@
 import { useState } from "react";
 
 const data = [
-  { label: "JAN", minted: 35, volume: 22 },
-  { label: "FEB", minted: 50, volume: 38 },
-  { label: "MAR", minted: 40, volume: 30 },
-  { label: "APR", minted: 65, volume: 48 },
-  { label: "MAY", minted: 55, volume: 42 },
-  { label: "JUN", minted: 80, volume: 60 },
-  { label: "JUL", minted: 90, volume: 72 },
+  { label: "JAN", minted: 0, volume: 0 },
+  { label: "FEB", minted: 0, volume: 0 },
+  { label: "MAR", minted: 0, volume: 0 },
+  { label: "APR", minted: 0, volume: 0 },
+  { label: "MAY", minted: 0, volume: 0 },
+  { label: "JUN", minted: 0, volume: 0 },
+  { label: "JUL", minted: 0, volume: 0 },
 ];
 
 const MAX = 100;

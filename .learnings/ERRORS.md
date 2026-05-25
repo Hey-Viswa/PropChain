@@ -4,6 +4,34 @@ Command failures and integration errors.
 
 ---
 
+## [ERR-20260525-001] explore_subagent-timeout
+
+**Logged**: 2026-05-25T00:00:00Z
+**Priority**: medium
+**Status**: pending
+**Area**: tooling
+
+### Summary
+`explore_subagent` failed with a 400 bad request / i/o timeout.
+
+### Error
+```
+badRequest: Request Failed: 400 Bad request: failed to decode request: bad request: i/o timeout
+```
+
+### Context
+- Operation attempted: explore_subagent search for mock data usage
+- Environment: VS Code Copilot tools
+
+### Suggested Fix
+Retry with a shorter query or fallback to targeted file reads/search tools.
+
+### Metadata
+- Reproducible: unknown
+- Related Files: N/A
+
+---
+
 ## [ERR-20260419-001] rg-command
 
 **Logged**: 2026-04-19T11:12:00Z

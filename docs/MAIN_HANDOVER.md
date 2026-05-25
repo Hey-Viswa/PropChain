@@ -69,6 +69,48 @@ When Claude Code Sonnet 4.6 is assigned an audit/review task, the review must be
 
 ## Session Log
 
+### 2026-05-25T17:05:30Z | Zeroed mock data for real metrics
+- Request summary: Reset fake dashboard/home/oracle data to zero/empty and prepare for real Mongo-backed metrics; push changes.
+- Work completed:
+  - Cleared mock datasets and set UI metrics to zero across landing, dashboard, oracle analytics, network, registry, and AI review.
+  - Added empty states where mock lists/charts were removed.
+  - Removed mock property breadcrumb lookup and mock doc hash in mint review.
+  - Installed Mapbox dependencies and fixed oracle queue button `asChild` usage and TSX mapping syntax.
+- Files changed:
+  - app/page.tsx
+  - app/dashboard/page.tsx
+  - app/dashboard/components/AIIntelligenceCard.tsx
+  - app/dashboard/components/NetworkTelemetry.tsx
+  - app/dashboard/components/PortfolioChart.tsx
+  - app/oracle/analytics/page.tsx
+  - app/oracle/queue/page.tsx
+  - app/network/page.tsx
+  - app/registry/page.tsx
+  - app/mint/review/page.tsx
+  - components/forms/AIReviewPanel.tsx
+  - components/shared/AssetSpiderChart.tsx
+  - hooks/useBreadcrumbs.ts
+  - lib/mockData.ts
+  - store/usePropertyStore.ts
+  - package.json
+  - package-lock.json
+  - .learnings/ERRORS.md
+  - docs/MAIN_HANDOVER.md
+  - docs/MASTER_CHANGELOG.md
+  - docs/WORK_HISTORY.md (via npm run session:end)
+- Verification commands and results:
+  - `npx tsc --noEmit`: pass.
+  - `npm run lint`: pass with warnings (hook deps, `<img>` usage).
+  - `npm run build`: success with warnings (wagmi/metamask connector module resolution, Tailwind ambiguous ease class, web3modal usage 403).
+  - `npx hardhat test` (in blockchain): pass (7 tests).
+- Open issues/blockers:
+  - Build warnings from `@metamask/sdk` missing `@react-native-async-storage/async-storage` and wagmi `porto/internal` resolution; web3modal usage 403.
+  - Phase documentation protocol file `docs/PHASE_DOCUMENTATION_PROTOCOL.md` not found; iteration log not updated.
+- Next steps:
+  - Run manual Phase 1 QA and deploy to Vercel.
+  - Decide on connector warning remediation (porto/metamask) and web3modal project ID.
+  - Restore/define phase documentation protocol and iteration log file.
+
 ### 2026-04-19T17:54:10Z | Docs cleanup: remove unnecessary files
 - Request summary: User requested deletion of unnecessary docs.
 - Work completed:

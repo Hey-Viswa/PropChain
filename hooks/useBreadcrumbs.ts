@@ -1,7 +1,6 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { MOCK_PROPERTIES } from "@/lib/mockData";
 
 export interface BreadcrumbItem {
   label: string;
@@ -29,9 +28,8 @@ export function useBreadcrumbs(): BreadcrumbItem[] {
 
     // Check if it looks like a property ID (numeric or starts with "prop-")
     if (i > 0 && parts[i - 1] === "properties") {
-      const prop = MOCK_PROPERTIES.find((p) => p.id === part);
       crumbs.push({
-        label: prop ? prop.address.split(",")[0] : "Property Detail",
+        label: "Property Detail",
         href,
       });
       return;

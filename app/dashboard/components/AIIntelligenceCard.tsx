@@ -3,9 +3,9 @@ import { ClipboardList, CheckCircle, XCircle, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const stats = [
-  { label: "Approved",       value: "24",   sub: "this month",     color: "text-success",                   dot: "bg-success"  },
-  { label: "Rejected",       value: "3",    sub: "this month",     color: "text-error",                     dot: "bg-error"    },
-  { label: "Avg turnaround", value: "18h",  sub: "oracle response",color: "text-primary dark:text-[#E89874]",dot: "bg-primary"  },
+  { label: "Approved",       value: "0",  sub: "this month",      color: "text-success",                   dot: "bg-success"  },
+  { label: "Rejected",       value: "0",  sub: "this month",      color: "text-error",                     dot: "bg-error"    },
+  { label: "Avg turnaround", value: "0h", sub: "oracle response", color: "text-primary dark:text-[#E89874]",dot: "bg-primary"  },
 ];
 
 export default function VerificationSummaryCard() {
@@ -39,7 +39,7 @@ export default function VerificationSummaryCard() {
         <div className="flex items-center gap-2 px-1">
           <CheckCircle className="w-3.5 h-3.5 text-success/80" />
           <p className="text-[11px] text-white/60">
-            <span className="text-white font-semibold">2 submissions</span> awaiting review
+            <span className="text-white font-semibold">0 submissions</span> awaiting review
           </p>
         </div>
         <Link href="/oracle/queue">
