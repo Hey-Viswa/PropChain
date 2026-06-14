@@ -47,9 +47,11 @@ export default function PropertyCard({ property }: PropertyCardProps) {
             View Details
           </Button>
         </Link>
-        <Button variant="default" size="sm" className="flex-1 font-bold uppercase tracking-widest text-[10px] shadow-lg">
-          Initiate Transfer
-        </Button>
+        <Link href={`/properties/${property.id}`} className="flex-1">
+          <Button variant="default" size="sm" className="w-full font-bold uppercase tracking-widest text-[10px] shadow-lg">
+            Manage
+          </Button>
+        </Link>
       </div>
     </div>
   );

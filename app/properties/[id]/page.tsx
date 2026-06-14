@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { usePropertyStore } from "@/store/usePropertyStore";
 import { MapPin, History, Building2, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import TransferCard from "@/components/shared/TransferCard";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 
@@ -175,7 +176,9 @@ export default function PropertyIdPage() {
           </div>
         </div>
 
-        {/* Audit trail (real on-chain history) */}
+        {/* Right column: transfer + audit */}
+        <div className="space-y-8">
+        <TransferCard tokenId={view.tokenId} ownerWallet={view.owner} statusUi={view.statusUi} />
         <div className="bg-card dark:bg-card rounded-2xl p-8 shadow-[0_8px_24px_rgba(0,0,0,0.03)] border border-outline_variant/10">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
@@ -212,6 +215,7 @@ export default function PropertyIdPage() {
               ))}
             </ol>
           )}
+        </div>
         </div>
       </div>
     </div>
