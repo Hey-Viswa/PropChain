@@ -196,13 +196,17 @@ async function defaultOcr(input: OcrInput): Promise<string> {
   const source = input.buffer ?? input.url;
   if (!source) return "";
   try {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const specifier = ["tesseract", "js"].join(".");
-    const tesseract: any = await import(/* webpackIgnore: true */ specifier);
+    const tesseract = (await import(/* webpackIgnore: true */ specifier)) as {
+      createWorker: (lang: string) => Promise<{
+        recognize: (src: unknown) => Promise<{ data?: { text?: string } }>;
+        terminate: () => Promise<void>;
+      }>;
+    };
     const worker = await tesseract.createWorker("eng");
     try {
-      const { data } = await worker.recognize(source as never);
-      return (data?.text as string) ?? "";
+      const { data } = await worker.recognize(source);
+      return data?.text ?? "";
     } finally {
       await worker.terminate();
     }
