@@ -76,7 +76,7 @@ export function useWallet() {
     : null;
 
   const isCorrectNetwork =
-    chain?.id === 31337 || chain?.id === 80001;
+    chain?.id === 31337 || chain?.id === 80002;
 
   return {
     address,

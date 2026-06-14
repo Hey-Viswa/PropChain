@@ -26,6 +26,7 @@ import {
   SlidersHorizontal,
   LogOut,
   FlaskConical,
+  Landmark,
 } from "lucide-react";
 
 const isDev = process.env.NODE_ENV === "development";
@@ -70,12 +71,17 @@ const oracleNavGroups: NavGroup[] = [
 export default function Sidebar() {
   const pathname         = usePathname();
   const { user, isLoaded: userLoaded } = useUser();
-  const { isOracle: hasOracleRole, isLoading } = useAdminRole();
+  const { isOracle: hasOracleRole, isBank, isSuperAdmin, isLoading } = useAdminRole();
   const { isOracleMode, setOracleMode, reset } = useOracleAccessStore();
   const { isConnected, truncatedAddress } = useWallet();
 
   const showOracleNav = isOracleMode || hasOracleRole;
-  const navGroups     = showOracleNav ? oracleNavGroups : userNavGroups;
+  const baseGroups    = showOracleNav ? oracleNavGroups : userNavGroups;
+  // Institutions (Bank Desk) — visible to bank/oracle/super-admin wallets.
+  const navGroups: NavGroup[] =
+    isBank || hasOracleRole || isSuperAdmin
+      ? [...baseGroups, { label: "Institutions", items: [{ label: "Bank Desk", href: "/bank", icon: Landmark }] }]
+      : baseGroups;
 
   function isActive(href: string) {
     if (href === "/dashboard") return pathname === "/dashboard";
@@ -191,7 +197,7 @@ export default function Sidebar() {
         <div className="flex items-center justify-between gap-2 p-2 bg-white/40 dark:bg-white/5 rounded-2xl border border-stone/20 dark:border-white/5">
           <div className="flex items-center gap-2 min-w-0">
              <div className="shrink-0 scale-90 origin-left">
-               <UserButton afterSignOutUrl="/" />
+               <UserButton />
              </div>
              <div className="min-w-0 overflow-hidden">
                <p className="text-[10px] font-black uppercase text-on_surface dark:text-[#e8eaf0] truncate">

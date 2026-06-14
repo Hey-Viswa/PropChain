@@ -52,7 +52,7 @@ export default function MintStep4() {
     if (!isCorrectNetwork) {
       toast({
         title: "Wrong network",
-        description: "Please switch to Polygon Mumbai or local Hardhat network.",
+        description: "Please switch to Polygon Amoy or the local Hardhat network.",
         variant: "destructive",
       });
       return;
@@ -113,7 +113,7 @@ export default function MintStep4() {
   };
 
   const docCount = uploadedDocs.length;
-  const txExplorerHref = txHash ? `https://mumbai.polygonscan.com/tx/${txHash}` : null;
+  const txExplorerHref = txHash ? `https://amoy.polygonscan.com/tx/${txHash}` : null;
 
   if (!details.ulpin) {
     return (

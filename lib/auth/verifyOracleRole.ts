@@ -1,12 +1,12 @@
 import { createPublicClient, http, keccak256, toBytes } from "viem";
-import { polygonMumbai, hardhat } from "viem/chains";
+import { polygonAmoy, hardhat } from "viem/chains";
 import { PROPERTY_NFT_ABI, PROPERTY_NFT_ADDRESS } from "@/lib/contracts/PropertyNFT.abi";
 
-const chain = process.env.NODE_ENV === "production" ? polygonMumbai : hardhat;
+const chain = process.env.NODE_ENV === "production" ? polygonAmoy : hardhat;
 
 const rpcUrl =
   process.env.NODE_ENV === "production"
-    ? process.env.MUMBAI_RPC_URL
+    ? process.env.BLOCKCHAIN_RPC_URL ?? process.env.AMOY_RPC_URL
     : "http://127.0.0.1:8545";
 
 export const publicClient = createPublicClient({

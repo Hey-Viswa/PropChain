@@ -5,6 +5,7 @@ import { KYC } from "@/lib/db/models/KYC";
 import { logActivity } from "@/lib/logActivity";
 import { headers } from "next/headers";
 import { rateLimit } from "@/lib/rateLimit";
+import { grantOnchainKyc } from "@/lib/services/onchainKyc";
 
 // Simulate OTP verification
 // In Phase 1 any 6-digit OTP passes
@@ -82,6 +83,19 @@ export async function POST(req: NextRequest) {
       { upsert: true, new: true }
     );
 
+    // Grant on-chain KYC so this wallet can mint (best-effort; needs the admin
+    // key + contract address — skipped gracefully in a no-chain demo).
+    let onchain: { ok: boolean; txHash?: string; reason?: string } = {
+      ok: false,
+      reason: "no wallet",
+    };
+    if (walletAddress) {
+      onchain = await grantOnchainKyc(walletAddress);
+      if (!onchain.ok) {
+        console.warn("[kyc] on-chain KYC not granted:", onchain.reason);
+      }
+    }
+
     await logActivity({
       clerkId:       userId,
       walletAddress: walletAddress ?? "",
@@ -90,6 +104,8 @@ export async function POST(req: NextRequest) {
       metadata: {
         aadhaarLast4,
         walletLinked: !!walletAddress,
+        onchainKyc: onchain.ok,
+        onchainTx: onchain.txHash ?? null,
       },
     });
 
@@ -97,6 +113,7 @@ export async function POST(req: NextRequest) {
       success:    true,
       verified:   true,
       verifiedAt: kycRecord.verifiedAt,
+      onchainKyc: onchain.ok,
     });
   } catch (err) {
     console.error("KYC submit error:", err);

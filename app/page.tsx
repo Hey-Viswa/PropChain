@@ -59,7 +59,7 @@ function ProfileOrLogin() {
 
   return isSignedIn ? (
     <div className="h-10 w-10 flex items-center justify-center">
-      <UserButton afterSignOutUrl="/" />
+      <UserButton />
     </div>
   ) : (
     <SignInButton mode="modal">

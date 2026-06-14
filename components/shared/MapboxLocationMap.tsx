@@ -1,7 +1,6 @@
 "use client";
 
 import { MapPin } from "lucide-react";
-import Map, { Marker, NavigationControl, ScaleControl } from "react-map-gl/mapbox";
 import { cn } from "@/lib/utils";
 
 interface MapboxLocationMapProps {
@@ -13,6 +12,14 @@ interface MapboxLocationMapProps {
   interactive?: boolean;
 }
 
+/**
+ * Dependency-free location card.
+ *
+ * The original implementation used Mapbox GL tiles, which require a paid
+ * Mapbox account beyond the free tier. To keep PropChain fully runnable on
+ * free services, this renders a lightweight static location panel (coordinates
+ * + a deep link to free OpenStreetMap) instead of streaming paid map tiles.
+ */
 export default function MapboxLocationMap({
   latitude,
   longitude,
@@ -21,59 +28,48 @@ export default function MapboxLocationMap({
   className,
   interactive = true,
 }: MapboxLocationMapProps) {
-  const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
-
-  if (!mapboxToken) {
-    return (
-      <div
-        className={cn(
-          "relative flex h-full w-full items-center justify-center rounded-xl bg-stone/10 dark:bg-card",
-          className
-        )}
-      >
-        <div className="text-center px-4">
-          <p className="text-sm font-semibold text-on_surface dark:text-[#e8eaf0]">Map preview unavailable</p>
-          <p className="text-xs text-on_surface_variant dark:text-[#9ba3b8] mt-1">
-            Add NEXT_PUBLIC_MAPBOX_TOKEN to enable Mapbox.
-          </p>
-          <p className="text-[11px] text-on_surface_variant/70 dark:text-[#9ba3b8]/70 mt-2 font-mono">
-            {latitude.toFixed(4)}, {longitude.toFixed(4)}
-          </p>
-        </div>
-      </div>
-    );
-  }
+  const osmUrl = `https://www.openstreetmap.org/?mlat=${latitude}&mlon=${longitude}#map=${zoom}/${latitude}/${longitude}`;
 
   return (
-    <div className={cn("relative h-full w-full rounded-xl overflow-hidden", className)}>
-      <Map
-        key={`${latitude.toFixed(5)}:${longitude.toFixed(5)}:${zoom}`}
-        initialViewState={{ latitude, longitude, zoom }}
-        mapboxAccessToken={mapboxToken}
-        mapStyle="mapbox://styles/mapbox/streets-v12"
-        reuseMaps
-        dragRotate={false}
-        scrollZoom={interactive}
-        doubleClickZoom={interactive}
-        touchZoomRotate={interactive}
-      >
-        <NavigationControl position="top-right" showCompass={false} />
-        <ScaleControl position="bottom-left" />
+    <div
+      className={cn(
+        "relative flex h-full w-full items-center justify-center overflow-hidden rounded-xl bg-stone/10 dark:bg-card",
+        className
+      )}
+    >
+      {/* Subtle grid backdrop to evoke a map without paid tiles */}
+      <div
+        aria-hidden
+        className="absolute inset-0 opacity-[0.18] dark:opacity-[0.12]"
+        style={{
+          backgroundImage:
+            "linear-gradient(currentColor 1px, transparent 1px), linear-gradient(90deg, currentColor 1px, transparent 1px)",
+          backgroundSize: "28px 28px",
+          color: "var(--tw-prose-borders, #94a3b8)",
+        }}
+      />
 
-        <Marker latitude={latitude} longitude={longitude} anchor="bottom">
-          <div className="h-8 w-8 rounded-full bg-primary text-on_primary border-2 border-white dark:border-[#111] shadow-lg flex items-center justify-center">
-            <MapPin className="h-4 w-4" />
-          </div>
-        </Marker>
-      </Map>
-
-      {label ? (
-        <div className="absolute left-3 top-3 rounded-xl bg-white/90 dark:bg-[#10141f]/90 px-2.5 py-1.5 text-[11px] font-medium text-on_surface dark:text-[#e8eaf0] shadow-sm backdrop-blur">
-          {label}
+      <div className="relative z-10 flex flex-col items-center text-center px-4">
+        <div className="mb-2 flex h-9 w-9 items-center justify-center rounded-full border-2 border-white bg-primary text-on_primary shadow-lg dark:border-[#111]">
+          <MapPin className="h-4 w-4" />
         </div>
-      ) : null}
-
-      <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-white/45 dark:from-[dark:bg-card]/70 to-transparent pointer-events-none" />
+        {label ? (
+          <p className="text-sm font-semibold text-on_surface dark:text-[#e8eaf0]">{label}</p>
+        ) : null}
+        <p className="mt-1 font-mono text-[11px] text-on_surface_variant dark:text-[#9ba3b8]">
+          {latitude.toFixed(4)}, {longitude.toFixed(4)}
+        </p>
+        {interactive ? (
+          <a
+            href={osmUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-2 text-[11px] font-medium text-primary underline-offset-4 hover:underline"
+          >
+            Open in OpenStreetMap
+          </a>
+        ) : null}
+      </div>
     </div>
   );
 }

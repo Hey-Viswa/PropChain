@@ -59,6 +59,41 @@ When Claude Code Sonnet 4.6 is assigned an audit/review task, the review must be
 
 ## Session Log
 
+### 2026-06-14T10:40:00Z | Phase 2 + Phase 3 backbone (free services only)
+- Request summary: Phase 1 done; build out the remaining phases, self-test, and
+  document everything needed to connect using only free services (no paid plans).
+- Work completed:
+  - Restored a green build baseline (HEAD UI-overhaul had regressed `tsc`): 7
+    type fixes, Solidity compiler 0.8.20 -> 0.8.28, retarget Polygon
+    Mumbai -> Amoy (80002), removed the paid Mapbox/react-map-gl dependency,
+    stopped tracking regenerated Hardhat artifacts.
+  - Phase 2 contracts: `EncumbranceRegistry.sol`, `DisputeRegistry.sol` (+tests).
+  - Phase 3 contract: `FractionalOwnership.sol` (ERC-20 share vault) (+tests).
+  - Services: `ipfsService` (Pinata), `emailService` (Resend), `historyService`
+    (free viem getLogs; no The Graph), `auditChain` (SHA-256 chain),
+    `fraudDetection`, `aiService` (Tesseract optional; no paid LLM), `txVerify`.
+  - DB models `Encumbrance`, `Dispute`; Zod schemas for all new payloads.
+  - API routes: properties/search, properties/[id]/history, analytics/public,
+    ai/verify, encumbrance, dispute. UI: `/analytics` public dashboard.
+  - Tooling: `npm run test:unit` runner (24 tests), `scripts/genAbis.js`,
+    `blockchain/scripts/deploy.ts`, `.env.example`, `docs/PHASE_2_3_SETUP.md`,
+    `docs/phase_2_3_status.md`.
+- Verification commands and results:
+  - `npx tsc --noEmit`: PASS.
+  - `npm run lint`: PASS (0 errors).
+  - `npm run build`: PASS (44 routes).
+  - `cd blockchain && npx hardhat test`: PASS (27 passing).
+  - `npm run test:unit`: PASS (24 passing).
+- Open issues/blockers:
+  - Live integration (DB/RPC/Pinata/Resend) not exercised — this environment has
+    no external network to those services; validated via build + unit/contract
+    tests. Connect using `.env.example` + `docs/PHASE_2_3_SETUP.md`.
+  - Front-end wallet wiring for encumbrance/dispute/fractional and AIReviewPanel
+    still uses mock data; the contracts + APIs that back them are ready.
+- Next steps:
+  - Wire the remaining UI actions to the new APIs/contracts.
+  - Deploy contracts to Amoy and fill the addresses into env.
+
 ### 2026-04-19T12:01:54Z | Per-phase documentation discipline enforced
 - Request summary: User requested mandatory documentation for every phase and iteration, including work done, technologies used, implementation method, and lessons learned to improve agent correctness over time.
 - Work completed:

@@ -1,3 +1,5 @@
+// AUTO-GENERATED from blockchain/artifacts/contracts/PropertyNFT.sol/PropertyNFT.json
+// Regenerate with: node scripts/genAbis.js
 export const PROPERTY_NFT_ABI = [
   {
     "inputs": [
@@ -1180,5 +1182,6 @@ export const PROPERTY_NFT_ABI = [
     "stateMutability": "nonpayable",
     "type": "function"
   }
-];
-export const PROPERTY_NFT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS as string;
+] as const;
+
+export const PROPERTY_NFT_ADDRESS = (process.env.NEXT_PUBLIC_CONTRACT_ADDRESS ?? "") as `0x${string}`;

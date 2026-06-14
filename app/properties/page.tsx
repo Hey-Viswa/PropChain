@@ -4,35 +4,52 @@ import PageHeader from "@/components/shared/PageHeader";
 import { Button } from "@/components/ui/button";
 import { PlusCircle, Search, LayoutGrid, List, Filter as FilterIcon, Maximize2, Building2, MapPin, Shield, TrendingUp } from "lucide-react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { usePropertyStore } from "@/store/usePropertyStore";
+import { useWallet } from "@/hooks/useWallet";
 import PropertyCard from "@/components/shared/PropertyCard";
-import { useReadProperties } from "@/hooks/useReadProperties";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
 export default function PropertiesPage() {
-  const storeProperties = usePropertyStore(s => s.properties);
   const filterStatus = usePropertyStore(s => s.filterStatus);
   const setFilter  = usePropertyStore(s => s.setFilter);
+  const { address } = useWallet();
 
-  const { properties, loading } = useReadProperties();
+  const [records, setRecords] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  const mappedProperties = properties.map(p => ({
-    id:              p.tokenId.toString(),
+  useEffect(() => {
+    if (!address) { setRecords([]); return; }
+    setLoading(true);
+    fetch(`/api/properties/owner?wallet=${address}`)
+      .then((r) => (r.ok ? r.json() : { properties: [] }))
+      .then((d) => setRecords(d.properties ?? []))
+      .catch(() => setRecords([]))
+      .finally(() => setLoading(false));
+  }, [address]);
+
+  const mappedProperties = records.map((p) => ({
+    id:              p.tokenId != null ? String(p.tokenId) : p._id,
     ulpin:           p.ulpin,
     address:         p.physicalAddress,
     area:            p.areaSqFt,
     type:            p.propertyType ?? "Residential",
-    status:          p.isApproved ? "verified" : "awaiting_oracle",
-    owner:           p.registeredBy,
-    registeredAt:    new Date(p.registeredAt * 1000).toLocaleDateString(),
-    ipfsCid:         p.ipfsDocHash,
+    status:          p.status === "approved" ? "verified" : p.status === "rejected" ? "rejected" : "awaiting_oracle",
+    owner:           p.walletAddress,
+    registeredAt:    p.createdAt ? new Date(p.createdAt).toLocaleDateString() : "—",
+    ipfsCid:         p.documentUrl ?? "",
     aiConfidence:    0,
-    hasEncumbrance:  p.hasEncumbrance,
+    hasEncumbrance:  false,
   })) as any[];
 
-  const displayProperties = properties.length > 0 ? mappedProperties : storeProperties;
+  // Show only real on-chain properties (no mock fallback).
+  const displayProperties = mappedProperties;
+  const total = mappedProperties.length;
+  const verified = mappedProperties.filter((p) => p.status === "verified").length;
+  const awaiting = mappedProperties.filter((p) => p.status === "awaiting_oracle").length;
+  const encumbered = mappedProperties.filter((p) => p.hasEncumbrance).length;
   
   const filteredProperties = filterStatus === "all" 
     ? displayProperties 
@@ -61,64 +78,22 @@ export default function PropertiesPage() {
           </div>
         </div>
 
-        {/* Stats Row */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <Card className="rounded-2xl border-stone/50 dark:bg-card dark:border-white/5 shadow-sm overflow-hidden">
-            <CardContent className="p-6">
-              <div className="flex justify-between items-start mb-4">
-                <div className="w-9 h-9 rounded-xl bg-primary/5 flex items-center justify-center text-primary border border-primary/10">
-                   <TrendingUp size={16} />
-                </div>
-                <span className="text-[10px] font-bold text-success bg-success/5 border border-success/10 px-2 py-0.5 rounded-full">+12.4%</span>
-              </div>
-              <p className="text-2xl font-bold font-display text-on_surface dark:text-[#e8eaf0] tracking-tight mb-1">$42.85M</p>
-              <p className="text-[10px] font-bold text-on_surface_variant text-on_surface_variant dark:text-muted-foreground uppercase tracking-[0.15em] opacity-60">Portfolio Valuation</p>
-            </CardContent>
-          </Card>
-
-          <Card className="rounded-2xl border-stone/50 dark:bg-card dark:border-white/5 shadow-sm overflow-hidden">
-            <CardContent className="p-6">
-              <div className="flex justify-between items-start mb-4">
-                <div className="w-9 h-9 rounded-xl bg-secondary/5 flex items-center justify-center text-secondary border border-secondary/10">
-                   <Building2 size={16} />
-                </div>
-                <span className="text-[10px] font-bold text-primary uppercase tracking-widest opacity-60">18 Assets</span>
-              </div>
-              <p className="text-2xl font-bold font-display text-on_surface dark:text-[#e8eaf0] tracking-tight mb-1">Minted Assets</p>
-              <p className="text-[10px] font-bold text-on_surface_variant text-on_surface_variant dark:text-muted-foreground uppercase tracking-[0.15em] opacity-60">Verified On-Chain</p>
-            </CardContent>
-          </Card>
-
-          <Card className="rounded-2xl border-stone/50 dark:bg-card dark:border-white/5 shadow-sm overflow-hidden">
-            <CardContent className="p-6">
-              <div className="flex justify-between items-start mb-4">
-                <div className="w-9 h-9 rounded-xl bg-stone/10 dark:bg-white/5 flex items-center justify-center text-on_surface_variant border border-stone/20 dark:border-white/5">
-                   <Shield size={16} />
-                </div>
-                <span className="text-[10px] font-bold text-on_surface_variant text-on_surface_variant dark:text-muted-foreground uppercase tracking-widest opacity-60">3 Pending</span>
-              </div>
-              <p className="text-2xl font-bold font-display text-on_surface dark:text-[#e8eaf0] tracking-tight mb-1">In Verification</p>
-              <p className="text-[10px] font-bold text-on_surface_variant text-on_surface_variant dark:text-muted-foreground uppercase tracking-[0.15em] opacity-60">Active Audits</p>
-            </CardContent>
-          </Card>
-
-          <Card className="rounded-2xl bg-primary border-none shadow-floating overflow-hidden relative">
-            <CardContent className="p-6 text-on_primary flex flex-col justify-center h-full">
-              <div className="relative z-10">
-                <div className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center mb-4">
-                   <Shield size={16} />
-                </div>
-                <p className="text-2xl font-bold font-display tracking-tight leading-tight mb-3">Portfolio<br/>Compliance</p>
-                <div className="flex items-center gap-3">
-                  <div className="h-1.5 flex-1 bg-white/20 rounded-full overflow-hidden">
-                    <div className="h-full w-[94%] bg-white rounded-full" />
-                  </div>
-                  <span className="text-[11px] font-black">94%</span>
-                </div>
-              </div>
-              <div className="absolute right-[-10%] top-[-20%] w-32 h-32 bg-white/10 rounded-full blur-3xl" />
-            </CardContent>
-          </Card>
+        {/* Stats Row (real counts) */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          {[
+            { icon: <Building2 size={16} />, label: "Total Properties", value: total, tone: "bg-primary/5 text-primary border-primary/10" },
+            { icon: <Shield size={16} />, label: "Verified", value: verified, tone: "bg-success/5 text-success border-success/10" },
+            { icon: <TrendingUp size={16} />, label: "Awaiting Oracle", value: awaiting, tone: "bg-secondary/5 text-secondary border-secondary/10" },
+            { icon: <Shield size={16} />, label: "With Encumbrance", value: encumbered, tone: "bg-stone/10 text-on_surface_variant border-stone/20 dark:bg-white/5" },
+          ].map((s) => (
+            <Card key={s.label} className="rounded-2xl border-stone/50 dark:bg-card dark:border-white/5 shadow-sm overflow-hidden">
+              <CardContent className="p-6">
+                <div className={cn("w-9 h-9 rounded-xl flex items-center justify-center border mb-4", s.tone)}>{s.icon}</div>
+                <p className="text-2xl font-bold font-display text-on_surface dark:text-[#e8eaf0] tracking-tight mb-1">{s.value}</p>
+                <p className="text-[10px] font-bold text-on_surface_variant dark:text-muted-foreground uppercase tracking-[0.15em] opacity-60">{s.label}</p>
+              </CardContent>
+            </Card>
+          ))}
         </div>
 
         {/* Toolbar */}
