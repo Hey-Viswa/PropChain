@@ -125,7 +125,7 @@ export default function AIReviewPanel() {
                 {doc.fraudFlags.length > 0 && (
                   <div className="flex flex-wrap gap-2 pt-2 border-t border-stone/20 dark:border-white/5">
                     {doc.fraudFlags.map((flag) => (
-                      <Badge key={flag} variant="destructive" className="rounded-xl px-3 py-1 text-[10px] font-bold uppercase tracking-widest">
+                      <Badge key={flag} variant="rejected" className="rounded-xl px-3 py-1 text-[10px] font-bold uppercase tracking-widest">
                         ⚠ {flag}
                       </Badge>
                     ))}

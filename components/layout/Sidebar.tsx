@@ -191,7 +191,7 @@ export default function Sidebar() {
         <div className="flex items-center justify-between gap-2 p-2 bg-white/40 dark:bg-white/5 rounded-2xl border border-stone/20 dark:border-white/5">
           <div className="flex items-center gap-2 min-w-0">
              <div className="shrink-0 scale-90 origin-left">
-               <UserButton afterSignOutUrl="/" />
+               <UserButton />
              </div>
              <div className="min-w-0 overflow-hidden">
                <p className="text-[10px] font-black uppercase text-on_surface dark:text-[#e8eaf0] truncate">

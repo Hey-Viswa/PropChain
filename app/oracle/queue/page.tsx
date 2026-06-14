@@ -191,11 +191,14 @@ export default function OracleQueuePage() {
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0 self-end md:self-start">
-                        <Button variant="outline" size="sm" className="h-9 px-4 text-xs font-bold uppercase tracking-wider" asChild>
-                          <a href={p.documentUrl} target="_blank" rel="noopener noreferrer">
-                            <FileText className="mr-1.5 h-3.5 w-3.5" />
-                            View Docs
-                          </a>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="h-9 px-4 text-xs font-bold uppercase tracking-wider"
+                          render={<a href={p.documentUrl} target="_blank" rel="noopener noreferrer" />}
+                        >
+                          <FileText className="mr-1.5 h-3.5 w-3.5" />
+                          View Docs
                         </Button>
                         <Separator orientation="vertical" className="h-6 mx-1 hidden md:block" />
                         <Button

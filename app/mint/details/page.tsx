@@ -14,7 +14,7 @@ import {
   SelectTrigger, 
   SelectValue 
 } from "@/components/ui/select";
-import { Info, MapPin, Target, CheckCircle2, Shield, Clock, ArrowRight } from "lucide-react";
+import { Info, MapPin, Target, CheckCircle2, Shield, Clock, ArrowRight, AlertTriangle } from "lucide-react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 
