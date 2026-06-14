@@ -22,12 +22,14 @@ import { Dispute } from "../lib/db/models/Dispute";
 const MONGODB_URI = process.env.MONGODB_URI;
 const wallet = (process.argv[2] || process.env.SEED_WALLET || "").toLowerCase();
 
+// High tokenIds so seeded display rows never collide with freshly minted
+// tokens (which start at 0) during a live demo.
 const SAMPLE = [
-  { tokenId: 0, ulpin: "MH0123456789", physicalAddress: "12, Shivaji Nagar, Pune", state: "Maharashtra", district: "Pune", areaSqFt: 1200, propertyType: "Residential", status: "approved" },
-  { tokenId: 1, ulpin: "MH9876543210", physicalAddress: "Bandra Kurla Complex, Mumbai", state: "Maharashtra", district: "Mumbai", areaSqFt: 5400, propertyType: "Commercial", status: "approved" },
-  { tokenId: 2, ulpin: "KA1122334455", physicalAddress: "100ft Road, Indiranagar, Bengaluru", state: "Karnataka", district: "Bengaluru", areaSqFt: 2100, propertyType: "Residential", status: "pending" },
-  { tokenId: 3, ulpin: "DL5544332211", physicalAddress: "Sector 12, Dwarka, New Delhi", state: "Delhi", district: "New Delhi", areaSqFt: 1800, propertyType: "Residential", status: "pending" },
-  { tokenId: 4, ulpin: "GJ6677889900", physicalAddress: "Satellite Road, Ahmedabad", state: "Gujarat", district: "Ahmedabad", areaSqFt: 9000, propertyType: "Agricultural", status: "rejected" },
+  { tokenId: 9001, ulpin: "MH0123456789", physicalAddress: "12, Shivaji Nagar, Pune", state: "Maharashtra", district: "Pune", areaSqFt: 1200, propertyType: "Residential", status: "approved" },
+  { tokenId: 9002, ulpin: "MH9876543210", physicalAddress: "Bandra Kurla Complex, Mumbai", state: "Maharashtra", district: "Mumbai", areaSqFt: 5400, propertyType: "Commercial", status: "approved" },
+  { tokenId: 9003, ulpin: "KA1122334455", physicalAddress: "100ft Road, Indiranagar, Bengaluru", state: "Karnataka", district: "Bengaluru", areaSqFt: 2100, propertyType: "Residential", status: "pending" },
+  { tokenId: 9004, ulpin: "DL5544332211", physicalAddress: "Sector 12, Dwarka, New Delhi", state: "Delhi", district: "New Delhi", areaSqFt: 1800, propertyType: "Residential", status: "pending" },
+  { tokenId: 9005, ulpin: "GJ6677889900", physicalAddress: "Satellite Road, Ahmedabad", state: "Gujarat", district: "Ahmedabad", areaSqFt: 9000, propertyType: "Agricultural", status: "rejected" },
 ];
 
 async function main() {
@@ -64,11 +66,11 @@ async function main() {
 
   // A Phase-2 encumbrance + dispute for the demo.
   await Encumbrance.create({
-    tokenId: 1, ulpin: "MH9876543210", lender: wallet, amount: 5000000,
+    tokenId: 9002, ulpin: "MH9876543210", lender: wallet, amount: 5000000,
     reason: "Commercial mortgage #CM-2025-014", status: "active",
   });
   await Dispute.create({
-    tokenId: 4, ulpin: "GJ6677889900", raisedBy: wallet,
+    tokenId: 9005, ulpin: "GJ6677889900", raisedBy: wallet,
     reason: "Competing ownership claim filed at sub-registrar office.", status: "open",
   });
 
