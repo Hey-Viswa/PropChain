@@ -3,10 +3,12 @@
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { usePropertyStore } from "@/store/usePropertyStore";
-import { MapPin, History, Building2, FileText } from "lucide-react";
+import { MapPin, History, Building2, FileText, Award } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import TransferCard from "@/components/shared/TransferCard";
 import ProtectionsCard from "@/components/shared/ProtectionsCard";
+import FractionalCard from "@/components/shared/FractionalCard";
+import SuccessionCard from "@/components/shared/SuccessionCard";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 
@@ -180,7 +182,26 @@ export default function PropertyIdPage() {
         {/* Right column: transfer + audit */}
         <div className="space-y-8">
         <TransferCard tokenId={view.tokenId} ownerWallet={view.owner} statusUi={view.statusUi} />
+        {view.statusUi === "verified" && view.tokenId != null && (
+          <Link
+            href={`/certificate/${view.tokenId}`}
+            className="flex items-center justify-between gap-3 bg-card dark:bg-card rounded-2xl p-6 shadow-[0_8px_24px_rgba(0,0,0,0.03)] border border-outline_variant/10 hover:border-primary/30 transition-colors group"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+                <Award size={20} />
+              </div>
+              <div>
+                <h3 className="text-base font-bold font-display text-on_surface dark:text-[#e8eaf0]">Ownership Certificate</h3>
+                <p className="text-xs text-on_surface_variant dark:text-muted-foreground">W3C verifiable credential · printable PDF</p>
+              </div>
+            </div>
+            <span className="text-primary text-sm font-semibold group-hover:translate-x-0.5 transition-transform">View →</span>
+          </Link>
+        )}
         <ProtectionsCard tokenId={view.tokenId} ulpin={view.ulpin} />
+        <FractionalCard tokenId={view.tokenId} ulpin={view.ulpin} ownerWallet={view.owner} statusUi={view.statusUi} />
+        <SuccessionCard tokenId={view.tokenId} ulpin={view.ulpin} ownerWallet={view.owner} />
         <div className="bg-card dark:bg-card rounded-2xl p-8 shadow-[0_8px_24px_rgba(0,0,0,0.03)] border border-outline_variant/10">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">

@@ -8,6 +8,7 @@ import { ActivityLog } from "@/lib/db/models/ActivityLog";
 import { encumbranceSchema } from "@/lib/validations";
 import { notifyLienChange } from "@/lib/services/emailService";
 import { verifyTxReceipt } from "@/lib/services/txVerify";
+import { hasAnyRole } from "@/lib/auth/roles";
 
 /**
  * POST /api/encumbrance  { action: "add" | "release", tokenId, ulpin, ... }
@@ -27,7 +28,7 @@ export async function POST(req: NextRequest) {
     if (!actor?.walletAddress) {
       return NextResponse.json({ error: "No wallet linked" }, { status: 403 });
     }
-    if (!["BANK", "ORACLE", "SUPER_ADMIN"].includes(actor.role)) {
+    if (!(await hasAnyRole(userId, ["BANK", "ORACLE", "SUPER_ADMIN"]))) {
       return NextResponse.json(
         { error: "Forbidden — requires BANK or ORACLE role" },
         { status: 403 }

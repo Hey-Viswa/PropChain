@@ -55,14 +55,39 @@ Phase 2 and Phase 3 using **only free-tier services** (no paid plans).
 | Mapbox tiles | OpenStreetMap deep-link location card |
 | Polygon Mumbai (sunset) | Polygon Amoy (free testnet, 80002) |
 
-## Not yet wired (follow-ups)
+## Completion wave — remaining plan items delivered
 
-- Front-end wallet calls for encumbrance/dispute/fractional contracts (API +
-  contracts are ready; the mint/property UIs still need buttons wired).
-- `AIReviewPanel` still renders mock docs; `/api/ai/verify` is ready to back it.
-- Live integration testing requires the external keys in `.env.local`
-  (see `docs/PHASE_2_3_SETUP.md`). This environment has no DB/RPC, so live flows
-  were validated by build + unit/contract tests, not by a running server.
+Everything previously listed under "not yet wired" is now built, plus the
+remaining Phase 2/3 stretch bullets from `PropChain_System_Plan.md`:
+
+- **CI** — `.github/workflows/ci.yml`: web job (tsc · lint · unit · build) +
+  contracts job (compile · test). Runs on every push/PR.
+- **`PropChainOracle.sol`** — standalone on-chain governance-role registry
+  (ORACLE_ROLE / BANK_ROLE) with grant/revoke + events. Deployed by
+  `deploy.ts`, ABI in `lib/contracts/PropChainOracle.abi.ts`, 6 contract tests.
+- **Bank Desk** (`/bank`) — BANK/ORACLE wallets register & release liens via
+  `/api/encumbrance`. Linked in the sidebar under "Institutions".
+- **Fractional ownership** — `Fractionalization` model + `/api/fractional` +
+  `FractionalCard` on the property page (issue ERC-20 shares / redeem).
+- **Succession / inheritance** — `Nomination` model + `/api/succession` +
+  `SuccessionCard` (nominate heirs with a 100%-split, registrar executes).
+- **W3C Verifiable Credential + certificate** — `credentialService.ts`
+  (HMAC-SHA256 data-integrity proof), `/api/credential/[tokenId]`, and a
+  printable `/certificate/[tokenId]` page with an embedded, dependency-free
+  **QR code** (`lib/qrcode.ts`, byte-mode ECC-M v1–6, hand-rolled per ISO 18004).
+- **Role bug fix** — `lib/auth/roles.ts` merges `User.role` with the `AdminRole`
+  collection; `/api/encumbrance` + `/api/dispute` no longer always-403.
+- **Tests** — `npm run test:unit` now 35 (credential + QR added); contracts 33.
+- `AIReviewPanel` is wired to `/api/ai/verify` (already done in an earlier pass).
+
+Verification gate (all green): `tsc --noEmit` · `next lint` · `next build`
+(48 routes) · `test:unit` 35/35 · `hardhat test` 33/33.
+
+## Still requires live keys
+
+Live integration testing needs the external keys in `.env.local`
+(see `docs/PHASE_2_3_SETUP.md`). This environment has no DB/RPC, so live flows
+were validated by build + unit/contract tests, not by a running server.
 
 ## What to connect
 

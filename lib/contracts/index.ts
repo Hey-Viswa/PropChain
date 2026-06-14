@@ -4,6 +4,7 @@ import { PROPERTY_NFT_ABI } from "./PropertyNFT.abi";
 import { ENCUMBRANCE_REGISTRY_ABI, ENCUMBRANCE_REGISTRY_ADDRESS } from "./EncumbranceRegistry.abi";
 import { DISPUTE_REGISTRY_ABI, DISPUTE_REGISTRY_ADDRESS } from "./DisputeRegistry.abi";
 import { FRACTIONAL_OWNERSHIP_ABI } from "./FractionalOwnership.abi";
+import { ORACLE_REGISTRY_ABI, ORACLE_REGISTRY_ADDRESS } from "./PropChainOracle.abi";
 
 // Re-export ABIs so consumers only import from this file
 export { PROPERTY_NFT_ABI as PropertyNFT_ABI };
@@ -13,6 +14,8 @@ export {
   DISPUTE_REGISTRY_ABI,
   DISPUTE_REGISTRY_ADDRESS,
   FRACTIONAL_OWNERSHIP_ABI,
+  ORACLE_REGISTRY_ABI,
+  ORACLE_REGISTRY_ADDRESS,
 };
 
 // Core PropertyNFT contract address — set NEXT_PUBLIC_CONTRACT_ADDRESS in .env.local

@@ -8,6 +8,7 @@ import { ActivityLog } from "@/lib/db/models/ActivityLog";
 import { disputeSchema } from "@/lib/validations";
 import { notifyDispute } from "@/lib/services/emailService";
 import { verifyTxReceipt } from "@/lib/services/txVerify";
+import { hasAnyRole } from "@/lib/auth/roles";
 
 /**
  * POST /api/dispute  { action: "raise" | "resolve", tokenId, ulpin, ... }
@@ -79,7 +80,7 @@ export async function POST(req: NextRequest) {
     }
 
     // action === "resolve" — oracle only
-    if (!["ORACLE", "SUPER_ADMIN"].includes(actor.role)) {
+    if (!(await hasAnyRole(userId, ["ORACLE", "SUPER_ADMIN"]))) {
       return NextResponse.json(
         { error: "Forbidden — resolving requires ORACLE role" },
         { status: 403 }

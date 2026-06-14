@@ -1,6 +1,6 @@
-// AUTO-GENERATED from blockchain/artifacts/contracts/DisputeRegistry.sol/DisputeRegistry.json
+// AUTO-GENERATED from blockchain/artifacts/contracts/PropChainOracle.sol/PropChainOracle.json
 // Regenerate with: node scripts/genAbis.js
-export const DISPUTE_REGISTRY_ABI = [
+export const ORACLE_REGISTRY_ABI = [
   {
     "inputs": [
       {
@@ -38,30 +38,18 @@ export const DISPUTE_REGISTRY_ABI = [
     "inputs": [
       {
         "indexed": true,
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
       },
       {
         "indexed": true,
         "internalType": "address",
-        "name": "raisedBy",
+        "name": "by",
         "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "string",
-        "name": "reason",
-        "type": "string"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "timestamp",
-        "type": "uint256"
       }
     ],
-    "name": "DisputeRaised",
+    "name": "BankGranted",
     "type": "event"
   },
   {
@@ -69,30 +57,56 @@ export const DISPUTE_REGISTRY_ABI = [
     "inputs": [
       {
         "indexed": true,
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
       },
       {
         "indexed": true,
         "internalType": "address",
-        "name": "resolvedBy",
+        "name": "by",
+        "type": "address"
+      }
+    ],
+    "name": "BankRevoked",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "account",
         "type": "address"
       },
       {
-        "indexed": false,
-        "internalType": "string",
-        "name": "resolution",
-        "type": "string"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "timestamp",
-        "type": "uint256"
+        "indexed": true,
+        "internalType": "address",
+        "name": "by",
+        "type": "address"
       }
     ],
-    "name": "DisputeResolved",
+    "name": "OracleGranted",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "by",
+        "type": "address"
+      }
+    ],
+    "name": "OracleRevoked",
     "type": "event"
   },
   {
@@ -172,6 +186,19 @@ export const DISPUTE_REGISTRY_ABI = [
   },
   {
     "inputs": [],
+    "name": "BANK_ROLE",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "DEFAULT_ADMIN_ROLE",
     "outputs": [
       {
@@ -185,146 +212,12 @@ export const DISPUTE_REGISTRY_ABI = [
   },
   {
     "inputs": [],
-    "name": "RESOLVER_ROLE",
+    "name": "ORACLE_ROLE",
     "outputs": [
       {
         "internalType": "bytes32",
         "name": "",
         "type": "bytes32"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "name": "disputeCount",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "name": "disputes",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "raisedBy",
-        "type": "address"
-      },
-      {
-        "internalType": "string",
-        "name": "reason",
-        "type": "string"
-      },
-      {
-        "internalType": "uint256",
-        "name": "raisedAt",
-        "type": "uint256"
-      },
-      {
-        "internalType": "bool",
-        "name": "resolved",
-        "type": "bool"
-      },
-      {
-        "internalType": "string",
-        "name": "resolution",
-        "type": "string"
-      },
-      {
-        "internalType": "address",
-        "name": "resolvedBy",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "resolvedAt",
-        "type": "uint256"
-      },
-      {
-        "internalType": "bool",
-        "name": "exists",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      }
-    ],
-    "name": "getDispute",
-    "outputs": [
-      {
-        "components": [
-          {
-            "internalType": "address",
-            "name": "raisedBy",
-            "type": "address"
-          },
-          {
-            "internalType": "string",
-            "name": "reason",
-            "type": "string"
-          },
-          {
-            "internalType": "uint256",
-            "name": "raisedAt",
-            "type": "uint256"
-          },
-          {
-            "internalType": "bool",
-            "name": "resolved",
-            "type": "bool"
-          },
-          {
-            "internalType": "string",
-            "name": "resolution",
-            "type": "string"
-          },
-          {
-            "internalType": "address",
-            "name": "resolvedBy",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "resolvedAt",
-            "type": "uint256"
-          },
-          {
-            "internalType": "bool",
-            "name": "exists",
-            "type": "bool"
-          }
-        ],
-        "internalType": "struct DisputeRegistry.Dispute",
-        "name": "",
-        "type": "tuple"
       }
     ],
     "stateMutability": "view",
@@ -357,7 +250,20 @@ export const DISPUTE_REGISTRY_ABI = [
         "type": "address"
       }
     ],
-    "name": "grantResolverRole",
+    "name": "grantBank",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "grantOracle",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -407,12 +313,12 @@ export const DISPUTE_REGISTRY_ABI = [
   {
     "inputs": [
       {
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
       }
     ],
-    "name": "isDisputed",
+    "name": "isBank",
     "outputs": [
       {
         "internalType": "bool",
@@ -426,19 +332,20 @@ export const DISPUTE_REGISTRY_ABI = [
   {
     "inputs": [
       {
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "string",
-        "name": "reason",
-        "type": "string"
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
       }
     ],
-    "name": "raiseDispute",
-    "outputs": [],
-    "stateMutability": "nonpayable",
+    "name": "isOracle",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -462,17 +369,12 @@ export const DISPUTE_REGISTRY_ABI = [
   {
     "inputs": [
       {
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "string",
-        "name": "resolution",
-        "type": "string"
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
       }
     ],
-    "name": "resolveDispute",
+    "name": "revokeBank",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -485,7 +387,7 @@ export const DISPUTE_REGISTRY_ABI = [
         "type": "address"
       }
     ],
-    "name": "revokeResolverRole",
+    "name": "revokeOracle",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -529,4 +431,4 @@ export const DISPUTE_REGISTRY_ABI = [
   }
 ] as const;
 
-export const DISPUTE_REGISTRY_ADDRESS = (process.env.NEXT_PUBLIC_DISPUTE_ADDRESS ?? "") as `0x${string}`;
+export const ORACLE_REGISTRY_ADDRESS = (process.env.NEXT_PUBLIC_ORACLE_REGISTRY_ADDRESS ?? "") as `0x${string}`;

@@ -26,6 +26,7 @@ import {
   SlidersHorizontal,
   LogOut,
   FlaskConical,
+  Landmark,
 } from "lucide-react";
 
 const isDev = process.env.NODE_ENV === "development";
@@ -70,12 +71,17 @@ const oracleNavGroups: NavGroup[] = [
 export default function Sidebar() {
   const pathname         = usePathname();
   const { user, isLoaded: userLoaded } = useUser();
-  const { isOracle: hasOracleRole, isLoading } = useAdminRole();
+  const { isOracle: hasOracleRole, isBank, isSuperAdmin, isLoading } = useAdminRole();
   const { isOracleMode, setOracleMode, reset } = useOracleAccessStore();
   const { isConnected, truncatedAddress } = useWallet();
 
   const showOracleNav = isOracleMode || hasOracleRole;
-  const navGroups     = showOracleNav ? oracleNavGroups : userNavGroups;
+  const baseGroups    = showOracleNav ? oracleNavGroups : userNavGroups;
+  // Institutions (Bank Desk) — visible to bank/oracle/super-admin wallets.
+  const navGroups: NavGroup[] =
+    isBank || hasOracleRole || isSuperAdmin
+      ? [...baseGroups, { label: "Institutions", items: [{ label: "Bank Desk", href: "/bank", icon: Landmark }] }]
+      : baseGroups;
 
   function isActive(href: string) {
     if (href === "/dashboard") return pathname === "/dashboard";

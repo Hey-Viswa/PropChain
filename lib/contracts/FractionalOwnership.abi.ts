@@ -1,5 +1,5 @@
 // AUTO-GENERATED from blockchain/artifacts/contracts/FractionalOwnership.sol/FractionalOwnership.json
-// Regenerate with: node scripts/genAbis.js  (after `cd blockchain && npx hardhat compile`)
+// Regenerate with: node scripts/genAbis.js
 export const FRACTIONAL_OWNERSHIP_ABI = [
   {
     "inputs": [

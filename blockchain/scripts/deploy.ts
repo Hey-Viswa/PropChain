@@ -38,6 +38,12 @@ async function main() {
   const disputeAddress = await dispute.getAddress();
   console.log("DisputeRegistry     ->", disputeAddress);
 
+  const PropChainOracle = await ethers.getContractFactory("PropChainOracle");
+  const oracle = await PropChainOracle.deploy(deployer.address);
+  await oracle.waitForDeployment();
+  const oracleAddress = await oracle.getAddress();
+  console.log("PropChainOracle     ->", oracleAddress);
+
   const deployment = {
     network: network.name,
     deployedAt: new Date().toISOString(),
@@ -46,11 +52,13 @@ async function main() {
       PropertyNFT: propertyNFTAddress,
       EncumbranceRegistry: encumbranceAddress,
       DisputeRegistry: disputeAddress,
+      PropChainOracle: oracleAddress,
     },
     env: {
       NEXT_PUBLIC_CONTRACT_ADDRESS: propertyNFTAddress,
       NEXT_PUBLIC_ENCUMBRANCE_ADDRESS: encumbranceAddress,
       NEXT_PUBLIC_DISPUTE_ADDRESS: disputeAddress,
+      NEXT_PUBLIC_ORACLE_REGISTRY_ADDRESS: oracleAddress,
     },
   };
 

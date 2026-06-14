@@ -1,5 +1,5 @@
 // AUTO-GENERATED from blockchain/artifacts/contracts/EncumbranceRegistry.sol/EncumbranceRegistry.json
-// Regenerate with: node scripts/genAbis.js  (after `cd blockchain && npx hardhat compile`)
+// Regenerate with: node scripts/genAbis.js
 export const ENCUMBRANCE_REGISTRY_ABI = [
   {
     "inputs": [

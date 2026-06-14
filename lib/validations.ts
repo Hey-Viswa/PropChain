@@ -67,3 +67,38 @@ export const searchQuerySchema = z.object({
   limit: z.coerce.number().int().min(1).max(100).optional(),
 });
 export type SearchQuery = z.infer<typeof searchQuerySchema>;
+
+export const fractionalSchema = z.object({
+  action: z.enum(["fractionalize", "redeem"]),
+  tokenId: z.coerce.number().int().min(0),
+  ulpin: z.string().regex(/^[A-Z]{2}\d{10}$/),
+  totalShares: z.coerce.number().int().min(1).max(10_000_000).optional(),
+  shareName: z.string().min(2).max(60).optional(),
+  shareSymbol: z
+    .string()
+    .min(2)
+    .max(8)
+    .regex(/^[A-Za-z0-9]+$/, "Symbol must be alphanumeric")
+    .optional(),
+  vaultAddress: z.string().regex(walletRegex, "Invalid vault address").optional(),
+  txHash: z.string().regex(txHashRegex, "Invalid tx hash").optional(),
+});
+export type FractionalPayload = z.infer<typeof fractionalSchema>;
+
+const nomineeSchema = z.object({
+  name: z.string().min(2).max(80),
+  wallet: z.string().regex(walletRegex, "Invalid nominee wallet"),
+  relation: z.string().min(2).max(40),
+  sharePct: z.coerce.number().min(1).max(100),
+});
+
+export const successionSchema = z.object({
+  action: z.enum(["nominate", "execute", "revoke"]),
+  tokenId: z.coerce.number().int().min(0),
+  ulpin: z.string().regex(/^[A-Z]{2}\d{10}$/),
+  nominees: z.array(nomineeSchema).min(1).max(6).optional(),
+  executeTo: z.string().regex(walletRegex, "Invalid heir wallet").optional(),
+  note: z.string().max(300).optional(),
+  txHash: z.string().regex(txHashRegex, "Invalid tx hash").optional(),
+});
+export type SuccessionPayload = z.infer<typeof successionSchema>;

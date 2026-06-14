@@ -30,6 +30,12 @@ import {
   computeScore,
   verifyDocument,
 } from "../lib/services/aiService";
+import {
+  canonicalize,
+  issueCredential,
+  verifyCredential,
+} from "../lib/services/credentialService";
+import { generateMatrix, toSvg } from "../lib/qrcode";
 
 // ── tiny harness ─────────────────────────────────────────────────────────────
 type TestFn = () => void | Promise<void>;
@@ -246,6 +252,97 @@ describe("aiService.verifyDocument", () => {
     const result = await verifyDocument({}, {}, { ocr: async () => "" });
     assert.equal(result.ocrTextLength, 0);
     assert.equal(result.decision, "reject");
+  });
+});
+
+// ── credentialService ────────────────────────────────────────────────────────
+const CRED_INPUT = {
+  tokenId: 9001,
+  ulpin: "MH0123456789",
+  owner: "0x1111111111111111111111111111111111111111",
+  physicalAddress: "12, Shivaji Nagar, Pune",
+  areaSqFt: 1200,
+  propertyType: "Residential",
+  status: "approved",
+  registeredAt: "2025-01-01T00:00:00.000Z",
+  chainId: 31337,
+  issuedAt: "2026-01-01T00:00:00.000Z",
+};
+
+describe("credentialService", () => {
+  it("canonicalize sorts keys deterministically", () => {
+    assert.equal(canonicalize({ b: 1, a: 2 }), '{"a":2,"b":1}');
+    assert.equal(canonicalize({ a: 2, b: 1 }), '{"a":2,"b":1}');
+    assert.equal(canonicalize([3, { y: 1, x: 2 }]), '[3,{"x":2,"y":1}]');
+  });
+
+  it("issues a W3C VC with the expected shape", () => {
+    const vc = issueCredential(CRED_INPUT);
+    assert.ok(vc["@context"].includes("https://www.w3.org/2018/credentials/v1"));
+    assert.ok(vc.type.includes("PropertyOwnershipCredential"));
+    assert.equal(vc.credentialSubject.ulpin, "MH0123456789");
+    assert.equal(vc.credentialSubject.id, "did:pkh:eip155:31337:0x1111111111111111111111111111111111111111");
+    assert.ok(vc.proof && vc.proof.proofValue.length === 64);
+  });
+
+  it("verifies a freshly issued credential", () => {
+    const vc = issueCredential(CRED_INPUT);
+    assert.deepEqual(verifyCredential(vc), { valid: true, reason: null });
+  });
+
+  it("detects tampering with the subject", () => {
+    const vc = issueCredential(CRED_INPUT);
+    vc.credentialSubject.owner = "0x2222222222222222222222222222222222222222" as never;
+    vc.credentialSubject.ulpin = "ZZ9999999999";
+    assert.equal(verifyCredential(vc).valid, false);
+  });
+
+  it("is deterministic for a fixed issuedAt", () => {
+    const a = issueCredential(CRED_INPUT);
+    const b = issueCredential(CRED_INPUT);
+    assert.equal(a.proof!.proofValue, b.proof!.proofValue);
+  });
+});
+
+// ── qrcode ───────────────────────────────────────────────────────────────────
+describe("qrcode", () => {
+  it("selects version 1 (21×21) for short payloads", () => {
+    const m = generateMatrix("hello");
+    assert.equal(m.length, 21);
+    assert.equal(m[0].length, 21);
+  });
+
+  it("places the three finder patterns", () => {
+    const m = generateMatrix("https://propchain.example/certificate/9001");
+    const size = m.length;
+    // Finder = 3×3 dark block · light ring · dark border (Chebyshev distance).
+    for (const [cy, cx] of [[3, 3], [3, size - 4], [size - 4, 3]] as const) {
+      assert.equal(m[cy][cx], true, "centre dark");
+      assert.equal(m[cy - 1][cx - 1], true, "3×3 block dark");
+      assert.equal(m[cy - 2][cx - 2], false, "light ring");
+      assert.equal(m[cy - 3][cx - 3], true, "dark border");
+    }
+  });
+
+  it("grows the version with the payload length", () => {
+    const small = generateMatrix("x");
+    const big = generateMatrix("https://propchain.example/certificate/9001?owner=0x1111111111111111111111111111111111111111");
+    assert.ok(big.length > small.length);
+  });
+
+  it("is deterministic", () => {
+    assert.deepEqual(generateMatrix("verify-me"), generateMatrix("verify-me"));
+  });
+
+  it("toSvg emits a self-contained svg", () => {
+    const svg = toSvg("https://propchain.example/certificate/9001");
+    assert.ok(svg.startsWith("<svg"));
+    assert.ok(svg.includes("<path"));
+    assert.ok(svg.trim().endsWith("</svg>"));
+  });
+
+  it("throws when the payload exceeds capacity", () => {
+    assert.throws(() => generateMatrix("a".repeat(200)));
   });
 });
 

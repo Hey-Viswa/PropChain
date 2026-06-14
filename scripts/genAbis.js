@@ -19,6 +19,7 @@ const TARGETS = [
   ["EncumbranceRegistry", "ENCUMBRANCE_REGISTRY", "NEXT_PUBLIC_ENCUMBRANCE_ADDRESS"],
   ["DisputeRegistry", "DISPUTE_REGISTRY", "NEXT_PUBLIC_DISPUTE_ADDRESS"],
   ["FractionalOwnership", "FRACTIONAL_OWNERSHIP", "NEXT_PUBLIC_FRACTIONAL_ADDRESS"],
+  ["PropChainOracle", "ORACLE_REGISTRY", "NEXT_PUBLIC_ORACLE_REGISTRY_ADDRESS"],
 ];
 
 for (const [name, prefix, env] of TARGETS) {
