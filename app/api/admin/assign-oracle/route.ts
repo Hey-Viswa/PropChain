@@ -8,7 +8,7 @@ import {
   toBytes,
 } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
-import { polygonMumbai, hardhat } from "viem/chains";
+import { polygonAmoy, hardhat } from "viem/chains";
 import { connectDB } from "@/lib/db/mongoose";
 import { AdminRole } from "@/lib/db/models/AdminRole";
 import { ActivityLog } from "@/lib/db/models/ActivityLog";
@@ -20,7 +20,7 @@ import {
 
 // ─── Chain config (mirrors verifyOracleRole.ts) ────────────────────────────
 const chain =
-  process.env.NODE_ENV === "production" ? polygonMumbai : hardhat;
+  process.env.NODE_ENV === "production" ? polygonAmoy : hardhat;
 
 const rpcUrl =
   process.env.NODE_ENV === "production"

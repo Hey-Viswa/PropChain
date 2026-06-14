@@ -9,6 +9,7 @@
     "lint": "next lint",
     "listener": "tsx scripts/eventListener.ts",
     "recovery": "tsx scripts/recoveryWorker.ts",
+    "seed": "tsx scripts/seed.ts",
     "test:unit": "tsx scripts/test-unit.ts"
   },
   "dependencies": {

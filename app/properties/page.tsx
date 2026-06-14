@@ -4,9 +4,10 @@ import PageHeader from "@/components/shared/PageHeader";
 import { Button } from "@/components/ui/button";
 import { PlusCircle, Search, LayoutGrid, List, Filter as FilterIcon, Maximize2, Building2, MapPin, Shield, TrendingUp } from "lucide-react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { usePropertyStore } from "@/store/usePropertyStore";
+import { useWallet } from "@/hooks/useWallet";
 import PropertyCard from "@/components/shared/PropertyCard";
-import { useReadProperties } from "@/hooks/useReadProperties";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
@@ -14,21 +15,33 @@ import { cn } from "@/lib/utils";
 export default function PropertiesPage() {
   const filterStatus = usePropertyStore(s => s.filterStatus);
   const setFilter  = usePropertyStore(s => s.setFilter);
+  const { address } = useWallet();
 
-  const { properties, loading } = useReadProperties();
+  const [records, setRecords] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  const mappedProperties = properties.map(p => ({
-    id:              p.tokenId.toString(),
+  useEffect(() => {
+    if (!address) { setRecords([]); return; }
+    setLoading(true);
+    fetch(`/api/properties/owner?wallet=${address}`)
+      .then((r) => (r.ok ? r.json() : { properties: [] }))
+      .then((d) => setRecords(d.properties ?? []))
+      .catch(() => setRecords([]))
+      .finally(() => setLoading(false));
+  }, [address]);
+
+  const mappedProperties = records.map((p) => ({
+    id:              p.tokenId != null ? String(p.tokenId) : p._id,
     ulpin:           p.ulpin,
     address:         p.physicalAddress,
     area:            p.areaSqFt,
     type:            p.propertyType ?? "Residential",
-    status:          p.isApproved ? "verified" : "awaiting_oracle",
-    owner:           p.registeredBy,
-    registeredAt:    new Date(p.registeredAt * 1000).toLocaleDateString(),
-    ipfsCid:         p.ipfsDocHash,
+    status:          p.status === "approved" ? "verified" : p.status === "rejected" ? "rejected" : "awaiting_oracle",
+    owner:           p.walletAddress,
+    registeredAt:    p.createdAt ? new Date(p.createdAt).toLocaleDateString() : "—",
+    ipfsCid:         p.documentUrl ?? "",
     aiConfidence:    0,
-    hasEncumbrance:  p.hasEncumbrance,
+    hasEncumbrance:  false,
   })) as any[];
 
   // Show only real on-chain properties (no mock fallback).
