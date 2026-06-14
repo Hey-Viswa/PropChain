@@ -346,6 +346,124 @@ describe("qrcode", () => {
   });
 });
 
+// ── qrcode round-trip (independent decoder) ──────────────────────────────────
+// Proves the generated matrix is actually decodable the way a real scanner
+// reads it: recover the mask from the format bits, rebuild the function-module
+// map from the version, unmask, read codewords in zig-zag order, de-interleave
+// the blocks, and parse byte mode back to the original text. If any of mask,
+// format info, placement, interleaving or encoding were wrong, this fails.
+const QR_M = {
+  1: { dataCW: 16, ecPerBlock: 10, numBlocks: 1, align: 0 },
+  2: { dataCW: 28, ecPerBlock: 16, numBlocks: 1, align: 18 },
+  3: { dataCW: 44, ecPerBlock: 26, numBlocks: 1, align: 22 },
+  4: { dataCW: 64, ecPerBlock: 18, numBlocks: 2, align: 26 },
+  5: { dataCW: 86, ecPerBlock: 24, numBlocks: 2, align: 30 },
+  6: { dataCW: 108, ecPerBlock: 16, numBlocks: 4, align: 34 },
+} as const;
+
+function decodeQr(m: boolean[][]): { text: string; mask: number; ecBits: number } {
+  const size = m.length;
+  const version = (size - 17) / 4;
+  const info = QR_M[version as 1 | 2 | 3 | 4 | 5 | 6];
+
+  // Rebuild the function-module map structurally from the version.
+  const isFn: boolean[][] = Array.from({ length: size }, () => new Array(size).fill(false));
+  const mark = (x: number, y: number) => {
+    if (x >= 0 && x < size && y >= 0 && y < size) isFn[y][x] = true;
+  };
+  for (let i = 0; i < size; i++) { mark(6, i); mark(i, 6); }
+  for (const [cx, cy] of [[3, 3], [size - 4, 3], [3, size - 4]] as const) {
+    for (let dy = -4; dy <= 4; dy++) for (let dx = -4; dx <= 4; dx++) mark(cx + dx, cy + dy);
+  }
+  if (version >= 2) {
+    const c = info.align;
+    for (let dy = -2; dy <= 2; dy++) for (let dx = -2; dx <= 2; dx++) mark(c + dx, c + dy);
+  }
+  for (let i = 0; i <= 5; i++) mark(8, i);
+  mark(8, 7); mark(8, 8); mark(7, 8);
+  for (let i = 9; i < 15; i++) mark(14 - i, 8);
+  for (let i = 0; i < 8; i++) mark(size - 1 - i, 8);
+  for (let i = 8; i < 15; i++) mark(8, size - 15 + i);
+  mark(8, size - 8);
+
+  // Recover format info → mask + EC level.
+  const fmtPos: [number, number][] = [];
+  for (let i = 0; i <= 5; i++) fmtPos.push([8, i]);
+  fmtPos.push([8, 7], [8, 8], [7, 8]);
+  for (let i = 9; i < 15; i++) fmtPos.push([14 - i, 8]);
+  let fmt = 0;
+  fmtPos.forEach(([x, y], i) => { if (m[y][x]) fmt |= 1 << i; });
+  const data5 = (fmt ^ 0x5412) >> 10;
+  const mask = data5 & 7;
+  const ecBits = (data5 >> 3) & 3;
+
+  // Read codeword bits in zig-zag order, unmasking (mask 0 = (x+y) even).
+  const bits: number[] = [];
+  for (let right = size - 1; right >= 1; right -= 2) {
+    if (right === 6) right = 5;
+    for (let vert = 0; vert < size; vert++) {
+      for (let j = 0; j < 2; j++) {
+        const x = right - j;
+        const up = ((right + 1) & 2) === 0;
+        const y = up ? size - 1 - vert : vert;
+        if (isFn[y][x]) continue;
+        let bit = m[y][x] ? 1 : 0;
+        if (mask === 0 && (x + y) % 2 === 0) bit ^= 1;
+        bits.push(bit);
+      }
+    }
+  }
+  const codewords: number[] = [];
+  for (let i = 0; i + 8 <= bits.length; i += 8) {
+    let v = 0;
+    for (let j = 0; j < 8; j++) v = (v << 1) | bits[i + j];
+    codewords.push(v);
+  }
+
+  // De-interleave the data codewords (equal-sized blocks).
+  const perBlock = info.dataCW / info.numBlocks;
+  const dataBytes = new Array<number>(info.dataCW);
+  for (let c = 0; c < perBlock; c++) {
+    for (let b = 0; b < info.numBlocks; b++) {
+      dataBytes[b * perBlock + c] = codewords[c * info.numBlocks + b];
+    }
+  }
+
+  // Parse byte mode: mode(4) | count(8) | bytes.
+  const dbits: number[] = [];
+  for (const byte of dataBytes) for (let k = 7; k >= 0; k--) dbits.push((byte >> k) & 1);
+  let p = 0;
+  const read = (n: number) => { let v = 0; for (let i = 0; i < n; i++) v = (v << 1) | dbits[p++]; return v; };
+  const mode = read(4);
+  if (mode !== 0b0100) throw new Error(`unexpected mode ${mode}`);
+  const count = read(8);
+  const out = new Uint8Array(count);
+  for (let i = 0; i < count; i++) out[i] = read(8);
+  return { text: new TextDecoder().decode(out), mask, ecBits };
+}
+
+describe("qrcode round-trip", () => {
+  const payloads = [
+    "PROP",
+    "https://propchain.example/certificate/9001",
+    "https://propchain-demo.vercel.app/certificate/9001",
+    "https://propchain-demo.vercel.app/certificate/9001?owner=0x1111111111111111111111111111111111111111",
+  ];
+  for (const text of payloads) {
+    it(`decodes back "${text.slice(0, 28)}${text.length > 28 ? "…" : ""}"`, () => {
+      const decoded = decodeQr(generateMatrix(text));
+      assert.equal(decoded.text, text, "payload round-trips");
+      assert.equal(decoded.mask, 0, "format info encodes mask 0");
+      assert.equal(decoded.ecBits, 0, "format info encodes EC level M");
+    });
+  }
+
+  it("covers single-block and multi-block versions", () => {
+    assert.equal(generateMatrix("PROP").length, 21); // v1, 1 block
+    assert.ok(generateMatrix(payloads[3]).length >= 33); // v4+, multi-block
+  });
+});
+
 // ── run ──────────────────────────────────────────────────────────────────────
 (async () => {
   let passed = 0;
